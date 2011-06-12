@@ -1,0 +1,32 @@
+Package: RcppEigen
+Type: Package
+Title: Rcpp integration for the Eigen templated linear algebra library.
+Version: 0.1.0
+Date: 2011-06-13
+Author: Romain Francois, Dirk Eddelbuettel and Doug Bates
+Maintainer: Romain Francois, Dirk Eddelbuettel and Doug Bates <RcppArmadillo-authors@r-enthusiasts.com>
+Description: R and Eigen integration using Rcpp
+ Eigen is a C++ linear template library for linear algebra: matrices,
+ vectors, numerical solvers and related algorithms.  It supports dense
+ and sparse matrices on integer, floating point and complex numbers.
+ The performance on many algorithms is comparable with some of the
+ best implementations based on Lapack and level-3 BLAS.
+ .
+ This library is useful if C++ has been decided as the language of
+ choice for linear algebra (due to speed and/or integration
+ capabilities), rather than another language.
+ .
+ The RcppEigen package includes the header files from the Eigen C++
+ template library (currently version 3.0.1). Thus users do not need to
+ install Eigen itself in order to use RcppEigen.
+ .
+ Eigen is licensed under the GNU LGPL version 3 or later, and also
+ under the GNU GPL version 2 or later.  RcppEigen (the Rcpp
+ bindings/bridge to Eigen) is licensed under the GNU GPL version 2 or
+ later, as is the rest of Rcpp.
+License: GPL (>= 2)
+Depends: Rcpp (>= 0.9.4.2), methods
+LazyLoad: yes
+LinkingTo: Rcpp
+Suggests: inline, RUnit
+URL: http://eigen.tuxfamily.org

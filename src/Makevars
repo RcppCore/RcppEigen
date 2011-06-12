@@ -1,0 +1,5 @@
+## -*- mode: makefile; -*-
+
+PKG_CXXFLAGS=-I../inst/include
+PKG_LIBS=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+
