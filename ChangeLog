@@ -1,0 +1,9 @@
+2011-06-13  Douglas Bates <bates@stat.wisc.edu>
+
+	* ChangeLog: Add ChangeLog
+	* src/fastLm.cpp: Handle the rank-deficient case.
+	* inst/include/Eigen/src/LU/arch/Inverse_SSE.h: Use an _m128d type
+	  instead of long long int for the mask.
+	* R/fastLm.R: Associate names with coefficients. Clean up fastLm.
+	  Forward the object through summary.
+	* inst/include/Eigen/src/Core/util/Meta.h: Suppress use of long long
