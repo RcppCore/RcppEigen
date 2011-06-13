@@ -32,6 +32,7 @@ fastLm.default <- function(X, y, ...) {
     y <- as.numeric(y)
 
     res <- fastLmPure(y, X)
+    names(res$coefficients) <- colnames(X)
     res$call <- match.call()
 
     class(res) <- "fastLm"
@@ -49,14 +50,10 @@ summary.fastLm <- function(object, ...) {
     se <- object$stderr
     tval <- coef(object)/se
 
-    TAB <- cbind(Estimate = coef(object),
-                 StdErr = se,
-                 t.value = tval,
-                 p.value = 2*pt(-abs(tval), df=object$df))
-
-    # why do I need this here?
-    rownames(TAB) <- names(object$coefficients)
-    colnames(TAB) <- c("Estimate", "StdErr", "t.value", "p.value")
+    object$coefficients <- cbind(Estimate = object$coefficients,
+                                 StdErr   = se,
+                                 t.value  = tval,
+                                 p.value  = 2*pt(-abs(tval), df=object$df))
 
     ## cf src/stats/R/lm.R and case with no weights and an intercept
     f <- object$fitted.values
@@ -64,19 +61,13 @@ summary.fastLm <- function(object, ...) {
     mss <- sum((f - mean(f))^2)
     rss <- sum(r^2)
 
-    r.squared <- mss/(mss + rss)
+    object$r.squared <- mss/(mss + rss)
     df.int <- 1 		# case of intercept
     n <- length(f)
     rdf <- object$df
-    adj.r.squared <- 1 - (1 - r.squared) * ((n - df.int)/rdf)
-
-    res <- list(call=object$call,
-                coefficients=TAB,
-                r.squared=r.squared,
-                adj.r.squared=adj.r.squared)
-
-    class(res) <- "summary.fastLm"
-    res
+    object$adj.r.squared <- 1 - (1 - object$r.squared) * ((n - df.int)/rdf)
+    class(object) <- "summary.fastLm"
+    object
 }
 
 print.summary.fastLm <- function(x, ...) {
@@ -86,6 +77,8 @@ print.summary.fastLm <- function(x, ...) {
 
     printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE)
     digits <- max(3, getOption("digits") - 3)
+    cat("\nResidual standard error: ", formatC(x$s, digits=digits), " on ",
+        formatC(x$df), " degrees of freedom\n", sep="")
     cat("Multiple R-squared: ", formatC(x$r.squared, digits=digits),
         ",\tAdjusted R-squared: ",formatC(x$adj.r.squared, digits=digits),
         "\n", sep="")
@@ -98,6 +91,7 @@ fastLm.formula <- function(formula, data=list(), ...) {
     y <- model.response(mf)
 
     res <- fastLm.default(x, y, ...)
+    names(res$coefficients) <- colnames(x)
     res$call <- match.call()
     res$formula <- formula
     res
