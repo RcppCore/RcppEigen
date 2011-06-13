@@ -25,7 +25,6 @@ extern "C" SEXP fastLm(SEXP ys, SEXP Xs) {
     using namespace Eigen;
     using namespace Rcpp;
     try {
-//	static double NaN = std::numeric_limits<double>::quiet_NaN();
 	NumericMatrix X(Xs);
 	NumericVector y(ys);
 	size_t n = X.nrow(), p = X.ncol();
@@ -36,18 +35,35 @@ extern "C" SEXP fastLm(SEXP ys, SEXP Xs) {
 	VectorXd b = Map<VectorXd>(y.begin(), n);
     
 	ColPivHouseholderQR<MatrixXd> mqr(A);      // decompose the model matrix
-	if (!mqr.isInjective())
-	    throw std::invalid_argument("X is rank deficient");
-	size_t               r = mqr.rank();
-	ptrdiff_t           df = n - r;
-	VectorXd          coef = mqr.solve(b); 
-	VectorXd        fitted = A * coef;
-	VectorXd           res = b - fitted;
-	double               s = std::sqrt(res.squaredNorm()/df);
-
-	MatrixXd  R = mqr.matrixQR().topLeftCorner(r, r); // need to create this explicitly
-	MatrixXd  Rinv(TriangularView<MatrixXd, Upper>(R).solve(MatrixXd::Identity(r, r)));
-	VectorXd se = mqr.colsPermutation() * Rinv.rowwise().norm() * s; // standard errors
+	size_t        r = mqr.rank();
+	ptrdiff_t    df = n - r;
+	VectorXd   coef(p);
+	VectorXd fitted(n);
+	VectorXd     se(p);
+	MatrixXd   Rinv;
+	if (r < p) {		// Handle the rank-deficient case
+	    MatrixXd Atrunc = (A * mqr.colsPermutation()).leftCols(r);
+	    HouseholderQR<MatrixXd> QR(Atrunc);
+	    VectorXd coefTrunc = QR.solve(b);
+	    fitted = Atrunc * coefTrunc;
+	    MatrixXd   R = QR.matrixQR().topLeftCorner(r, r);
+	    Rinv = TriangularView<MatrixXd, Upper>(R).solve(MatrixXd::Identity(r, r));
+	    coef.topRows(r) = coefTrunc;
+	    std::fill(coef.data() + r, coef.data() + p,
+		      std::numeric_limits<double>::quiet_NaN());
+	    coef = mqr.colsPermutation() * coef;
+	    std::fill(se.data() + r, se.data() + p,
+		      std::numeric_limits<double>::quiet_NaN());
+	} else {
+	    coef = mqr.solve(b); 
+	    fitted = A * coef;
+	    MatrixXd  R = mqr.matrixQR().topRows(p);
+	    Rinv = TriangularView<MatrixXd, Upper>(R).solve(MatrixXd::Identity(p, p));
+	}
+	VectorXd      res = b - fitted;
+	double          s = std::sqrt(res.squaredNorm()/df);
+	se.topRows(r) = Rinv.rowwise().norm() * s;
+	se = mqr.colsPermutation() * se;
 
 	return List::create(_["coefficients"]  = coef,
 			    _["rank"]          = r,
