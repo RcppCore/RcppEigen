@@ -79,10 +79,10 @@ fastLm(X, \dots)
 }
 \examples{
   require(datasets)
-  data(trees)
+#  data(trees)  # Unnecessary - the datasets package uses LazyData
 
   ## bare-bones direct interface
-  flm <- fastLmPure( log(trees$Volume),  cbind(1, log(trees$Girth)) )
+  flm <- fastLmPure( cbind(1, log(trees$Girth)), log(trees$Volume) )
   print(flm)
 
   ## standard R interface for formula or data returning object of class fastLm
@@ -98,7 +98,7 @@ fastLm(X, \dots)
   set.seed(1)
   dd$y <- mm \%*\% seq_len(ncol(mm)) + rnorm(nrow(mm), sd = 0.1)
   summary(lm(y ~ f1 * f2, dd))     # detects rank deficiency
-  try(summary(fastLm(y ~ f1 * f2, dd))) # need to rewrite this
+  try(summary(fastLm(y ~ f1 * f2, dd))) # also detects rank deficiency
 }
 \keyword{regression}
 
