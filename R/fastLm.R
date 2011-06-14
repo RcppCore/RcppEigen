@@ -17,11 +17,11 @@
 ## You should have received a copy of the GNU General Public License
 ## along with RcppEigen.  If not, see <http://www.gnu.org/licenses/>.
 
-fastLmPure <- function(y, X) {
+fastLmPure <- function(X, y) {
 
     stopifnot(is.matrix(X), is.numeric(y), NROW(y)==nrow(X))
 
-    .Call("fastLm", y, X, package="RcppEigen")
+    .Call("fastLm", X, y, package="RcppEigen")
 }
 
 fastLm <- function(X, ...) UseMethod("fastLm")
@@ -31,7 +31,7 @@ fastLm.default <- function(X, y, ...) {
     X <- as.matrix(X)
     y <- as.numeric(y)
 
-    res <- fastLmPure(y, X)
+    res <- fastLmPure(X, y)
     names(res$coefficients) <- colnames(X)
     res$call <- match.call()
 
@@ -87,12 +87,12 @@ print.summary.fastLm <- function(x, ...) {
 
 fastLm.formula <- function(formula, data=list(), ...) {
     mf <- model.frame(formula=formula, data=data)
-    x <- model.matrix(attr(mf, "terms"), data=mf)
+    X <- model.matrix(attr(mf, "terms"), data=mf)
     y <- model.response(mf)
 
-    res <- fastLm.default(x, y, ...)
-    names(res$coefficients) <- colnames(x)
+    res <- fastLm.default(X, y, ...)
     res$call <- match.call()
+    # I think this is redundant.  The formula is available as res$call$formula
     res$formula <- formula
     res
 }

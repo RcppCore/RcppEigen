@@ -10,7 +10,7 @@
   decomposition from the \code{Eigen} linear algebra library.
 }
 \usage{
-fastLmPure(y, X)
+fastLmPure(X, y)
 fastLm(X, \dots)
 \method{fastLm}{default}(X, y, \dots)
 \method{fastLm}{formula}(formula, data = list(), \dots)
@@ -59,7 +59,7 @@ fastLm(X, \dots)
   \code{fastLmPure} returns a list with three components:
   \item{coefficients}{a vector of coefficients}
   \item{rank}{a scalar denoting the computed rank of the model matrix}
-  \item{df}{a scalar denoting the degrees of freedom in the model}
+  \item{df.residual}{a scalar denoting the degrees of freedom in the model}
   \item{stderr}{a vector of the (estimated) standard errors of the coefficient estimates}
   \item{s}{a scalar - the root mean square for residuals}
   \item{residuals}{the vector of residuals}

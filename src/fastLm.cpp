@@ -21,7 +21,7 @@
 
 #include <RcppEigen.h>
 
-extern "C" SEXP fastLm(SEXP ys, SEXP Xs) {
+extern "C" SEXP fastLm(SEXP Xs, SEXP ys) {
     using namespace Eigen;
     using namespace Rcpp;
     try {
@@ -67,7 +67,7 @@ extern "C" SEXP fastLm(SEXP ys, SEXP Xs) {
 
 	return List::create(_["coefficients"]  = coef,
 			    _["rank"]          = r,
-			    _["df"]            = df,
+			    _["df.residual"]   = df,
 			    _["perm"]          = mqr.colsPermutation().indices(),
 			    _["stderr"]        = se,
 			    _["s"]             = s,
@@ -83,7 +83,101 @@ extern "C" SEXP fastLm(SEXP ys, SEXP Xs) {
     return R_NilValue; // -Wall
 }
 
+extern "C" SEXP fastLmBench(SEXP Xs, SEXP ys) {
+    using namespace Eigen;
+    using namespace Rcpp;
+    try {
+	NumericMatrix X(Xs);
+	NumericVector y(ys);
+	size_t        n = X.nrow(), p = X.ncol();
+	ptrdiff_t    df = n - p;
+	if ((size_t)y.size() != n)
+	    throw std::invalid_argument("size mismatch");
+	
+	MatrixXd      A = Map<MatrixXd>(X.begin(), n, p); // shares storage
+	VectorXd b      = Map<VectorXd>(y.begin(), n);
 
+	HouseholderQR<MatrixXd> Aqr(A);
+	VectorXd   coef = Aqr.solve(b);
+	double        s = std::sqrt((b - A*coef).squaredNorm()/df);
 
+	MatrixXd   Rinv((TriangularView<MatrixXd, Upper>(Aqr.matrixQR().topRows(p)))
+			.solve(MatrixXd::Identity(p, p)));
+	VectorXd     se = Rinv.rowwise().norm() * s;
 
+	return List::create(_["coefficients"] = coef,
+			    _["se"]           = se,
+			    _["df.residual"]  = df);
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
 
+extern "C" SEXP fastLmChol1(SEXP Xs, SEXP ys) {
+    using namespace Eigen;
+    using namespace Rcpp;
+    try {
+	NumericMatrix X(Xs);
+	NumericVector y(ys);
+	size_t          n = X.nrow(), p = X.ncol();
+	ptrdiff_t      df = n - p;
+	if (df <= 0l)
+	    throw std::invalid_argument("nrow(X) > ncol(X) not satisfied");
+	if ((size_t)y.size() != n)
+	    throw std::invalid_argument("size mismatch");
+	
+	MatrixXd        A = Map<MatrixXd>(X.begin(), n, p); // shares storage
+	VectorXd        b = Map<VectorXd>(y.begin(), n);
+
+	LLT<MatrixXd> Ch(SelfAdjointView<MatrixXd, Lower>(MatrixXd::Zero(p, p)).rankUpdate(A.adjoint()));
+	VectorXd     coef = Ch.solve(A.adjoint() * b);
+	double          s = std::sqrt((b - A*coef).squaredNorm()/df);
+
+	VectorXd       se = (Ch.matrixL().solve(MatrixXd::Identity(p, p))).colwise().norm() * s;;
+
+	return List::create(_["coefficients"] = coef,
+			    _["se"]           = se,
+			    _["df.residual"]  = df);
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
+
+extern "C" SEXP fastLmChol2(SEXP Xs, SEXP ys) {
+    using namespace Eigen;
+    using namespace Rcpp;
+    try {
+	NumericMatrix   X(Xs);
+	NumericVector   y(ys);
+	size_t          n = X.nrow(), p = X.ncol();
+	ptrdiff_t      df = n - p;
+	if ((size_t)y.size() != n)
+	    throw std::invalid_argument("size mismatch");
+	
+	MatrixXd        A = Map<MatrixXd>(X.begin(), n, p); // shares storage
+	VectorXd        b = Map<VectorXd>(y.begin(), n);
+
+	LDLT<MatrixXd> Ch(SelfAdjointView<MatrixXd, Lower>(MatrixXd::Zero(p, p)).rankUpdate(A.adjoint()));
+	VectorXd     coef = Ch.solve(A.adjoint() * b);
+	double         s2 = (b - A*coef).squaredNorm()/df;
+
+	ArrayXd        se = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array() * s2).sqrt();
+	NumericVector Rse(p);
+	std::copy(se.data(), se.data() + p, Rse.begin());
+			    
+	return List::create(_["coefficients"] = coef,
+			    _["se"]           = Rse,
+			    _["df.residual"]  = df);
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
