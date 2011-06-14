@@ -1,3 +1,12 @@
+2011-06-14  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION: New version.
+	* man/fastLm.Rd: Change order of fastLmPure arguments in the example.
+	  Dirk said I would miss one of these. :-)
+	* R/fastLm.R, man/fastLm.Rd, src/fastLm.cpp: Change order of fastLmPure
+	  arguments and the various fastLm* C++ functions. Add fastLmChol1 and
+	  fastLmChol2.
+
 2011-06-13  Douglas Bates <bates@stat.wisc.edu>
 
 	* ChangeLog: Add ChangeLog
