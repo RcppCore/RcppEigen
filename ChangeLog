@@ -1,5 +1,6 @@
 2011-06-14  Douglas Bates <bates@stat.wisc.edu>
 
+	* src/fastLm.cpp: Cosmetic fixes.
 	* DESCRIPTION: New version.
 	* man/fastLm.Rd: Change order of fastLmPure arguments in the example.
 	  Dirk said I would miss one of these. :-)
