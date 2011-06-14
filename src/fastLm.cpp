@@ -95,7 +95,7 @@ extern "C" SEXP fastLmBench(SEXP Xs, SEXP ys) {
 	    throw std::invalid_argument("size mismatch");
 	
 	MatrixXd      A = Map<MatrixXd>(X.begin(), n, p); // shares storage
-	VectorXd b      = Map<VectorXd>(y.begin(), n);
+	VectorXd      b = Map<VectorXd>(y.begin(), n);
 
 	HouseholderQR<MatrixXd> Aqr(A);
 	VectorXd   coef = Aqr.solve(b);
@@ -132,7 +132,7 @@ extern "C" SEXP fastLmChol1(SEXP Xs, SEXP ys) {
 	MatrixXd        A = Map<MatrixXd>(X.begin(), n, p); // shares storage
 	VectorXd        b = Map<VectorXd>(y.begin(), n);
 
-	LLT<MatrixXd> Ch(SelfAdjointView<MatrixXd, Lower>(MatrixXd::Zero(p, p)).rankUpdate(A.adjoint()));
+	LLT<MatrixXd>  Ch(SelfAdjointView<MatrixXd, Lower>(MatrixXd::Zero(p, p)).rankUpdate(A.adjoint()));
 	VectorXd     coef = Ch.solve(A.adjoint() * b);
 	double          s = std::sqrt((b - A*coef).squaredNorm()/df);
 
@@ -168,7 +168,7 @@ extern "C" SEXP fastLmChol2(SEXP Xs, SEXP ys) {
 	double         s2 = (b - A*coef).squaredNorm()/df;
 
 	ArrayXd        se = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array() * s2).sqrt();
-	NumericVector Rse(p);
+	NumericVector Rse(p);	// should define a wrap method for ArrayXd, ArrayXXd, etc.
 	std::copy(se.data(), se.data() + p, Rse.begin());
 			    
 	return List::create(_["coefficients"] = coef,
