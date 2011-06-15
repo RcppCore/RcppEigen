@@ -23,7 +23,7 @@
 }
 
 test.fastLm <- function() {
-    data(trees)
+    data(trees, package="datasets")
     flm <- .Call("fastLm",
                  cbind(1, log(trees$Girth)),
                  log(trees$Volume),
@@ -37,7 +37,7 @@ test.fastLm <- function() {
 }
 
 test.fastLm.Bench <- function() {
-    data(trees)
+    data(trees, package="datasets")
     flm <- .Call("fastLmBench",
                  cbind(1, log(trees$Girth)),
                  log(trees$Volume),
@@ -51,7 +51,7 @@ test.fastLm.Bench <- function() {
 }
 
 test.fastLm.Chol1 <- function() {
-    data(trees)
+    data(trees, package="datasets")
     flm <- .Call("fastLmChol1",
                  cbind(1, log(trees$Girth)),
                  log(trees$Volume),
@@ -65,7 +65,7 @@ test.fastLm.Chol1 <- function() {
 }
 
 test.fastLm.Chol2 <- function() {
-    data(trees)
+    data(trees, package="datasets")
     flm <- .Call("fastLmChol2",
                  cbind(1, log(trees$Girth)),
                  log(trees$Volume),
@@ -79,7 +79,7 @@ test.fastLm.Chol2 <- function() {
 }
 
 test.fastLm.formula <- function() {
-    data(trees)
+    data(trees, package="datasets")
     flm <- fastLm(log(Volume) ~ log(Girth), data=trees)
     fit <- lm(log(Volume) ~ log(Girth), data=trees)
 
