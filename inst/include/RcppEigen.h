@@ -22,10 +22,12 @@
 #ifndef RcppEigen__RcppEigen__h
 #define RcppEigen__RcppEigen__h
 
+#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
 #include <RcppEigenForward.h>
 #include <Rcpp.h>
 #include <RcppEigenWrap.h>
 
 #include <Eigen/Dense>
+#include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse
 
 #endif
