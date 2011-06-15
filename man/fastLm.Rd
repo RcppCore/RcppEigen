@@ -61,7 +61,7 @@ fastLm(X, \dots)
   \item{rank}{a scalar denoting the computed rank of the model matrix}
   \item{df.residual}{a scalar denoting the degrees of freedom in the model}
   \item{stderr}{a vector of the (estimated) standard errors of the coefficient estimates}
-  \item{s}{a scalar - the root mean square for residuals}
+  \item{s}{a numeric scalar - the root mean square for residuals}
   \item{residuals}{the vector of residuals}
   \item{fitted.values}{the vector of fitted value}
   \item{Rinv}{the inverse of the upper-left r by r portion of matrix R
