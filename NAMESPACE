@@ -1,9 +1,10 @@
 useDynLib(RcppEigen)
-import(Rcpp)
+#import(Rcpp)
 
 #exportPattern("^[[:alpha:]]+")
 export(fastLm,
-       fastLmPure
+       fastLmPure,
+       RcppEigen.package.skeleton
        )
 
 S3method(fastLm, default)
