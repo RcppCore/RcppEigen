@@ -1,3 +1,27 @@
+2011-06-15  Douglas Bates <bates@stat.wisc.edu>
+
+	* cleanup, inst/doc/*: Documentation based on unit tests.
+	* R/SHLIB.R, R/inline.R, R/unit.test.R: Add support for inline package
+	* inst/include/RcppEigen.h: Add support for sparse Cholesky and LU
+	* inst/include/unsupported, inst/include/unsupported/*: Add
+	  support for sparse Cholesky and LU
+	* man/RcppEigen-package.Rd: Add reference to web page
+	* NAMESPACE, R/RcppEigen.package.skeleton.R, inst/skeleton/*,
+	  man/RcppEigen.package.skeleton.Rd: Add RcppEigen.package.skeleton and
+	  support files.
+	* DESCRIPTION: Remove Conrad's text about Armadillo, as suggested by
+	  Dirk
+
+2011-06-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/unitTests/runit.fastLm.R: better way to load trees dataset
+	* man/fastLm.Rd: better way to load trees dataset
+	* inst/unitTests/runit.fastLm.R, man/fastLm.Rd: added unit tests for
+	  fastLm{Bench,Chol1,Chol2}
+	* ChangeLog, inst/unitTests, inst/unitTests/runTests.R,
+	  inst/unitTests/runit.fastLm.R, tests, tests/doRUnit.R: added initial
+	  unit tests
+
 2011-06-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/unitTests/*: Added initial unit tests
