@@ -4,7 +4,7 @@
 \setmargrb{0.75in}{0.75in}{0.75in}{0.75in}
 
 \usepackage[colorlinks]{hyperref}
-\author{Dirk Eddelbuettel, Romain Fran\c{c}ois and Douglas Bates}
+\author{Douglas Bates, Dirk Eddelbuettel and Romain Fran\c{c}ois}
 \title{RcppEigen : Unit testing results}
 \begin{document}
 \maketitle
@@ -12,7 +12,7 @@
 \begin{verbatim}
 <<echo=F,results=tex>>=
 if( file.exists( "unitTests-results/RcppEigen-unitTests.txt" ) ){
-	writeLines( readLines( "unitTests-results/RcppEigen-unitTests.txt" ) )
+        writeLines( readLines( "unitTests-results/RcppEigen-unitTests.txt" ) )
 }
 @
 \end{verbatim}

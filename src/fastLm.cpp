@@ -2,7 +2,7 @@
 //
 // fastLm.cpp: Rcpp/Eigen example of a simple lm() alternative
 //
-// Copyright (C)  2010 Dirk Eddelbuettel, Romain Francois and Douglas Bates
+// Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -17,7 +17,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with RcppArmadillo.  If not, see <http://www.gnu.org/licenses/>.
+// in file.path(R.home("share"), "licenses").  If not, see
+// <http://www.gnu.org/licenses/>.
 
 #include <RcppEigen.h>
 
