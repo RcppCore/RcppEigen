@@ -75,7 +75,7 @@ fastLm(X, \dots)
 \seealso{\code{\link{lm}}, \code{\link{lm.fit}}} 
 \author{
   Eigen is described at \url{http://eigen.tuxfamily.org}. RcppEigen is written by
-  Romain Francois, Dirk Eddelbuettel and Douglas Bates.
+  Douglas Bates, Dirk Eddelbuettel and Romain Francois.
 }
 \examples{
   data(trees, package="datasets")

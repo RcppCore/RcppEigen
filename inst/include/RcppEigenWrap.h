@@ -1,8 +1,8 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 4 -*-
 //
-// RcppEigenWrap.h: Rcpp/Armadillo glue
+// RcppEigenWrap.h: Rcpp/Eigen glue
 //
-// Copyright (C)  2011 Dirk Eddelbuettel, Romain Francois and Douglas Bates
+// Copyright (C)      2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //

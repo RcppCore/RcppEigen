@@ -1,6 +1,6 @@
 ## RcppEigen.package.skeleton.R: makes a skeleton for a package that wants to use RcppEigen
 ##
-## Copyright (C)  2011 Dirk Eddelbuettel, Romain Francois and Douglas Bates
+## Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -102,7 +102,7 @@ RcppEigen.package.skeleton <- function(
 		message( " >> added example header file using Rcpp/RcppEigen")
 		
 		file.copy( file.path( skeleton, "rcppeigen_hello_world.cpp" ), src )
-		message( " >> added example src file using armadillo classes")
+		message( " >> added example src file using Eigen classes")
 		
 		rcode <- readLines( file.path( skeleton, "rcppeigen_hello_world.R" ) )
 		rcode <- gsub( "@PKG@", name, rcode, fixed = TRUE )

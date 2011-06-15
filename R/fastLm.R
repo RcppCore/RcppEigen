@@ -1,6 +1,6 @@
 ## fastLm.R: Rcpp/Eigen implementation of lm()
 ##
-## Copyright (C)  2011 Dirk Eddelbuettel, Romain Francois and Douglas Bates
+## Copyright (C)  2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##

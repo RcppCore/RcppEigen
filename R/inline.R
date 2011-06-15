@@ -1,4 +1,4 @@
-## Copyright (C)       2010 Dirk Eddelbuettel, Romain Francois and Douglas Bates
+## Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
