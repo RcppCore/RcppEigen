@@ -181,3 +181,36 @@ extern "C" SEXP fastLmChol2(SEXP Xs, SEXP ys) {
     }
     return R_NilValue; // -Wall
 }
+
+extern "C" SEXP fastLmSVD(SEXP Xs, SEXP ys) {
+    using namespace Eigen;
+    using namespace Rcpp;
+    try {
+	NumericMatrix   X(Xs);
+	NumericVector   y(ys);
+	size_t          n = X.nrow(), p = X.ncol();
+	ptrdiff_t      df = n - p;
+	if ((size_t)y.size() != n)
+	    throw std::invalid_argument("size mismatch");
+	
+	MatrixXd        A = Map<MatrixXd>(X.begin(), n, p); // shares storage
+	VectorXd        b = Map<VectorXd>(y.begin(), n);
+
+	VectorXd     coef = A.jacobiSvd(ComputeThinU|ComputeThinV).solve(b);
+//	double         s2 = (b - A*coef).squaredNorm()/df;
+
+	// ArrayXd        se = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array() * s2).sqrt();
+	// NumericVector Rse(p);	// should define a wrap method for ArrayXd, ArrayXXd, etc.
+	// std::copy(se.data(), se.data() + p, Rse.begin());
+			    
+	return List::create(_["coefficients"] = coef,
+			    // _["se"]           = Rse,
+			    _["df.residual"]  = df);
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
+
