@@ -13,7 +13,7 @@
 ## ----> put the bulk of the code e.g. in  ../inst/unitTests/runTests.R :
 
 if(require("RUnit", quietly = TRUE)) {
-    pkg <- "RcppArmadillo"
+    pkg <- "RcppEigen"
 
     require( pkg, character.only=TRUE)
 
@@ -24,7 +24,7 @@ if(require("RUnit", quietly = TRUE)) {
     ## without this, we get unit test failures
     Sys.setenv( R_TESTS = "" )
 
-    RcppArmadillo.unit.test.output.dir <- getwd()
+    RcppEigen.unit.test.output.dir <- getwd()
 
     source(file.path(path, "runTests.R"), echo = TRUE)
 
