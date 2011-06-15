@@ -1,3 +1,8 @@
+2011-06-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/unitTests/*: Added initial unit tests
+	* tests/doRUnit.R: Added hook to run RUnit tests
+
 2011-06-14  Douglas Bates <bates@stat.wisc.edu>
 
 	* src/fastLm.cpp: Cosmetic fixes.
