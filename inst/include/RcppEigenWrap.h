@@ -51,6 +51,17 @@ namespace Rcpp{
 	SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& data ){
 		return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
     }
+
+    template <typename T>
+	SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
+		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	}
+    
+	template <typename T>
+	SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>& object ){
+		return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    }
+
     /* support for Rcpp::as */
 
     namespace traits {
