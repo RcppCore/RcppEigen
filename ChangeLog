@@ -1,3 +1,35 @@
+2011-06-21  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION: Minor fix in punctuation.
+	* R/fastLm.R, inst/unitTests/runit.fastLm.R, man/fastLm.Rd,
+	  src/fastLm.cpp, src/fastLm.h: Refactoring of the fastLm code to allow
+	  algorithms to be added easily. Adjust docs and R code accordingly.
+
+2011-06-17  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: Add
+	  wrap instantiations for ArrayXd, ArrayXXd classes in Eigen
+
+2011-06-15  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION, R/RcppEigen.package.skeleton.R, R/SHLIB.R, R/fastLm.R,
+	  R/inline.R, R/unit.test.R, inst/doc/RcppEigen-unitTests.Rnw,
+	  inst/include/RcppEigen.h, inst/include/RcppEigenConfig.h,
+	  inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h,
+	  inst/unitTests/runit.fastLm.R, man/fastLm.Rd, src/RcppEigen.cpp,
+	  src/fastLm.cpp: Change references to Armadillo into Eigen; author
+	  order in copyright statements.
+
+2011-06-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/doRUnit.R: oops: s/Armadillo/Eigen/
+
+2011-06-15  Douglas Bates <bates@stat.wisc.edu>
+
+	* src/fastLm.cpp: Initial (not very good) implementation of "fastLmSVD",
+	  which isn't really that fast.
+	* man/fastLm.Rd: Minor clarification.
+
 2011-06-15  Douglas Bates <bates@stat.wisc.edu>
 
 	* cleanup, inst/doc/*: Documentation based on unit tests.
