@@ -6,14 +6,14 @@
 \concept{regression}
 \title{Bare-bones linear model fitting function}
 \description{
-  \code{fastLm} estimates the linear model using the a column-pivoted QR
-  decomposition from the \code{Eigen} linear algebra library.
+  \code{fastLm} estimates the linear model using one of several methods
+  implemented using the \code{Eigen} linear algebra library.
 }
 \usage{
-fastLmPure(X, y)
+fastLmPure(X, y, method = 0L)
 fastLm(X, \dots)
-\method{fastLm}{default}(X, y, \dots)
-\method{fastLm}{formula}(formula, data = list(), \dots)
+\method{fastLm}{default}(X, y, method = 0L, \dots)
+\method{fastLm}{formula}(formula, data = list(), method = 0L, \dots)
 }
 \arguments{
 
@@ -31,6 +31,10 @@ fastLm(X, \dots)
     the variables in the model.  If not found in \code{data}, the
     variables are taken from \code{environment(formula)},
     typically the environment from which \code{lm} is called.}
+
+  \item{method}{an integer scalar with value 0 for the column-pivoted QR
+    decomposition, 1 for the unpivoted QR decomposition, 2 for the LLT
+    Cholesky, 3 for the LDLT Cholesky.  Default is zero.}
 
   \item{\dots}{not used}
 }

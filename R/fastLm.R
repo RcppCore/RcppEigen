@@ -17,22 +17,21 @@
 ## You should have received a copy of the GNU General Public License
 ## along with RcppEigen.  If not, see <http://www.gnu.org/licenses/>.
 
-fastLmPure <- function(X, y) {
+fastLmPure <- function(X, y, method = 0L) {
 
     stopifnot(is.matrix(X), is.numeric(y), NROW(y)==nrow(X))
 
-    .Call("fastLm", X, y, package="RcppEigen")
+    .Call("fastLm", X, y, as.integer(method[1]), PACKAGE="RcppEigen")
 }
 
 fastLm <- function(X, ...) UseMethod("fastLm")
 
-fastLm.default <- function(X, y, ...) {
+fastLm.default <- function(X, y, method = 0L, ...) {
 
     X <- as.matrix(X)
     y <- as.numeric(y)
 
-    res <- fastLmPure(X, y)
-    names(res$coefficients) <- colnames(X)
+    res <- fastLmPure(X, y, as.integer(method[1]))
     res$call <- match.call()
 
     class(res) <- "fastLm"
@@ -47,13 +46,14 @@ print.fastLm <- function(x, ...) {
 }
 
 summary.fastLm <- function(object, ...) {
-    se <- object$stderr
-    tval <- coef(object)/se
+    coef <- object$coefficients
+    se   <- object$se
+    tval <- coef/se
 
-    object$coefficients <- cbind(Estimate = object$coefficients,
-                                 StdErr   = se,
-                                 t.value  = tval,
-                                 p.value  = 2*pt(-abs(tval), df=object$df))
+    object$coefficients <- cbind(Estimate     = coef,
+                                 "Std. Error" = se,
+                                 "t value"    = tval,
+                                 "Pr(>|t|)"   = 2*pt(-abs(tval), df=object$df))
 
     ## cf src/stats/R/lm.R and case with no weights and an intercept
     f <- object$fitted.values
@@ -77,7 +77,7 @@ print.summary.fastLm <- function(x, ...) {
 
     printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE)
     digits <- max(3, getOption("digits") - 3)
-    cat("\nResidual standard error: ", formatC(x$s, digits=digits), " on ",
+    cat("\nResidual standard error: ", formatC(sqrt(x$s2), digits=digits), " on ",
         formatC(x$df), " degrees of freedom\n", sep="")
     cat("Multiple R-squared: ", formatC(x$r.squared, digits=digits),
         ",\tAdjusted R-squared: ",formatC(x$adj.r.squared, digits=digits),
@@ -85,12 +85,12 @@ print.summary.fastLm <- function(x, ...) {
     invisible(x)
 }
 
-fastLm.formula <- function(formula, data=list(), ...) {
+fastLm.formula <- function(formula, data=list(), method = 0L, ...) {
     mf <- model.frame(formula=formula, data=data)
     X <- model.matrix(attr(mf, "terms"), data=mf)
     y <- model.response(mf)
 
-    res <- fastLm.default(X, y, ...)
+    res <- fastLm.default(X, y, method=method, ...)
     res$call <- match.call()
     # I think this is redundant.  The formula is available as res$call$formula
     res$formula <- formula

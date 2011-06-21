@@ -24,59 +24,35 @@
 
 test.fastLm <- function() {
     data(trees, package="datasets")
-    flm <- .Call("fastLm",
-                 cbind(1, log(trees$Girth)),
-                 log(trees$Volume),
-                 package="RcppEigen")
+    flm0 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 0L,
+                  PACKAGE="RcppEigen")
+    flm1 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 1L,
+                  PACKAGE="RcppEigen")
+    flm2 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 2L,
+                  PACKAGE="RcppEigen")
+    flm3 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 3L,
+                  PACKAGE="RcppEigen")
     fit <- lm(log(Volume) ~ log(Girth), data=trees)
-
-    checkEquals(as.numeric(flm$coefficients), as.numeric(coef(fit)),
-                msg="fastLm.coef")
-    checkEquals(as.numeric(flm$stderr), as.numeric(coef(summary(fit))[,2]),
-                msg="fastLm.stderr")
+    fitCoef <- unname(coef(fit))
+    fitStdErr <- unname(coef(summary(fit))[, "Std. Error", drop = TRUE])
+    checkEquals(flm0$coefficients, fitCoef, msg="fastLm0.coef")
+    checkEquals(flm0$se, fitStdErr, msg="fastLm0.stderr")
+    checkEquals(flm1$coefficients, fitCoef, msg="fastLm1.coef")
+    checkEquals(flm1$se, fitStdErr, msg="fastLm1.stderr")
+    checkEquals(flm2$coefficients, fitCoef, msg="fastLm2.coef")
+    checkEquals(flm2$se, fitStdErr, msg="fastLm2.stderr")
+    checkEquals(flm3$coefficients, fitCoef, msg="fastLm3.coef")
+    checkEquals(flm3$se, fitStdErr, msg="fastLm3.stderr")
 }
 
-test.fastLm.Bench <- function() {
-    data(trees, package="datasets")
-    flm <- .Call("fastLmBench",
-                 cbind(1, log(trees$Girth)),
-                 log(trees$Volume),
-                 package="RcppEigen")
-    fit <- lm(log(Volume) ~ log(Girth), data=trees)
-
-    checkEquals(as.numeric(flm$coefficients), as.numeric(coef(fit)),
-                msg="fastLm.coef")
-    checkEquals(as.numeric(flm$se), as.numeric(coef(summary(fit))[,2]),
-                msg="fastLm.stderr")
-}
-
-test.fastLm.Chol1 <- function() {
-    data(trees, package="datasets")
-    flm <- .Call("fastLmChol1",
-                 cbind(1, log(trees$Girth)),
-                 log(trees$Volume),
-                 package="RcppEigen")
-    fit <- lm(log(Volume) ~ log(Girth), data=trees)
-
-    checkEquals(as.numeric(flm$coefficients), as.numeric(coef(fit)),
-                msg="fastLm.coef")
-    checkEquals(as.numeric(flm$se), as.numeric(coef(summary(fit))[,2]),
-                msg="fastLm.stderr")
-}
-
-test.fastLm.Chol2 <- function() {
-    data(trees, package="datasets")
-    flm <- .Call("fastLmChol2",
-                 cbind(1, log(trees$Girth)),
-                 log(trees$Volume),
-                 package="RcppEigen")
-    fit <- lm(log(Volume) ~ log(Girth), data=trees)
-
-    checkEquals(as.numeric(flm$coefficients), as.numeric(coef(fit)),
-                msg="fastLm.coef")
-    checkEquals(as.numeric(flm$se), as.numeric(coef(summary(fit))[,2]),
-                msg="fastLm.stderr")
-}
 
 test.fastLm.formula <- function() {
     data(trees, package="datasets")
@@ -84,7 +60,7 @@ test.fastLm.formula <- function() {
     fit <- lm(log(Volume) ~ log(Girth), data=trees)
 
     checkEquals(flm$coefficients, coef(fit), msg="fastLm.formula.coef")
-    checkEquals(as.numeric(flm$stderr), as.numeric(coef(summary(fit))[,2]),
+    checkEquals(as.numeric(flm$se), as.numeric(coef(summary(fit))[,2]),
                 msg="fastLm.formula.stderr")
 }
 
