@@ -26,6 +26,7 @@ typedef Eigen::LDLT<MatrixXd>                          LDLTType;
 typedef Eigen::ColPivHouseholderQR<MatrixXd>           PivQRType;
 typedef Eigen::HouseholderQR<MatrixXd>                 QRType;
 typedef Eigen::JacobiSVD<MatrixXd>                     SVDType;
+typedef Eigen::DiagonalMatrix<double,Eigen::Dynamic>   DiagType;
 				// Types derived from decompositions
 typedef typename PivQRType::PermutationType            PermutationType;
 typedef typename PermutationType::IndicesType          IndicesType;
@@ -68,6 +69,11 @@ public:
 class QR : public lm {
 public:
     QR(const MMatrixXd&, const MVectorXd&);
+};
+
+class SVD : public lm {
+public:
+    SVD(const MMatrixXd&, const MVectorXd&);
 };
 
 extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP types);
