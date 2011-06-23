@@ -35,6 +35,7 @@ namespace Rcpp {
     template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& ) ;
     template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, 1>& ) ;
     
+#if 0
     namespace traits {
 
 	/* support for as */
@@ -43,6 +44,7 @@ namespace Rcpp {
 	template<typename T> class Exporter< Eigen::Matrix<T, 1, Eigen::Dynamic> > ;
 
     } // namespace traits 
+#endif
 
 }
 

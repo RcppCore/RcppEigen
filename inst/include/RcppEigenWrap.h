@@ -1,6 +1,6 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 4 -*-
 //
-// RcppEigenWrap.h: Rcpp/Eigen glue
+// RcppEigenWrap.h: Rcpp wrap methods for Eigen matrices, vectors and arrays
 //
 // Copyright (C)      2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
@@ -62,34 +62,35 @@ namespace Rcpp{
 		return ::Rcpp::wrap(object.data(), object.data() + object.size());
     }
 
+#if 0
     /* support for Rcpp::as */
-
+	
     namespace traits {
-	
-	template <typename T> 
-	class Exporter< Eigen::Matrix<T, Eigen::Dynamic, 1> >
-	    : public IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T > {
-	public: 
-	    Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
-	}; 
-
-	template <typename T> 
-	class Exporter< Eigen::Matrix<T, 1, Eigen::Dynamic> >
-		: public IndexingExporter< Eigen::Matrix<T, 1, Eigen::Dynamic>, T > {
-	public:
-	    Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, 1, Eigen::Dynamic>, T >(x){}
-	}; 
-
-	template <typename T> 
-	class Exporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
-		: public MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
-	public:
-	    Exporter(SEXP x) :
-			MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
-	}; 
-	
+		
+		template <typename T> 
+		class Exporter< Eigen::Matrix<T, Eigen::Dynamic, 1> >
+			: public IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T > {
+		public: 
+			Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
+		}; 
+		
+		template <typename T> 
+		class Exporter< Eigen::Matrix<T, 1, Eigen::Dynamic> >
+			: public IndexingExporter< Eigen::Matrix<T, 1, Eigen::Dynamic>, T > {
+		public:
+			Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, 1, Eigen::Dynamic>, T >(x){}
+		}; 
+		
+		template <typename T> 
+		class Exporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
+			: public MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
+		public:
+			Exporter(SEXP x) :
+				MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
+		}; 
+		
     } // namespace traits
-
+#endif
 }
 
 #endif
