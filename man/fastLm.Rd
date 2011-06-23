@@ -83,12 +83,10 @@ fastLm(X, \dots)
 }
 \examples{
   data(trees, package="datasets")
-  data(trees, package="datasets")
   mm <- cbind(1, log(trees$Girth))   # model matrix
   y  <- log(trees$Volume)            # response
   crossprod(mm)
-  .Call("crossprod1", mm, PACKAGE="RcppEigen")  # doesn't use wrap
-  .Call("crossprod", mm, PACKAGE="RcppEigen")   # uses wrap
+  .Call("crossprod", mm, PACKAGE="RcppEigen")
 
   ## bare-bones direct interface
   flm <- fastLmPure(mm, y)
