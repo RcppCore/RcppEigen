@@ -25,17 +25,16 @@ using namespace Rcpp;
 extern "C" SEXP eigen_version(SEXP single_){
 
     bool single = as<bool>( single_) ;
-    int major = 3, minor = 0, patch = 1;
     if( single ){
-	return wrap( 10000*major +
-		     100*minor + 
-		     patch ) ;
+	return wrap( 10000 * EIGEN_WORLD_VERSION +
+		     100 * EIGEN_MAJOR_VERSION + 
+		     EIGEN_MINOR_VERSION ) ;
     }
 
     IntegerVector version = 
-	IntegerVector::create(_["major"] = major,
-			      _["minor"] = minor,
-			      _["patch"] = patch);
+	IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
+			      _["minor"] = EIGEN_MAJOR_VERSION,
+			      _["patch"] = EIGEN_MINOR_VERSION);
 
    return version ;
 
