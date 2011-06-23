@@ -166,15 +166,18 @@ extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
 	if ((Index)y.size() != n)
 	    throw std::invalid_argument("size mismatch");
 	const MVectorXd       yy(y.begin(), n);
-	lm                   ans = do_lm(MMatrixXd(X.begin(), n, p), yy, as<int>(type));
-	
+        const MMatrixXd       XX(X.begin(), n, p);
+
+	lm                   ans = do_lm(MMatrixXd(X.begin(), n, p), yy, ::Rf_asInteger(type));
 	NumericVector       coef(ans.coef().data(), ans.coef().data() + p);
 				// install the names, if available
 	List            dimnames = X.attr("dimnames");
-	RObject         colnames = dimnames[1];
-	if (!(colnames).isNULL())
-	    coef.attr("names") = clone(CharacterVector(colnames));
-
+	if (dimnames.size() > 1) {
+	    RObject         colnames = dimnames[1];
+	    if (!(colnames).isNULL())
+		coef.attr("names") = clone(CharacterVector(colnames));
+	}
+	    
 	VectorXd           resid = yy - ans.fitted();
 	double                s2 = resid.squaredNorm()/ans.df();
 	PermutationType     Pmat = PermutationType(p);
@@ -225,7 +228,7 @@ extern "C" SEXP crossprod1(SEXP Xs) {
 	XtX                   = XtX.setZero().selfadjointView<Eigen::Lower>().rankUpdate(Xe.adjoint());
 	NumericMatrix     ans(p, p);
 	std::copy(XtX.data(), XtX.data() + XtX.size(), ans.begin());
-	return                  ans;
+	return                   ans;
     } catch( std::exception &ex ) {
 	forward_exception_to_r( ex );
     } catch(...) { 
