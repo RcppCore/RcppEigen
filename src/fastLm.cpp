@@ -24,9 +24,35 @@
 
 using namespace Rcpp;
 
-lm::lm(const MMatrixXd &X, const MVectorXd &y) :
-    m_n(X.rows()), m_p(X.cols()), m_coef(m_p), m_r(NA_INTEGER), m_df(m_n - m_p),
-    m_perm(m_p), m_fitted(m_n), m_unsc(m_p, m_p) {}
+lm::lm(const MMatrixXd &X, const MVectorXd &y)
+    : m_n(X.rows()),
+      m_p(X.cols()),
+      m_coef(m_p),
+      m_r(NA_INTEGER),
+      m_df(m_n - m_p),
+      m_perm(m_p),
+      m_fitted(m_n),
+      m_unsc(m_p, m_p),
+      m_usePrescribedThreshold(false) {
+}
+
+lm& lm::setThreshold(const RealScalar& threshold)
+{
+    m_usePrescribedThreshold = true;
+    m_prescribedThreshold = threshold;
+    return *this;
+}
+
+/** Returns the threshold that will be used by certain methods such as rank().
+ *
+ */
+RealScalar lm::threshold() const
+{
+    return m_usePrescribedThreshold ? m_prescribedThreshold
+// this formula comes from experimenting (see "LU precision tuning" thread on the list)
+// and turns out to be identical to Higham's formula used already in LDLt.
+	: std::numeric_limits<double>::epsilon() * m_p; 
+}
 
 ColPivQR::ColPivQR(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     PivQRType           PQR(X);	// decompose the model matrix
@@ -64,7 +90,7 @@ QR::QR(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     m_fitted      = X * m_coef;
     MatrixXd    R = QR.matrixQR().topLeftCorner(m_p, m_p);
     MatrixXd Rinv = R.triangularView<Eigen::Upper>().solve(MatrixXd::Identity(m_p, m_p));
-    m_unsc        = R.setZero().selfadjointView<Eigen::Upper>().rankUpdate(Rinv);
+    m_unsc        = m_unsc.setZero().selfadjointView<Eigen::Upper>().rankUpdate(Rinv);
     for (Index i = 0; i < m_p; ++i) m_perm[i] = i;
 }
 
@@ -86,15 +112,27 @@ LDLT::LDLT(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
 }
 
 SVD::SVD(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
-    double  prec = std::sqrt(std::numeric_limits<double>::epsilon());
     SVDType  UDV = X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
     VectorXd   D = UDV.singularValues();
     m_r          = std::count_if(D.data(), D.data() + m_p,
-				 std::bind2nd(std::greater<double>(), D[0] * prec));
+				 std::bind2nd(std::greater<double>(), threshold() * D[0]));
     m_coef       = UDV.solve(y);
     m_fitted     = X * m_coef;
     MatrixXd VDi = UDV.matrixV() * DiagType(UDV.singularValues().array().inverse().matrix());
     m_unsc       = m_unsc.selfadjointView<Eigen::Lower>().rankUpdate(VDi);
+    for (Index i = 0; i < m_p; ++i) m_perm[i] = i;
+}
+
+
+SymmEigen::SymmEigen(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
+    EigvType eig(m_unsc.setZero().selfadjointView<Eigen::Lower>().rankUpdate(X.adjoint()));
+    ArrayXd    D = eig.eigenvalues().array().sqrt(); // singular values of X
+    MatrixXd VDi = eig.eigenvectors() * DiagType(D.inverse().matrix());
+    m_coef       = VDi * VDi.adjoint() * X.adjoint() * y;
+    m_r          = std::count_if(D.data(), D.data() + m_p,
+				 std::bind2nd(std::greater<double>(), D[0] * threshold()));
+    m_fitted     = X * m_coef;
+    m_unsc       = m_unsc.setZero().selfadjointView<Eigen::Lower>().rankUpdate(VDi);
     for (Index i = 0; i < m_p; ++i) m_perm[i] = i;
 }
 
@@ -113,8 +151,8 @@ static inline lm do_lm(const MMatrixXd &X, const MVectorXd &y, int type)
 	return LDLT(X, y);
     case SVD_t:
      	return SVD(X, y);
-    // case SymmEigen_t:
-    // 	return SymmEigen(X, y);
+    case SymmEigen_t:
+     	return SymmEigen(X, y);
     }
     throw std::invalid_argument("invalid type");
     return ColPivQR(X, y);	// -Wall
@@ -162,69 +200,14 @@ extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
     return R_NilValue; // -Wall
 }
 
-#if 0
-
-extern "C" SEXP fastLm(SEXP Xs, SEXP ys) {
-    using namespace Eigen;
-    using namespace Rcpp;
+extern "C" SEXP crossprod(SEXP Xs) {
     try {
-	NumericMatrix   X(Xs);
-	NumericVector   y(ys);
-	size_t          n = X.nrow(), p = X.ncol(), r = X.ncol();
-	ptrdiff_t      df = n - p;
-	if ((size_t)y.size() != n)
-	    throw std::invalid_argument("size mismatch");
-	
-	const Map<MatrixXd>   A(X.begin(), n, p); // shares storage
-	const Map<VectorXd>   b(y.begin(), n);
-	
-	VectorXd     coef, fitted, unsc;
-	
-	LDLT<MatrixXd> Ch(SelfAdjointView<MatrixXd, Upper>(MatrixXd::Zero(p, p))
-			  .rankUpdate(A.adjoint()));
-	ArrayXd      diag = Ch.vectorD().array();            
-	double       dmax = *std::max_element(diag.data(), diag.data() + p),
-	    dmin = *std::min_element(diag.data(), diag.data() + p);
-	if (dmin <= 0. || dmin/dmax < 100 * std::numeric_limits<double>.epsilon()) {
-	    ColPivHouseholderQR<MatrixXd> mqr(A);      // decompose the model matrix
-	    r                  = mqr.rank();
-	    df                 = n - r;
- 	    MatrixXd    Atrunc = (A * mqr.colsPermutation()).leftCols(r);
- 	    HouseholderQR<MatrixXd> QR(Atrunc);
- 	    VectorXd coefTrunc = QR.solve(b);
- 	    fitted             = Atrunc * coefTrunc;
- 	    coef.topRows(r)    = coefTrunc;
- 	    std::fill(coef.data() + r, coef.data() + p, std::numeric_limits<double>::quiet_NaN());
- 	    coef = mqr.colsPermutation() * coef;
-	    MatrixXd         R = QR.matrixQR().topRows(r);
- 	    MatrixXd      Rinv = TriangularView<MatrixXd, Upper>(R).solve(MatrixXd::Identity(r, r));
-	    unsc.topRows(r)    = Rinv.rowwise.norm();
- 	    std::fill(unsc.data() + r, unsc.data() + p, std::numeric_limits<double>::quiet_NaN());
-	} else {
-	    coef               = Ch.solve(A.adjoint() * b);
-	    fitted             = A * coef;
-	    unsc               = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array()).sqrt();
-	}
-	VectorXd    resid = b - fitted;
-	double          s = std::sqrt(resid.squaredNorm()/df);
-	VectorXf       se = unsc.array() * s;
-
-	LDLT           Ch(MatrixXd::Zero(p, p).selfAdjointView(Eigen::Lower).rankUpdate(A.adjoint()));
-	VectorXd     coef = Ch.solve(A.adjoint() * b);
-	double         s2 = (b - A*coef).squaredNorm()/df;
-
-	ArrayXd        se = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array() * s2).sqrt();
-	NumericVector Rse(p);	// should define a wrap method for ArrayXd, ArrayXXd, etc.
-	std::copy(se.data(), se.data() + p, Rse.begin());
-			    
-	return List::create(_["coefficients"] = coef,
-			    _["stderr"]       = se,
-                            _["rank"]         = r,
-                            _["s"]            = s,
-                            _["perm"]         = perm,
-			    _["residuals"]    = resid,
-			    _["fitted"]       = fitted,
-			    _["df.residual"]  = df);
+	const NumericMatrix X(Xs);
+	Index               n = X.nrow(), p = X.ncol();
+	const MMatrixXd    Xe(X.begin(), n, p);
+	MatrixXd          XtX(p, p);
+	XtX                   = XtX.setZero().selfadjointView<Eigen::Lower>().rankUpdate(Xe.adjoint());
+	return                  wrap(XtX);
     } catch( std::exception &ex ) {
 	forward_exception_to_r( ex );
     } catch(...) { 
@@ -233,36 +216,53 @@ extern "C" SEXP fastLm(SEXP Xs, SEXP ys) {
     return R_NilValue; // -Wall
 }
 
-// extern "C" SEXP fastLmSVD(SEXP Xs, SEXP ys) {
-//     using namespace Eigen;
-//     using namespace Rcpp;
-//     try {
-// 	NumericMatrix   X(Xs);
-// 	NumericVector   y(ys);
-// 	size_t          n = X.nrow(), p = X.ncol();
-// 	ptrdiff_t      df = n - p;
-// 	if ((size_t)y.size() != n)
-// 	    throw std::invalid_argument("size mismatch");
-	
-// 	MatrixXd        A = Map<MatrixXd>(X.begin(), n, p); // shares storage
-// 	VectorXd        b = Map<VectorXd>(y.begin(), n);
+extern "C" SEXP crossprod1(SEXP Xs) {
+    try {
+	const NumericMatrix X(Xs);
+	Index               n = X.nrow(), p = X.ncol();
+	const MMatrixXd    Xe(X.begin(), n, p);
+	MatrixXd          XtX(p, p);
+	XtX                   = XtX.setZero().selfadjointView<Eigen::Lower>().rankUpdate(Xe.adjoint());
+	NumericMatrix     ans(p, p);
+	std::copy(XtX.data(), XtX.data() + XtX.size(), ans.begin());
+	return                  ans;
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
 
-// 	VectorXd     coef = A.jacobiSvd(ComputeThinU|ComputeThinV).solve(b);
-// //	double         s2 = (b - A*coef).squaredNorm()/df;
+extern "C" SEXP tcrossprod(SEXP Xs) {
+    try {
+	const NumericMatrix X(Xs);
+	Index    n = X.nrow(), p = X.ncol();
+	MatrixXd          XXt(n, n);
+	XXt        = XXt.setZero().selfadjointView<Eigen::Lower>().rankUpdate(MMatrixXd(X.begin(), n, p));
+	return wrap(XXt);
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
 
-// 	// ArrayXd        se = (Ch.solve(MatrixXd::Identity(p, p)).diagonal().array() * s2).sqrt();
-// 	// NumericVector Rse(p);	// should define a wrap method for ArrayXd, ArrayXXd, etc.
-// 	// std::copy(se.data(), se.data() + p, Rse.begin());
-			    
-// 	return List::create(_["coefficients"] = coef,
-// 			    // _["se"]           = Rse,
-// 			    _["df.residual"]  = df);
-//     } catch( std::exception &ex ) {
-// 	forward_exception_to_r( ex );
-//     } catch(...) { 
-// 	::Rf_error( "c++ exception (unknown reason)" ); 
-//     }
-//     return R_NilValue; // -Wall
-// }
+extern "C" SEXP tcrossprod1(SEXP Xs) {
+    try {
+	const NumericMatrix X(Xs);
+	Index    n = X.nrow(), p = X.ncol();
+	MatrixXd          XXt(n, n);
+	XXt        = XXt.setZero().selfadjointView<Eigen::Lower>().rankUpdate(MMatrixXd(X.begin(), n, p));
+	NumericMatrix     ans(n, n);
+	std::copy(XXt.data(), XXt.data() + XXt.size(), ans.begin());
+	return   ans;
+    } catch( std::exception &ex ) {
+	forward_exception_to_r( ex );
+    } catch(...) { 
+	::Rf_error( "c++ exception (unknown reason)" ); 
+    }
+    return R_NilValue; // -Wall
+}
 
-#endif
