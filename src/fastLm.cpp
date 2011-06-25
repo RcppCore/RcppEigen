@@ -168,7 +168,7 @@ extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
 	const MVectorXd       yy(y.begin(), n);
         const MMatrixXd       XX(X.begin(), n, p);
 
-	lm                   ans = do_lm(MMatrixXd(X.begin(), n, p), yy, ::Rf_asInteger(type));
+	lm                   ans = do_lm(XX, yy, ::Rf_asInteger(type));
 	NumericVector       coef(ans.coef().data(), ans.coef().data() + p);
 				// install the names, if available
 	List            dimnames = X.attr("dimnames");
