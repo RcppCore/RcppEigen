@@ -62,6 +62,17 @@ namespace Rcpp{
 		return ::Rcpp::wrap(object.data(), object.data() + object.size());
     }
 
+	template <typename T>
+    SEXP wrap(const Eigen::SparseMatrix<T>& object ) {
+		int       nnz = object.nonZeros(), p = object.outerSize();
+		const int *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
+		const T   *xp = object._valuePtr();
+		
+		return List(_["Dim"] = Dimension(object.rows(), p),
+					_["i"]   = ::Rcpp::wrap(ip, ip + nnz),
+					_["p"]   = ::Rcpp::wrap(pp, pp + p + 1),
+					_["x"]   = ::Rcpp::wrap(xp, xp + nnz));
+	}
 #if 0
     /* support for Rcpp::as */
 	

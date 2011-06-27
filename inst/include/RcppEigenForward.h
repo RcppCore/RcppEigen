@@ -26,6 +26,7 @@
 #include <Rconfig.h>
 #include <RcppEigenConfig.h>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 /* forward declarations */
 namespace Rcpp {
     /* support for wrap */
@@ -34,6 +35,7 @@ namespace Rcpp {
     template<typename T> SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& ) ;
     template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& ) ;
     template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, 1>& ) ;
+    template<typename T> SEXP wrap( const Eigen::SparseMatrix<T>& ) ;
     
 #if 0
     namespace traits {
