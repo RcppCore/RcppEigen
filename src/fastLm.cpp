@@ -111,6 +111,21 @@ LDLT::LDLT(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     m_unsc      = Ch.solve(MatrixXd::Identity(m_p, m_p));
 }
 
+// SVD method
+MatrixXd pseudoInverse(const MatrixXd& X, double tolerance) {
+    SVDType  UDV = X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
+    VectorXd   D = UDV.singularValues();
+    double   tol = D[0] * tolerance;
+				// There are better ways of doing this
+    double  *Dpt = D.data();
+    for (int i = 0; i < D.size(); ++i)
+	Dpt[i] = Dpt[i] < tol ? 0. : 1/Dpt[i];
+// Eigen2 code
+//UDV.matrixV() * (D.cwise() > tol).select(D.cwise().inverse(), 0).
+//    asDiagonal() * UDV.matrixU().adjoint();
+    return UDV.matrixV() * D.asDiagonal() * UDV.matrixU().adjoint();
+}
+
 SVD::SVD(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     SVDType  UDV = X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
     VectorXd   D = UDV.singularValues();
@@ -169,7 +184,7 @@ extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
         const MMatrixXd       XX(X.begin(), n, p);
 
 	lm                   ans = do_lm(XX, yy, ::Rf_asInteger(type));
-	NumericVector       coef(ans.coef().data(), ans.coef().data() + p);
+	NumericVector       coef = wrap(ans.coef());
 				// install the names, if available
 	List            dimnames = X.attr("dimnames");
 	if (dimnames.size() > 1) {
