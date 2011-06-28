@@ -42,9 +42,10 @@ if (require("RcppGSL", character=TRUE, quietly=TRUE)) {
     exprs$GSL <- expression(.Call("fastLm", mm, y, PACKAGE="RcppGSL"))
 }
 
-do_bench <- function(n=100000L, p=40L, nrep=20L) {
+do_bench <- function(n=100000L, p=40L, nrep=20L, suppressSVD=(n > 100000L)) {
     mm <- cbind(1, matrix(rnorm(n * (p - 1L)), nc=p-1L))
     y <- rnorm(n)
+    if (suppressSVD) exprs <- exprs[!names(exprs) %in% c("SVD", "GSL")]
     cat(paste("lm benchmark for n = ", n, " and p = ", p, ": nrep = ",
               nrep, "\n", sep=''))
     do.call(benchmark, c(exprs,
@@ -54,4 +55,4 @@ do_bench <- function(n=100000L, p=40L, nrep=20L) {
                               replications = nrep)))
 }
 
-do_bench()
+print(do_bench())
