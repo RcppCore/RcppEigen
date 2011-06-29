@@ -64,15 +64,19 @@ namespace Rcpp{
 
 	template <typename T>
     SEXP wrap(const Eigen::SparseMatrix<T>& object ) {
-		int       nnz = object.nonZeros(), p = object.outerSize();
-		const int *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
-		const T   *xp = object._valuePtr();
+		int          nnz = object.nonZeros(), p = object.outerSize();
+		Dimension    dim(object.innerSize(), p);
+		const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
+		const T      *xp = object._valuePtr();
+		IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
+		NumericVector xv(xp, xp + nnz);
 		
-		return List(_["Dim"] = Dimension(object.rows(), p),
-					_["i"]   = ::Rcpp::wrap(ip, ip + nnz),
-					_["p"]   = ::Rcpp::wrap(pp, pp + p + 1),
-					_["x"]   = ::Rcpp::wrap(xp, xp + nnz));
+		return ::Rcpp::wrap(List::create(_["Dim"] = dim,
+										 _["i"]   = iv,
+										 _["p"]   = pv,
+										 _["x"]   = xv));
 	}
+
 #if 0
     /* support for Rcpp::as */
 	
