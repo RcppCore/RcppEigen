@@ -59,10 +59,10 @@ ColPivQR::ColPivQR(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     PermutationType    Pmat = PQR.colsPermutation();
     m_perm                  = Pmat.indices();
     m_r                     = PQR.rank();
-    m_df                    = m_n - m_r;
     MatrixXd              R = PQR.matrixQR().topLeftCorner(m_p, m_p);
 
     if (m_r < (int)m_p) {		// The rank-deficient case
+	m_df                = m_n - m_r;
 	int           nsing = m_p - m_r;
 	MatrixXd     Atrunc = (X * Pmat).leftCols(m_r);
 	QRType           QR(Atrunc);
@@ -129,8 +129,7 @@ MatrixXd pseudoInverse(const MatrixXd& X, double tolerance) {
 SVD::SVD(const MMatrixXd &X, const MVectorXd &y) : lm(X, y) {
     SVDType  UDV = X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
     VectorXd   D = UDV.singularValues();
-    m_r          = std::count_if(D.data(), D.data() + m_p,
-				 std::bind2nd(std::greater<double>(), threshold() * D[0]));
+    m_r          = (D.array() > threshold() * D[0]).count();
     m_coef       = UDV.solve(y);
     m_fitted     = X * m_coef;
     MatrixXd VDi = UDV.matrixV() * DiagType(UDV.singularValues().array().inverse().matrix());
