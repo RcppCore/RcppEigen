@@ -1,5 +1,50 @@
+2011-06-30  Douglas Bates <bates@stat.wisc.edu>
+
+	* src/fastLm.cpp: Code simplification suggested by Gael Guennebaud
+
+2011-06-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: make Maintainers equal to Authors (but keep our joint
+	  email address)
+
+2011-06-29  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h: Syntax errors corrected.
+
+2011-06-28  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/examples/lmBenchmark.R: Print the results from do_bench() so
+	  echo=TRUE is not needed when sourcing; add a suppressSVD argument to
+	  do_bench().
+
+2011-06-27  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: Add a
+	  wrap method (compiles but currently untested) for
+	  Eigen::SparseMatrix<T>
+	* src/fastLm.cpp: Include sample code for the Moore-Penrose inverse.
+	  There are better ways of doing this but I can't work out the syntax.
+
+2011-06-25  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/examples, inst/examples/lmBenchmark.R: Add lm benchmark example
+	* src/fastLm.cpp: tighten code a bit
+
+2011-06-23  Douglas Bates <bates@stat.wisc.edu>
+
+	* src/fastLm.cpp: Don't try to extract names that aren't there.
+	* man/fastLm.Rd: Add a simple example.
+	* src/fastLm.cpp, src/fastLm.h: Add the SymmEig lm method. Preliminary
+	  support for setting a tolerance for the rank calculation.
+	* src/RcppEigen.cpp: Use the correct macros for eigen_version.
+	* man/fastLm.Rd, tests/simple.R: Add examples and test cases for simple
+	  crossprod and tcrossprod functions
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: bypass
+	  the incomplete exporter functions to support as<>
+
 2011-06-21  Douglas Bates <bates@stat.wisc.edu>
 
+	* src/fastLm.cpp, src/fastLm.h: Add an SVD method for fastLm
 	* DESCRIPTION: Minor fix in punctuation.
 	* R/fastLm.R, inst/unitTests/runit.fastLm.R, man/fastLm.Rd,
 	  src/fastLm.cpp, src/fastLm.h: Refactoring of the fastLm code to allow
