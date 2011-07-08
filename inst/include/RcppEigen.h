@@ -27,7 +27,7 @@
 #include <Rcpp.h>
 #include <RcppEigenWrap.h>
 
-#include <Eigen/Dense>
-#include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse
+//#include <Eigen/Dense>
+//#include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse
 
 #endif
