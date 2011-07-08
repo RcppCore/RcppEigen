@@ -25,19 +25,26 @@
 #include <RcppCommon.h>
 #include <Rconfig.h>
 #include <RcppEigenConfig.h>
+
 #include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse
+
 /* forward declarations */
 namespace Rcpp {
     /* support for wrap */
-    template<typename T> SEXP wrap( const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& ) ;
-    template<typename T> SEXP wrap( const Eigen::Matrix<T, Eigen::Dynamic, 1>& ) ;
-    template<typename T> SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& ) ;
-    template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& ) ;
-    template<typename T> SEXP wrap( const Eigen::Array<T, Eigen::Dynamic, 1>& ) ;
-    template<typename T> SEXP wrap( const Eigen::SparseMatrix<T>& ) ;
+    template<typename T> SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>&);
+    template<typename T> SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, 1>&);
+    template<typename T> SEXP wrap(const Eigen::Matrix<T, 1, Eigen::Dynamic>&);
+    template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>&);
+    template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>&);
+    template<typename T> SEXP wrap(const Eigen::SparseMatrix<T>&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >&);
+    template<typename T> SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >&);
     
-#if 0
     namespace traits {
 
 	/* support for as */
@@ -46,7 +53,6 @@ namespace Rcpp {
 	template<typename T> class Exporter< Eigen::Matrix<T, 1, Eigen::Dynamic> > ;
 
     } // namespace traits 
-#endif
 
 }
 

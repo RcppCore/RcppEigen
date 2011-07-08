@@ -28,7 +28,7 @@ namespace Rcpp{
 
 		template <typename T>
 		SEXP Eigen_wrap( const T& object, const ::Rcpp::Dimension& dim){
-			::Rcpp::RObject x = ::Rcpp::wrap( object.data() , object.data() + object.size() ) ;
+			::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
 			x.attr( "dim" ) = dim ;
 			return x; 
 		}
@@ -62,8 +62,33 @@ namespace Rcpp{
 		return ::Rcpp::wrap(object.data(), object.data() + object.size());
     }
 
+    template <typename T>
+	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
+		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	}
+    
 	template <typename T>
-    SEXP wrap(const Eigen::SparseMatrix<T>& object ) {
+	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >& object ){
+		return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    }
+
+    template <typename T>
+	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >& data ){
+		return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
+    }
+
+    template <typename T>
+	SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
+		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	}
+    
+	template <typename T>
+	SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >& object ){
+		return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    }
+
+	template <typename T>
+    SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >& object ) {
 		int          nnz = object.nonZeros(), p = object.outerSize();
 		Dimension    dim(object.innerSize(), p);
 		const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
@@ -77,16 +102,15 @@ namespace Rcpp{
 										 _["x"]   = xv));
 	}
 
-#if 0
     /* support for Rcpp::as */
 	
     namespace traits {
 		
 		template <typename T> 
-		class Exporter< Eigen::Matrix<T, Eigen::Dynamic, 1> >
-			: public IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T > {
+		class Exporter<Eigen::Matrix<T, Eigen::Dynamic, 1> >
+			: public IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T> {
 		public: 
-			Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
+			Exporter(SEXP x) : IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
 		}; 
 		
 		template <typename T> 
@@ -105,8 +129,6 @@ namespace Rcpp{
 		}; 
 		
     } // namespace traits
-#endif
 }
 
 #endif
-
