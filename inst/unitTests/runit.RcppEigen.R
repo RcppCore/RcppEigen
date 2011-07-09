@@ -110,7 +110,7 @@ test.wrap.R <- function(){
     checkEquals( res[[1]][[2]], double(5), msg = "VectorXd::Zero(5)")
     checkEquals( res[[1]][[3]], double(5), msg = "VectorXf::Zero(5)")
     checkEquals( res[[1]][[4]], integer(5), msg = "VectorXi::Zero(5)")
-    
+
     checkEquals( res[[2]][[1]], (1+0i) * diag(nr=3L), msg = "MatrixXcd::Identity(3,3)")
     checkEquals( res[[2]][[2]], diag(nr=3L), msg = "MatrixXd::Identity(3,3)")
     checkEquals( res[[2]][[3]], diag(nr=3L), msg = "MatrixXf::Identity(3,3)")
@@ -137,13 +137,13 @@ test.wrap.R <- function(){
     checkEquals( res[[6]][[4]], integer(5), msg = "ArrayXi::Zero(5)")
 
     oneTen <- seq(1, 10, length.out=6L)
-    
+
     checkEquals( res[[7]][[1]], oneTen,       msg = "Op_seq")
     checkEquals( res[[7]][[2]], log(oneTen),  msg = "Op_log")
     checkEquals( res[[7]][[3]], exp(oneTen),  msg = "Op_exp")
     checkEquals( res[[7]][[4]], sqrt(oneTen), msg = "Op_sqrt")
     checkEquals( res[[7]][[5]], cos(oneTen),  msg = "Op_cos")
-    
+
 }
 
 test.as.Col <- function(){
@@ -198,7 +198,7 @@ test.wrap.Glue <- function(){
     res["mat+mat"] = m1 + m2 ;
     return res ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
 
 	res <- fx()
     checkEquals( res[[1]], 2*diag(3), msg = "wrap(Glue)" )
@@ -214,7 +214,7 @@ test.wrap.Op <- function(){
     res["- mat"] = - m1 ;
     return res ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     res <- fx()
     checkEquals( res[[1]], -1*diag(3), msg = "wrap(Op)" )
 }
@@ -236,7 +236,7 @@ test.as.Col <- function(){
 
     return res ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
 
     res <- fx( list( 1:10, as.numeric(1:10) ) )
     checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Col>" )
@@ -258,7 +258,7 @@ test.as.Row <- function(){
     	arma::accu( m4 ) ) ;
     return res ;
 
-	', plugin = "RcppArmadillo" )
+	', plugin = "RcppEigen" )
 
     res <- fx( list( 1:10, as.numeric(1:10) ) )
     checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Row>" )
@@ -272,7 +272,7 @@ test.cxmat <- function(){
     arma::cx_fmat m2 = arma::eye<arma::cx_fmat>( 3, 3 ) ;
     return List::create( _["double"] = m1, _["float"] = m2 ) ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     checkEquals( fx(),
 		list( double = (1+0i)*diag(3), float = (1+0i)*diag(3) ),
 		msg = "support for complex matrices" )
@@ -288,7 +288,7 @@ test.mtOp <- function(){
 
     return wrap( x * m1 ) ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     checkEquals( fx(),
 		(1+2i)*diag(3),
 		msg = "support for mtOp" )
@@ -304,7 +304,7 @@ test.mtGlue <- function(){
 
     return wrap( m1 + m2 ) ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     checkEquals( fx(),
 		2.0 * diag(3) ,
 		msg = "support for mtOp" )
@@ -319,10 +319,10 @@ test.sugar <- function(){
     arma::mat m = forward( xx + xx ) ;
     return wrap( m ) ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     checkEquals( fx(1:10),
 		matrix( 2*(1:10), nrow = 10 ) ,
-		msg = "RcppArmadillo and sugar" )
+		msg = "RcppEigen and sugar" )
 
 }
 
@@ -334,11 +334,11 @@ test.sugar.cplx <- function(){
 
     return wrap( m ) ;
 
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     x <- 1:10*(1+1i)
     checkEquals( fx(x),
 		matrix( exp(x), nrow = 10 ) ,
-		msg = "RcppArmadillo and sugar (complex)" )
+		msg = "RcppEigen and sugar (complex)" )
 
 }
 
@@ -354,7 +354,7 @@ test.armadillo.sugar.ctor <- function(){
     	_["rowvec"] = ro,
     	_["colvec"] = co
     );
-    ', plugin = "RcppArmadillo" )
+    ', plugin = "RcppEigen" )
     checkEquals( fx(1:10),
 		list(
                      mat = matrix( 4*(1:10), nrow = 10 ),
@@ -385,7 +385,7 @@ test.armadillo.sugar.matrix.ctor <- function(){
     	_["rowvec"] = ro,
     	_["colvec"] = co
     );
-    ', plugin = "RcppArmadillo", includes = inc )
+    ', plugin = "RcppEigen", includes = inc )
     res <- fx(1:10)
     norm <- function(x, y) sqrt( x*x + y*y )
     checkEquals( res,
@@ -409,7 +409,7 @@ test.armadillo.rtti.check <- function() {
     arma::vec V;
     blah(V); // if blah() worked, we have a problem
     '
-    fun <- cxxfunction(signature(), body=src, inc=inc, plugin = "RcppArmadillo")
+    fun <- cxxfunction(signature(), body=src, inc=inc, plugin = "RcppEigen")
 
     checkException(fun(), msg="RTTI check on matrix constructor exception")
 
