@@ -1,3 +1,32 @@
+2011-07-10  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/PlainObjectBaseAddon.h: Added some begin and end methods
+	  to PlainObjectBase template through the extension mechanism. Should
+	  make these legitimate iterators to simplify some wrap methods (need a
+	  value_type member).
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h,
+	  inst/unitTests/runit.RcppEigen.R: Added as methods for mapped vectors
+	  and mapped matrices (still some code duplication) and tests of same.
+
+2011-07-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/unitTests/runit.RcppEigen.R: s/Armadillo/Eigen/ in a few places
+
+2011-07-09  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/unitTests/runit.RcppEigen.R: Added tests of wrap and as. Need to
+	  create an as method for mapped arrays.
+
+2011-07-08  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION: Prepare for a new release.
+	* inst/include/RcppEigen.h, inst/include/RcppEigenForward.h,
+	  inst/include/RcppEigenWrap.h: Add wrap methods for mapped Eigen
+	  objects; Initial support for as<> with some Eigen classes.
+	* inst/include/unsupported/Eigen/src/SparseExtra/SimplicialCholesky.h:
+	  Commit interim version of the SimplicialLLT and SimplicialLDLT classes
+	  that will appear in Eigen 3.0.2
+
 2011-06-30  Douglas Bates <bates@stat.wisc.edu>
 
 	* src/fastLm.cpp: Code simplification suggested by Gael Guennebaud
