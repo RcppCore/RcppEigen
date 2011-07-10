@@ -146,7 +146,7 @@ test.wrap.R <- function(){
 
 }
 
-test.as.Col <- function(){
+test.as.Vec <- function(){
     fx <- cxxfunction( signature(input_ = "list" ) , '
 
     List input(input_) ;
@@ -162,7 +162,46 @@ test.as.Col <- function(){
     ', plugin = "RcppEigen" )
 
     res <- fx( list( 1:10, as.numeric(1:10) ) )
-    checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Col>" )
+    checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Vec>" )
+}
+
+test.as.MVec <- function(){
+    fx <- cxxfunction( signature(input_ = "list" ) , '
+
+    List input(input_) ;
+    const Eigen::Map<Eigen::VectorXi>   m1 = input[0] ; // maps share storage and do not allow conversion
+    const Eigen::Map<Eigen::VectorXd>   m2 = input[1] ; 
+
+    List res = List::create(m1.sum(), m2.sum());
+
+    return res ;
+
+    ', plugin = "RcppEigen" )
+
+    res <- fx( list( 1:10, as.numeric(1:10) ) )
+    checkEquals( unlist( res ), rep(55.0, 2 ), msg = "as<MVec>" )
+}
+
+test.as.MMat <- function(){
+    fx <- cxxfunction( signature(input_ = "list" ) , '
+
+    List input(input_) ;
+    const Eigen::Map<Eigen::MatrixXi>   m1 = input[0]; // maps share storage and do not allow conversion
+    const Eigen::Map<Eigen::MatrixXd>   m2 = input[1] ;
+//    const Eigen::Map<Eigen::MatrixXcd>  m3 = input[2] ; 
+
+    List res = List::create(m1.sum(), m2.sum()); //, m3.sum());
+
+    return res ;
+
+    ', plugin = "RcppEigen" )
+
+    integer_mat <- matrix(as.integer(diag(nr=4L)), nc=4L)
+    numeric_mat <- diag(nr=5L)
+#    complex_mat <- (1+0i) * diag(nr=5L)
+    res <- fx(list(integer_mat, numeric_mat)) #, complex_mat))
+    checkEquals(unlist(res), c(4L, 5#, 5+0i
+                               ), msg = "as<MMat>" )
 }
 
 if (FALSE) {
