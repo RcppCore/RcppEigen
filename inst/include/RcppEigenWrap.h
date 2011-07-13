@@ -57,6 +57,7 @@ namespace Rcpp{
         // so the first thing we need to do is to find out so that we don't evaluate if we don't need to
         template <typename T>
         inline SEXP eigen_wrap( const T& obj ){
+            Rprintf( "eigen wrap\n" ) ;
             return eigen_wrap_is_plain( obj, 
                 typename is_plain<T>::type() 
                 ) ;
@@ -72,16 +73,17 @@ namespace Rcpp{
 
     } /* namespace RcppEigen */
 
-    /* wrap */
-	template <typename Derived>
-	SEXP wrap(const Eigen::EigenBase<Derived>& object) {
-//FIXME: Check IsRowMajor and transpose if needed
-		::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
-		if (object.ColsAtCompileTime == 1) return x; // represented as a vector
-		x.attr("dim") = ::Rcpp::Dimension(object.rows(), object.cols());
-	}
-
-    // template <typename T>
+    // /* wrap */
+    // [romain] : no longer necessary
+    // template <typename Derived>
+    // SEXP wrap(const Eigen::EigenBase<Derived>& object) {
+    //     //FIXME: Check IsRowMajor and transpose if needed
+    // 	::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
+    // 	if (object.ColsAtCompileTime == 1) return x; // represented as a vector
+    // 	x.attr("dim") = ::Rcpp::Dimension(object.rows(), object.cols());
+    // }
+    // 
+	// template <typename T>
 	// SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
 	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
 	// }
@@ -95,42 +97,43 @@ namespace Rcpp{
 	// SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& data ){
 	// 	return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
     // }
-
-    template <typename T>
-	SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
-		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	}
-    
-	template <typename T>
-	SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>& object ){
-		return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    }
-
-    template <typename T>
-	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
-		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	}
-    
-	template <typename T>
-	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >& object ){
-		return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    }
-
-    template <typename T>
-	SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >& data ){
-		return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
-    }
-
-    template <typename T>
-	SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
-		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	}
-    
-	template <typename T>
-	SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >& object ){
-		return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    }
-
+    // 
+    // template <typename T>
+	// SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	// }
+    // 
+	// template <typename T>
+	// SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>& object ){
+	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    // }
+    // 
+    // template <typename T>
+	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	// }
+    // 
+	// template <typename T>
+	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >& object ){
+	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    // }
+    // 
+    // template <typename T>
+	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >& data ){
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
+    // }
+    // 
+    // template <typename T>
+	// SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	// }
+    // 
+	// template <typename T>
+	// SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >& object ){
+	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    // }
+               
+    // we can probably deal with sparse stuff more generically
 	template <typename T>
     SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >& object ) {
 		int          nnz = object.nonZeros(), p = object.outerSize();

@@ -32,18 +32,20 @@
 /* forward declarations */
 namespace Rcpp {
     /* support for wrap */
-    template<typename Derived> SEXP wrap(const Eigen::EigenBase<Derived>&);
+    
+    // [romain] : don't need all this anymore
+    // template<typename Derived> SEXP wrap(const Eigen::EigenBase<Derived>&);
     // template<typename T> SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>&);
     // template<typename T> SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, 1>&);
     // template<typename T> SEXP wrap(const Eigen::Matrix<T, 1, Eigen::Dynamic>&);
-    template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>&);
-    template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>&);
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >&);
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >&);
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >&);
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >&);
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >&);
-    template<typename T> SEXP wrap(const Eigen::SparseMatrix<T>&);
+    // template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>&);
+    // template<typename T> SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>&);
+    // template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >&);
+    // template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >&);
+    // template<typename T> SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >&);
+    // template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >&);
+    // template<typename T> SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >&);
+    // template<typename T> SEXP wrap(const Eigen::SparseMatrix<T>&);
     template<typename T> SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >&);
     
     namespace traits {
