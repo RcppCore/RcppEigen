@@ -29,10 +29,13 @@ namespace Rcpp{
         // helper trait to identify if T is a plain object type
         // TODO: perhaps move this to its own file
         template <typename T> struct is_plain : Rcpp::traits::same_type<T,typename T::PlainObject>{} ;
+          
+        // helper trait to identify if the object has dense storage
+        template <typename T> struct is_dense : Rcpp::traits::same_type<typename T::StorageKind,Eigen::Dense>{} ;
         
-        // plain object, so we can assume data() and size()
-        template <typename T>
-        SEXP eigen_wrap_is_plain( const T& obj, ::Rcpp::traits::true_type ){
+        // for plain dense objects
+        template <typename T> 
+        SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ){
             // FIXME: deal with RowMajor, etc ...
             const int RTYPE = Rcpp::traits::r_sexptype_traits<typename T::Scalar>::rtype ;
             if( obj.cols() == 1 ) {
@@ -40,7 +43,32 @@ namespace Rcpp{
             } else {
                 Rcpp::Matrix<RTYPE> x( obj.rows(), obj.cols(), obj.data() ) ;
                 return x; 
-            }
+            }   
+        }
+        
+        // for plain sparse objects
+        template <typename T> 
+        SEXP eigen_wrap_plain_dense( const T& object, Rcpp::traits::false_type ){
+            typedef typename T::Scalar Scalar ;
+            const int RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype  ;  
+            int          nnz = object.nonZeros(), p = object.outerSize();
+	        Dimension    dim(object.innerSize(), p);
+	        const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
+	        const Scalar      *xp = object._valuePtr();
+	        IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
+	        Vector<RTYPE> xv(xp, xp + nnz);
+	        
+	        return List::create(_["Dim"] = dim,
+	        								 _["i"]   = iv,
+	        								 _["p"]   = pv,
+	        								 _["x"]   = xv);
+	    } 
+        
+        
+        // plain object, so we can assume data() and size()
+        template <typename T>
+        inline SEXP eigen_wrap_is_plain( const T& obj, ::Rcpp::traits::true_type ){
+            return eigen_wrap_plain_dense( obj, typename is_dense<T>::type() ) ;
         }
        
         // when the object is not plain, we need to eval()uate it
@@ -131,22 +159,20 @@ namespace Rcpp{
 	// SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >& object ){
 	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
     // }
-               
-    // we can probably deal with sparse stuff more generically
-	template <typename T>
-    SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >& object ) {
-		int          nnz = object.nonZeros(), p = object.outerSize();
-		Dimension    dim(object.innerSize(), p);
-		const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
-		const T      *xp = object._valuePtr();
-		IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
-		NumericVector xv(xp, xp + nnz);
-		
-		return ::Rcpp::wrap(List::create(_["Dim"] = dim,
-										 _["i"]   = iv,
-										 _["p"]   = pv,
-										 _["x"]   = xv));
-	}
+    // template <typename T>
+    // SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >& object ) {
+	// 	int          nnz = object.nonZeros(), p = object.outerSize();
+	// 	Dimension    dim(object.innerSize(), p);
+	// 	const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
+	// 	const T      *xp = object._valuePtr();
+	// 	IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
+	// 	NumericVector xv(xp, xp + nnz);
+	// 	
+	// 	return ::Rcpp::wrap(List::create(_["Dim"] = dim,
+	// 									 _["i"]   = iv,
+	// 									 _["p"]   = pv,
+	// 									 _["x"]   = xv));
+	// }
 
     /* support for Rcpp::as */
 	
