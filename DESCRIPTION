@@ -21,7 +21,7 @@ Description: R and Eigen integration using Rcpp.
  bindings/bridge to Eigen) is licensed under the GNU GPL version 2 or
  later, as is the rest of Rcpp.
 License: GPL (>= 2)
-Depends: Rcpp (>= 0.9.4), methods
+Depends: Rcpp (>= 0.9.5.1), methods
 LazyLoad: yes
 LinkingTo: Rcpp
 Suggests: inline, RUnit

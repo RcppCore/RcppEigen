@@ -38,7 +38,7 @@ namespace Rcpp{
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ){
             // FIXME: deal with RowMajor, etc ...
             const int RTYPE = Rcpp::traits::r_sexptype_traits<typename T::Scalar>::rtype ;
-            if( obj.cols() == 1 ) {
+            if( T::ColsAtCompileTime == 1 ) {
                 return wrap( obj.data(), obj.data() + obj.size() ) ;
             } else {
                 Rcpp::Matrix<RTYPE> x( obj.rows(), obj.cols(), obj.data() ) ;
