@@ -25,15 +25,11 @@ test.wrap.R <- function(){
 
     fx <- cxxfunction( , '
 
-    // The eval() method is necessary because the static methods Zero()
-    // and Identity() return expression objects, so that more general
-    // expressions involving them can be evaluated more effectively.  We
-    // have not yet written a wrap method for expression objects.
     List vecs = List::create(
-        _["Vec<complex>"] = Eigen::VectorXcd::Zero(5).eval(),
-        _["Vec<double>"]  = Eigen::VectorXd::Zero(5).eval(),
-        _["Vec<float>"]   = Eigen::VectorXf::Zero(5).eval(),
-        _["Vec<int>"]     = Eigen::VectorXi::Zero(5).eval()
+        _["Vec<complex>"] = Eigen::VectorXcd::Zero(5),
+        _["Vec<double>"]  = Eigen::VectorXd::Zero(5),
+        _["Vec<float>"]   = Eigen::VectorXf::Zero(5),
+        _["Vec<int>"]     = Eigen::VectorXi::Zero(5)
     );
 
     // A VectorX<T> behaves as a matrix with one column but is converted to
@@ -43,52 +39,52 @@ test.wrap.R <- function(){
     // during execution of the code.  A MatrixX<T> object can be resized to have
     // a different number of columns.  A VectorX<T> object cannot.
     List cols = List::create(
-        _["Col<complex>"] = Eigen::MatrixXcd::Zero(5, 1).eval(),
-        _["Col<double>"]  = Eigen::MatrixXd::Zero(5, 1).eval(),
-        _["Col<float>"]   = Eigen::MatrixXf::Zero(5, 1).eval(),
-        _["Col<int>"]     = Eigen::MatrixXi::Zero(5, 1).eval()
+        _["Col<complex>"] = Eigen::MatrixXcd::Zero(5, 1),
+        _["Col<double>"]  = Eigen::MatrixXd::Zero(5, 1),
+        _["Col<float>"]   = Eigen::MatrixXf::Zero(5, 1),
+        _["Col<int>"]     = Eigen::MatrixXi::Zero(5, 1)
     );
 
     List rows = List::create(
-        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5).eval(),
-        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5).eval(),
-        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5).eval(),
-        _["Row<int>"]     = Eigen::RowVectorXi::Zero(5).eval()
+        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
+        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
+        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
+        _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
     );
 
     List matrices = List::create(
-        _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3).eval(),
-        _["Mat<double>"]  = Eigen::MatrixXd::Identity(3, 3).eval(),
-        _["Mat<float>"]   = Eigen::MatrixXf::Identity(3, 3).eval(),
-        _["Mat<int>"]     = Eigen::MatrixXi::Identity(3, 3).eval()
+        _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
+        _["Mat<double>"]  = Eigen::MatrixXd::Identity(3, 3),
+        _["Mat<float>"]   = Eigen::MatrixXf::Identity(3, 3),
+        _["Mat<int>"]     = Eigen::MatrixXi::Identity(3, 3)
     );
 
     // ArrayXX<t> objects have the same structure as matrices but allow
     // componentwise arithmetic.  A * B is matrix multiplication for
     // matrices and componentwise multiplication for arrays.
     List arrays2 = List::create(
-        _["Arr2<complex>"] = Eigen::ArrayXXcd::Zero(3, 3).eval(),
-        _["Arr2<double>"]  = Eigen::ArrayXXd::Zero(3, 3).eval(),
-        _["Arr2<float>"]   = Eigen::ArrayXXf::Zero(3, 3).eval(),
-        _["Arr2<int>"]     = Eigen::ArrayXXi::Zero(3, 3).eval()
+        _["Arr2<complex>"] = Eigen::ArrayXXcd::Zero(3, 3),
+        _["Arr2<double>"]  = Eigen::ArrayXXd::Zero(3, 3),
+        _["Arr2<float>"]   = Eigen::ArrayXXf::Zero(3, 3),
+        _["Arr2<int>"]     = Eigen::ArrayXXi::Zero(3, 3)
     );
 
     // ArrayX<t> objects have the same structure as VectorX<T> objects
     // but allow componentwise arithmetic, including functions like exp, log,
     // sqrt, ...
     List arrays1 = List::create(
-        _["Arr1<complex>"] = Eigen::ArrayXcd::Zero(5).eval(),
-        _["Arr1<double>"]  = Eigen::ArrayXd::Zero(5).eval(),
-        _["Arr1<float>"]   = Eigen::ArrayXf::Zero(5).eval(),
-        _["Arr1<int>"]     = Eigen::ArrayXi::Zero(5).eval()
+        _["Arr1<complex>"] = Eigen::ArrayXcd::Zero(5),
+        _["Arr1<double>"]  = Eigen::ArrayXd::Zero(5),
+        _["Arr1<float>"]   = Eigen::ArrayXf::Zero(5),
+        _["Arr1<int>"]     = Eigen::ArrayXi::Zero(5)
     );
 
     List operations = List::create(
-        _["Op_seq"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).eval(),  // arguments are length.out, start, end
-        _["Op_log"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).log().eval(),
-        _["Op_exp"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).exp().eval(),
-        _["Op_sqrt"] = Eigen::ArrayXd::LinSpaced(6, 1, 10).sqrt().eval(),
-        _["Op_cos"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).cos().eval()
+        _["Op_seq"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10),  // arguments are length.out, start, end
+        _["Op_log"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).log(),
+        _["Op_exp"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).exp(),
+        _["Op_sqrt"] = Eigen::ArrayXd::LinSpaced(6, 1, 10).sqrt(),
+        _["Op_cos"]  = Eigen::ArrayXd::LinSpaced(6, 1, 10).cos()
     );
 
     List output = List::create(
