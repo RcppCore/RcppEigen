@@ -1,3 +1,22 @@
+2011-07-13  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION, inst/include/RcppEigenWrap.h,
+	  inst/unitTests/runit.RcppEigen.R: Dispatch on wrap to vector according
+	  to T::ColsAtCompileTime; modify tests to avoid the .eval() methods;
+	  bump Rcpp version dependence
+
+2011-07-13  Romain Francois  <romain@r-enthusiasts.com>
+
+	* inst/include/RcppEigenWrap.h: dispatch sparse/dense and generalizes
+	  dealing with sparse objects
+	* inst/include/RcppEigenWrap.h: comment non generic implementations
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: comment
+	  non generic implementations
+	* inst/include/RcppEigenWrap.h: deal with dimensions in
+	  eigen_wrap_is_plain
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: first
+	  steps into dealing with Eigen expressions
+
 2011-07-10  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/include/PlainObjectBaseAddon.h: Added some begin and end methods
