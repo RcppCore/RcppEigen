@@ -57,7 +57,6 @@ namespace Rcpp{
         // so the first thing we need to do is to find out so that we don't evaluate if we don't need to
         template <typename T>
         inline SEXP eigen_wrap( const T& obj ){
-            Rprintf( "eigen wrap\n" ) ;
             return eigen_wrap_is_plain( obj, 
                 typename is_plain<T>::type() 
                 ) ;
