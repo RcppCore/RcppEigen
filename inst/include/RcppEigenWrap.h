@@ -25,7 +25,41 @@
 namespace Rcpp{
 
     namespace RcppEigen{
-
+        
+        // helper trait to identify if T is a plain object type
+        // TODO: perhaps move this to its own file
+        template <typename T> struct is_plain : Rcpp::traits::same_type<T,typename T::PlainObject>{} ;
+        
+        // plain object, so we can assume data() and size()
+        template <typename T>
+        SEXP eigen_wrap_is_plain( const T& obj, ::Rcpp::traits::true_type ){
+            // FIXME: deal with RowMajor, etc ...
+            const int RTYPE = Rcpp::traits::r_sexptype_traits<typename T::Scalar>::rtype ;
+            Rcpp::Vector<RTYPE> x( obj.data(), obj.data() + obj.size() ) ;
+            // TODO: deal with dimensions
+            return x ;
+        }
+       
+        // when the object is not plain, we need to eval()uate it
+        template <typename T>
+        inline SEXP eigen_wrap_is_plain( const T& obj, ::Rcpp::traits::false_type ){
+            return eigen_wrap_is_plain( obj.eval(), Rcpp::traits::true_type() ) ;
+        }
+        
+        
+        // at that point we know that T derives from EigenBase
+        // so it is either a plain object (Matrix, etc ...) or an expression
+        // that eval()uates into a plain object
+        //
+        // so the first thing we need to do is to find out so that we don't evaluate if we don't need to
+        template <typename T>
+        inline SEXP eigen_wrap( const T& obj ){
+            return eigen_wrap_is_plain( obj, 
+                typename is_plain<T>::type() 
+                ) ;
+        }
+        
+        
 		template <typename T>
 		SEXP Eigen_wrap( const T& object, const ::Rcpp::Dimension& dim){
 			::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
@@ -44,20 +78,20 @@ namespace Rcpp{
 		x.attr("dim") = ::Rcpp::Dimension(object.rows(), object.cols());
 	}
 
-    template <typename T>
-	SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
-		return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	}
-    
-	template <typename T>
-	SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, 1>& object ){
-		return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    }
-
-    template <typename T>
-	SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& data ){
-		return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
-    }
+    // template <typename T>
+	// SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
+	// }
+    // 
+	// template <typename T>
+	// SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, 1>& object ){
+	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
+    // }
+    // 
+    // template <typename T>
+	// SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& data ){
+	// 	return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
+    // }
 
     template <typename T>
 	SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
