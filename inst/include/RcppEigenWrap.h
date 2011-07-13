@@ -35,9 +35,12 @@ namespace Rcpp{
         SEXP eigen_wrap_is_plain( const T& obj, ::Rcpp::traits::true_type ){
             // FIXME: deal with RowMajor, etc ...
             const int RTYPE = Rcpp::traits::r_sexptype_traits<typename T::Scalar>::rtype ;
-            Rcpp::Vector<RTYPE> x( obj.data(), obj.data() + obj.size() ) ;
-            // TODO: deal with dimensions
-            return x ;
+            if( obj.cols() == 1 ) {
+                return wrap( obj.data(), obj.data() + obj.size() ) ;
+            } else {
+                Rcpp::Matrix<RTYPE> x( obj.rows(), obj.cols(), obj.data() ) ;
+                return x; 
+            }
         }
        
         // when the object is not plain, we need to eval()uate it
