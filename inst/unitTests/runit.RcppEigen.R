@@ -200,253 +200,51 @@ test.as.MMat <- function(){
                                ), msg = "as<MMat>" )
 }
 
-if (FALSE) {
-
-test.as.Mat <- function(){
-
-    fx <- cxxfunction( signature(input_ = "list" ) , '
+test.as.MSpMat <- function() {
+    suppressMessages(require("Matrix"))
+    data("KNex", package = "Matrix")
+    fx <- cxxfunction( signature(input_ = "list"), '
     List input(input_) ;
-    Eigen::MatrixXi                                             m1 = input[0] ; /* implicit as */
-    Eigen::MatrixXd                                             m2 = input[1] ; /* implicit as */
-    Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic> m3 = input[0] ; /* implicit as */
-    Eigen::MatrixXf                                             m4 = input[1] ; /* implicit as */
+    const Eigen::MappedSparseMatrix<double>  m1 = input[0]; // maps share storage and do not allow conversion
 
-    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+    List res = List::create(_["nnz"]   = m1.nonZeros(),
+                            _["nr"]    = m1.rows(),
+                            _["nc"]    = m1.cols(),
+                            _["inSz"]  = m1.innerSize(),
+                            _["outSz"] = m1.outerSize(),
+                            _["sum"]   = m1.sum());
 
-    return res ;
-    ', plugin = "RcppEigen" )
-
-    integer_mat <- matrix( as.integer(diag(4)), ncol = 4, nrow = 4 )
-    numeric_mat <- diag(5)
-    res <- fx( list( integer_mat, numeric_mat ) )
-    checkEquals( unlist( res), c(4L, 5L, 4L, 5L ), msg = "as<Mat>" )
-}
-
-test.wrap.Glue <- function(){
-
-    fx <- cxxfunction( , '
-
-    arma::mat m1 = arma::eye<arma::mat>( 3, 3 ) ;
-    arma::mat m2 = arma::eye<arma::mat>( 3, 3 ) ;
-
-    List res ;
-    res["mat+mat"] = m1 + m2 ;
     return res ;
 
     ', plugin = "RcppEigen" )
 
-	res <- fx()
-    checkEquals( res[[1]], 2*diag(3), msg = "wrap(Glue)" )
+    KNX <- KNex[[1]]
+    res <- fx(KNex)
+    checkEquals(unname(unlist(res)),
+                c(nnzero(KNX), nrow(KNX), ncol(KNX),  nrow(KNX), ncol(KNX), sum(KNX@x)),
+                msg = "as<MSPMatrix>")
 }
 
-test.wrap.Op <- function(){
-
-    fx <- cxxfunction( , '
-
-    arma::mat m1 = arma::eye<arma::mat>( 3, 3 ) ;
-
-    List res ;
-    res["- mat"] = - m1 ;
-    return res ;
-
-    ', plugin = "RcppEigen" )
-    res <- fx()
-    checkEquals( res[[1]], -1*diag(3), msg = "wrap(Op)" )
-}
-
-test.as.Col <- function(){
-    fx <- cxxfunction( signature(input_ = "list" ) , '
-
+test.as.SpMat <- function() {
+    suppressMessages(require("Matrix"))
+    data("KNex", package = "Matrix")
+    fx <- cxxfunction( signature(input_ = "list"), '
     List input(input_) ;
-    arma::icolvec m1 = input[0] ; /* implicit as */
-    arma::colvec  m2 = input[1] ; /* implicit as */
-    arma::ucolvec m3 = input[0] ; /* implicit as */
-    arma::fcolvec m4 = input[1] ; /* implicit as */
+    const Eigen::SparseMatrix<double>  m1 = input[0];
 
-    List res = List::create(
-    	arma::accu( m1 ),
-    	arma::accu( m2 ),
-    	arma::accu( m3 ),
-    	arma::accu( m4 ) ) ;
+    List res = List::create(_["nnz"]   = m1.nonZeros(),
+                            _["nr"]    = m1.rows(),
+                            _["nc"]    = m1.cols(),
+                            _["inSz"]  = m1.innerSize(),
+                            _["outSz"] = m1.outerSize(),
+                            _["sum"]   = m1.sum());
 
     return res ;
-
     ', plugin = "RcppEigen" )
 
-    res <- fx( list( 1:10, as.numeric(1:10) ) )
-    checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Col>" )
-}
-
-test.as.Row <- function(){
-    fx <- cxxfunction( signature(input_ = "list" ) , '
-
-    List input(input_) ;
-    arma::irowvec m1 = input[0] ; /* implicit as */
-    arma::rowvec  m2 = input[1] ; /* implicit as */
-    arma::urowvec m3 = input[0] ; /* implicit as */
-    arma::frowvec m4 = input[1] ; /* implicit as */
-
-    List res = List::create(
-    	arma::accu( m1 ),
-    	arma::accu( m2 ),
-    	arma::accu( m3 ),
-    	arma::accu( m4 ) ) ;
-    return res ;
-
-	', plugin = "RcppEigen" )
-
-    res <- fx( list( 1:10, as.numeric(1:10) ) )
-    checkEquals( unlist( res ), rep(55.0, 4 ), msg = "as<Row>" )
-}
-
-test.cxmat <- function(){
-
-    fx <- cxxfunction( signature() , '
-
-    arma::cx_mat m1  = arma::eye<arma::cx_mat> ( 3, 3 ) ;
-    arma::cx_fmat m2 = arma::eye<arma::cx_fmat>( 3, 3 ) ;
-    return List::create( _["double"] = m1, _["float"] = m2 ) ;
-
-    ', plugin = "RcppEigen" )
-    checkEquals( fx(),
-		list( double = (1+0i)*diag(3), float = (1+0i)*diag(3) ),
-		msg = "support for complex matrices" )
-
-}
-
-test.mtOp <- function(){
-
-    fx <- cxxfunction( signature() , '
-
-    std::complex<double> x( 1.0, 2.0 ) ;
-    arma::mat m1  = arma::eye<arma::mat> ( 3, 3 ) ;
-
-    return wrap( x * m1 ) ;
-
-    ', plugin = "RcppEigen" )
-    checkEquals( fx(),
-		(1+2i)*diag(3),
-		msg = "support for mtOp" )
-
-}
-
-test.mtGlue <- function(){
-
-    fx <- cxxfunction( signature() , '
-
-    arma::imat m2 = arma::eye<arma::imat> ( 3, 3 ) ;
-    arma::mat m1  = arma::eye<arma::mat> ( 3, 3 ) ;
-
-    return wrap( m1 + m2 ) ;
-
-    ', plugin = "RcppEigen" )
-    checkEquals( fx(),
-		2.0 * diag(3) ,
-		msg = "support for mtOp" )
-
-}
-
-
-test.sugar <- function(){
-
-    fx <- cxxfunction( signature(x= "numeric") , '
-    NumericVector xx(x) ;
-    arma::mat m = forward( xx + xx ) ;
-    return wrap( m ) ;
-
-    ', plugin = "RcppEigen" )
-    checkEquals( fx(1:10),
-		matrix( 2*(1:10), nrow = 10 ) ,
-		msg = "RcppEigen and sugar" )
-
-}
-
-test.sugar.cplx <- function(){
-
-    fx <- cxxfunction( signature(x= "complex") , '
-    ComplexVector xx(x) ;
-    arma::cx_mat m = forward( exp( xx ) ) ;
-
-    return wrap( m ) ;
-
-    ', plugin = "RcppEigen" )
-    x <- 1:10*(1+1i)
-    checkEquals( fx(x),
-		matrix( exp(x), nrow = 10 ) ,
-		msg = "RcppEigen and sugar (complex)" )
-
-}
-
-test.armadillo.sugar.ctor <- function(){
-
-    fx <- cxxfunction( signature(x= "numeric") , '
-    NumericVector xx(x) ;
-    arma::mat m = xx + xx ;
-    arma::colvec co = xx ;
-    arma::rowvec ro = xx ;
-    return List::create(
-    	_["mat"] = m + m,
-    	_["rowvec"] = ro,
-    	_["colvec"] = co
-    );
-    ', plugin = "RcppEigen" )
-    checkEquals( fx(1:10),
-		list(
-                     mat = matrix( 4*(1:10), nrow = 10 ),
-                     rowvec = matrix( 1:10, nrow = 1 ),
-                     colvec = matrix( 1:10, ncol = 1 )
-                     )
-		,
-		msg = "Mat( sugar expression )" )
-
-}
-
-
-test.armadillo.sugar.matrix.ctor <- function(){
-
-    inc <- '
-    double norm( double x, double y){
-		return ::sqrt( x*x + y*y );
-    }
-    '
-    fx <- cxxfunction( signature(x= "numeric") , '
-    NumericVector xx(x) ;
-    NumericVector yy = NumericVector::create( 1 ) ;
-    arma::mat m = diag( xx ) ;
-    arma::colvec co = outer( xx, yy, ::norm ) ;
-    arma::rowvec ro = outer( yy, xx, ::norm ) ;
-    return List::create(
-    	_["mat"] = m + m ,
-    	_["rowvec"] = ro,
-    	_["colvec"] = co
-    );
-    ', plugin = "RcppEigen", includes = inc )
-    res <- fx(1:10)
-    norm <- function(x, y) sqrt( x*x + y*y )
-    checkEquals( res,
-		list(
-                     mat = diag(2*(1:10)),
-                     rowvec = outer( 1, 1:10, norm ),
-                     colvec = outer( 1:10, 1, norm )
-                     ),
-		msg = "Mat( sugar expression )" )
-
-}
-
-test.armadillo.rtti.check <- function() {
-
-    inc <- '
-    void blah(arma::mat& X) {
-         X.set_size(5,5);
-    }
-    '
-    src <- '
-    arma::vec V;
-    blah(V); // if blah() worked, we have a problem
-    '
-    fun <- cxxfunction(signature(), body=src, inc=inc, plugin = "RcppEigen")
-
-    checkException(fun(), msg="RTTI check on matrix constructor exception")
-
-}
+    KNX <- KNex[[1]]
+    res <- fx(KNex)
+    checkEquals(unname(unlist(res)),
+                c(nnzero(KNX), nrow(KNX), ncol(KNX),  nrow(KNX), ncol(KNX), sum(KNX@x)),
+                msg = "as<MSPMatrix>")
 }

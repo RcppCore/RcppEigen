@@ -100,79 +100,6 @@ namespace Rcpp{
 
     } /* namespace RcppEigen */
 
-    // /* wrap */
-    // [romain] : no longer necessary
-    // template <typename Derived>
-    // SEXP wrap(const Eigen::EigenBase<Derived>& object) {
-    //     //FIXME: Check IsRowMajor and transpose if needed
-    // 	::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
-    // 	if (object.ColsAtCompileTime == 1) return x; // represented as a vector
-    // 	x.attr("dim") = ::Rcpp::Dimension(object.rows(), object.cols());
-    // }
-    // 
-	// template <typename T>
-	// SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	// }
-    // 
-	// template <typename T>
-	// SEXP wrap(const Eigen::Matrix<T, Eigen::Dynamic, 1>& object ){
-	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    // }
-    // 
-    // template <typename T>
-	// SEXP wrap( const Eigen::Matrix<T, 1, Eigen::Dynamic>& data ){
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
-    // }
-    // 
-    // template <typename T>
-	// SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>& data) {
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	// }
-    // 
-	// template <typename T>
-	// SEXP wrap(const Eigen::Array<T, Eigen::Dynamic, 1>& object ){
-	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    // }
-    // 
-    // template <typename T>
-	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	// }
-    // 
-	// template <typename T>
-	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >& object ){
-	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    // }
-    // 
-    // template <typename T>
-	// SEXP wrap(const Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> >& data ){
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(1, data.size()));
-    // }
-    // 
-    // template <typename T>
-	// SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >& data) {
-	// 	return RcppEigen::Eigen_wrap(data, Dimension(data.rows(), data.cols()));
-	// }
-    // 
-	// template <typename T>
-	// SEXP wrap(const Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >& object ){
-	// 	return ::Rcpp::wrap(object.data(), object.data() + object.size());
-    // }
-    // template <typename T>
-    // SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >& object ) {
-	// 	int          nnz = object.nonZeros(), p = object.outerSize();
-	// 	Dimension    dim(object.innerSize(), p);
-	// 	const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
-	// 	const T      *xp = object._valuePtr();
-	// 	IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
-	// 	NumericVector xv(xp, xp + nnz);
-	// 	
-	// 	return ::Rcpp::wrap(List::create(_["Dim"] = dim,
-	// 									 _["i"]   = iv,
-	// 									 _["p"]   = pv,
-	// 									 _["x"]   = xv));
-	// }
 
     /* support for Rcpp::as */
 	
@@ -238,7 +165,61 @@ namespace Rcpp{
 			Exporter(SEXP x) :
 				MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
 		}; 
-		
+
+		template<typename T>
+		class Exporter<Eigen::MappedSparseMatrix<T> > {
+		public:
+			Exporter(SEXP x)
+				: d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")) {
+				if (!d_x.is("CsparseMatrix")) 
+					throw std::invalid_argument("Need S4 class CsparseMatrix for an mapped sparse matrix");
+				const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+				SEXP xx = d_x.slot("x");
+				if (TYPEOF(xx) != RTYPE)
+					throw std::invalid_argument("Wrong R type for mapped sparse matrix");
+				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
+				d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(xx);
+			}
+			Eigen::MappedSparseMatrix<T> get() {
+				return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+													d_p.begin(), d_i.begin(), d_start);
+			}
+		protected:
+			S4            d_x;
+			T*            d_start;
+			IntegerVector d_dims, d_i, d_p;
+		};
+
+		template<typename T>
+		class Exporter<Eigen::SparseMatrix<T> > {
+		public:
+			Exporter(SEXP x)
+				: d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")) {
+				if (!d_x.is("CsparseMatrix"))
+					throw std::invalid_argument("Need S4 class CsparseMatrix for an mapped sparse matrix");
+				const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+				SEXP xx = d_x.slot("x");
+				if (TYPEOF(xx) != RTYPE) // should coerce instead - see Rcpp/inst/include/Rcpp/internal/export.h
+					throw std::invalid_argument("Wrong R type for sparse matrix");
+				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
+				d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(xx);
+			}
+			Eigen::SparseMatrix<T> get() {
+				Eigen::SparseMatrix<T>  ans(d_dims[0], d_dims[1]);
+				ans.reserve(d_p[d_dims[1]]);
+				for(int j = 0; j < d_dims[1]; ++j) {
+					ans.startVec(j);
+					for (int k = d_p[j]; k < d_p[j + 1]; ++k) ans.insertBack(d_i[k], j) = d_start[k];
+				}
+				ans.finalize();  
+				return ans;
+			}
+		protected:
+			S4            d_x;
+			T*            d_start;
+			IntegerVector d_dims, d_i, d_p;
+		};
+				
     } // namespace traits
 }
 
