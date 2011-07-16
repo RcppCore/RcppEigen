@@ -493,7 +493,6 @@ void SimplicialCholesky<_MatrixType,_UpLo>::analyzePattern(const MatrixType& a)
     Lp[k+1] = Lp[k] + m_nonZerosPerCol[k] + (m_LDLt ? 0 : 1);
 
   m_matrix.resizeNonZeros(Lp[size]);
-  
   m_isInitialized     = true;
   m_info              = Success;
   m_analysisIsOk      = true;
