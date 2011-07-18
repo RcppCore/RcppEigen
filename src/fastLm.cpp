@@ -174,36 +174,35 @@ static inline lm do_lm(const MMatrixXd &X, const MVectorXd &y, int type)
 
 extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
     try {
-	const NumericMatrix    X(Xs);
-	const NumericVector    y(ys);
-	Index    n = X.nrow(), p = X.ncol();
+	const MMatrixXd      X(as<MMatrixXd>(Xs));
+	const MVectorXd      y(as<MVectorXd>(ys));
+	Index                n = X.rows(), p = X.cols();
 	if ((Index)y.size() != n)
 	    throw std::invalid_argument("size mismatch");
-	const MVectorXd       yy(y.begin(), n);
-        const MMatrixXd       XX(X.begin(), n, p);
 
-	lm                   ans = do_lm(XX, yy, ::Rf_asInteger(type));
-	NumericVector       coef = wrap(ans.coef());
-				// install the names, if available
-	List            dimnames = X.attr("dimnames");
+	lm                 ans = do_lm(X, y, ::Rf_asInteger(type));
+				// Copy coefficients and install names, if available
+	NumericVector     coef = wrap(ans.coef());
+	List          dimnames = NumericMatrix(Xs).attr("dimnames");
 	if (dimnames.size() > 1) {
-	    RObject         colnames = dimnames[1];
+	    RObject   colnames = dimnames[1];
 	    if (!(colnames).isNULL())
 		coef.attr("names") = clone(CharacterVector(colnames));
 	}
 	    
-	VectorXd           resid = yy - ans.fitted();
-	double                s2 = resid.squaredNorm()/ans.df();
-	PermutationType     Pmat = PermutationType(p);
-	Pmat.indices()           = ans.perm();
-	VectorXd              dd = Pmat * ans.unsc().diagonal();
-	ArrayXd               se = (dd.array() * s2).sqrt();
+	VectorXd         resid = y - ans.fitted();
+	double              s2 = resid.squaredNorm()/ans.df();
+				// Create the standard errors
+	PermutationType   Pmat = PermutationType(p);
+	Pmat.indices()         = ans.perm();
+	VectorXd            dd = Pmat * ans.unsc().diagonal();
+	ArrayXd             se = (dd.array() * s2).sqrt();
 
 	return List::create(_["coefficients"]  = coef,
 			    _["se"]            = se,
 			    _["rank"]          = ans.rank(),
 			    _["df.residual"]   = ans.df(),
-			    _["perm"]          = IntegerVector(ans.perm().data(), ans.perm().data() + p),
+			    _["perm"]          = ans.perm(),
 			    _["residuals"]     = resid,
 			    _["s2"]            = s2,
 			    _["fitted.values"] = ans.fitted(),
