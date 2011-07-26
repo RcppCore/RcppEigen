@@ -1,3 +1,20 @@
+2011-07-26  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/SimplicialCholesky.h:
+	  Added matrixLDL method
+
+2011-07-18  Douglas Bates <bates@stat.wisc.edu>
+
+	* src/fastLm.cpp: clean up code, taking advantage of the more general
+	  wrap methods
+
+2011-07-15  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h,
+	  inst/unitTests/runit.RcppEigen.R: added as methods for
+	  Eigen::SparseMatrix and Eigen::MappedSparseMatrix classes and tests of
+	  same
+
 2011-07-13  Douglas Bates <bates@stat.wisc.edu>
 
 	* DESCRIPTION, inst/include/RcppEigenWrap.h,
