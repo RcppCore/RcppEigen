@@ -221,6 +221,8 @@ class SimplicialCholesky
 	return m_parent;
     }
     
+    const CholMatrixType matrixLDL() const {return m_matrix;}
+
     /** \returns the number of nonzeros per column from the symbolic analysis */
     const VectorXi& nonZerosPerCol() const
     {
