@@ -15,8 +15,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with RcppEigen.  If not, see <http://www.gnu.org/licenses/>.
 
-inlineCxxPlugin <- Rcpp:::Rcpp.plugin.maker(
-	include.before = "#include <RcppEigen.h>", 
-	package        = "RcppEigen"
-)
+inlineCxxPlugin <-
+    Rcpp:::Rcpp.plugin.maker(
+                             include.before = "#include <RcppEigen.h>", 
+                             package        = "RcppEigen"
+#                             , LinkingTo      = c("RcppEigen", "Rcpp")
+                             )
 

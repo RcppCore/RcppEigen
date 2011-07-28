@@ -1,6 +1,14 @@
 useDynLib(RcppEigen)
 #import(Rcpp)
 
+importClassesFrom("Matrix"
+                  , ddiMatrix
+                  , dgCMatrix
+                  , dgeMatrix
+                  , dsCMatrix
+                  , dtCMatrix
+                  )
+
 #exportPattern("^[[:alpha:]]+")
 export(fastLm,
        fastLmPure,

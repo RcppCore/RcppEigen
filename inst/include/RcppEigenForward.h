@@ -25,6 +25,7 @@
 #include <RcppCommon.h>
 #include <Rconfig.h>
 #include <RcppEigenConfig.h>
+#include <RcppEigenCholmod.h>
 #define EIGEN_PLAINOBJECTBASE_PLUGIN "PlainObjectBaseAddon.h"
 #include <Eigen/Dense>
 #include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse

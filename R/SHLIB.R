@@ -18,6 +18,5 @@
 SHLIB <- Rcpp:::SHLIB.maker( 
     env = list( 
         PKG_LIBS = Rcpp:::RcppLdFlags(),
-        PKG_CPPFLAGS = Rcpp:::RcppCxxFlags()
    )
 )
