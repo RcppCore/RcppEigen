@@ -160,240 +160,279 @@ enum CholmodMode {
   *               or Upper. Default is Lower.
   *
   */
-template<typename _MatrixType, int _UpLo = Lower>
-class CholmodDecomposition
-{
-  public:
-    typedef _MatrixType MatrixType;
-    enum { UpLo = _UpLo };
-    typedef typename MatrixType::Scalar Scalar;
-    typedef typename MatrixType::RealScalar RealScalar;
-    typedef MatrixType CholMatrixType;
-    typedef typename MatrixType::Index Index;
+    template<typename _MatrixType, int _UpLo = Lower> class CholmodDecomposition {
+    public:
+	typedef _MatrixType MatrixType;
+	enum { UpLo = _UpLo };
+	typedef typename MatrixType::Scalar Scalar;
+	typedef typename MatrixType::RealScalar RealScalar;
+	typedef MatrixType CholMatrixType;
+	typedef typename MatrixType::Index Index;
+    
+    public:
+// FIXME: Allow for MappedSparseMatrix in constructor and the compute,
+// analyzePattern and factorize methods.
+// Distinguish between a SelfAdjointView and a SparseMatrix in the
+// analyzePattern and factorize methods.
+	CholmodDecomposition() :
+	    m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
+	{
+	    M_R_cholmod_start(&m_cholmod);
+	    setMode(CholmodLDLt);
+	}
 
-  public:
+	CholmodDecomposition(const MatrixType& matrix)
+	    : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
+	{
+	    M_R_cholmod_start(&m_cholmod);
+	    compute(matrix);
+	}
+	
+	~CholmodDecomposition()
+	{
+	    if(m_cholmodFactor)
+		M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
+	    M_cholmod_finish(&m_cholmod);
+	}
+	
+	inline Index cols() const { return m_cholmodFactor->n; }
+	inline Index rows() const { return m_cholmodFactor->n; }
+	
+	void setMode(CholmodMode mode)
+	{
+	    switch(mode)
+	    {
+	    case CholmodAuto:
+		m_cholmod.final_asis = 1;
+		m_cholmod.supernodal = CHOLMOD_AUTO;
+		break;
+	    case CholmodSimplicialLLt:
+		m_cholmod.final_asis = 0;
+		m_cholmod.supernodal = CHOLMOD_SIMPLICIAL;
+		m_cholmod.final_ll = 1;
+		break;
+	    case CholmodSupernodalLLt:
+		m_cholmod.final_asis = 1;
+		m_cholmod.supernodal = CHOLMOD_SUPERNODAL;
+		break;
+	    case CholmodLDLt:
+		m_cholmod.final_asis = 1;
+		m_cholmod.supernodal = CHOLMOD_SIMPLICIAL;
+		break;
+	    default:
+		break;
+	    }
+	}
+	
+	/** \brief Reports whether previous computation was successful.
+	 *
+	 * \returns \c Success if computation was succesful,
+	 *          \c NumericalIssue if the matrix.appears to be negative.
+	 */
+	ComputationInfo info() const
+	{
+	    eigen_assert(m_isInitialized && "Decomposition is not initialized.");
+	    return m_info;
+	}
 
-    CholmodDecomposition()
-      : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
-    {
-      M_R_cholmod_start(&m_cholmod);
-      setMode(CholmodLDLt);
-    }
+	/** Computes the sparse Cholesky decomposition of \a matrix */
+	void compute(const MatrixType& matrix)
+	{
+	    analyzePattern(matrix);
+	    factorize(matrix);
+	}
+	
+	/** \returns the solution x of \f$ A x = b \f$ using the current decomposition of A.
+	 *
+	 * \sa compute()
+	 */
+	template<typename Rhs>
+	inline const internal::solve_retval<CholmodDecomposition, Rhs>
+	solve(const MatrixBase<Rhs>& b) const
+	{
+	    eigen_assert(m_isInitialized && "LLT is not initialized.");
+	    eigen_assert(rows()==b.rows()
+			 && "CholmodDecomposition::solve(): invalid number of rows of the right hand side matrix b");
+	    return internal::solve_retval<CholmodDecomposition, Rhs>(*this, b.derived());
+	}
+	
+	/** \returns the solution x of \f$ A x = b \f$ using the current decomposition of A.
+	 *
+	 * \sa compute()
+	 */
+	template<typename Rhs>
+	inline const internal::sparse_solve_retval<CholmodDecomposition, Rhs>
+	solve(const SparseMatrixBase<Rhs>& b) const
+	{
+	    eigen_assert(m_isInitialized && "LLT is not initialized.");
+	    eigen_assert(rows()==b.rows()
+			 && "CholmodDecomposition::solve(): invalid number of rows of the right hand side matrix b");
+	    return internal::sparse_solve_retval<CholmodDecomposition, Rhs>(*this, b.derived());
+	}
+	
+	/** Performs a symbolic decomposition on the sparcity of \a matrix.
+	 *
+	 * This function is particularly useful when solving for several problems having the same structure.
+	 * 
+	 * \sa factorize()
+	 */
+	void analyzePattern(const MatrixType& matrix)
+	{
+	    if(m_cholmodFactor)
+	    {
+		M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
+		m_cholmodFactor = 0;
+	    }
+	    cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
+		viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
+		viewAsCholmod(matrix);
+	    
+	    m_cholmodFactor = M_cholmod_analyze(&A, &m_cholmod);
+	    
+	    this->m_isInitialized = true;
+	    this->m_info = Success;
+	    m_analysisIsOk = true;
+	    m_factorizationIsOk = false;
+	}
+	
+	const cholmod_factor* factor() const {return m_cholmodFactor;}
+	
+	/** Performs a numeric decomposition of \a matrix
+	 *
+	 * The given matrix must have the same sparcity pattern as the
+	 * matrix on which the symbolic decomposition has been
+	 * performed. 
+	 *
+	 * \sa analyzePattern()
+	 */
+	void factorize(const MatrixType& matrix)
+	{
+	    eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
+	    
+	    cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
+	    if (M_cholmod_factorize(&A, m_cholmodFactor, &m_cholmod) != CHOLMOD_OK)
+		throw std::runtime_error("CholmodDecomposition.factorize() error");
+	    
+	    this->m_info = Success;
+	    m_factorizationIsOk = true;
+	}
 
-    CholmodDecomposition(const MatrixType& matrix)
-      : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
-    {
-      M_R_cholmod_start(&m_cholmod);
-      compute(matrix);
-    }
+	/** Performs a numeric decomposition of \a matrix with greater
+	 * control.  \a beta times the identity is added to A or A*A'
+	 * during the factorization.  If \a fset is present it
+	 * describes the columns (rectangular \a matrix) or rows and
+	 * columns (square \a matrix) used in the factorization.
+	 * 
+	 * The given matrix must have the same sparcity pattern as the
+	 * matrix on which the symbolic decomposition has been
+	 * performed. 
+	 *
+	 * \sa analyzePattern()
+	 */
+	void factorize_p(const MatrixType& matrix, ArrayXi fset, double beta=0.)
+	{
+	    eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
+	    cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
+		viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
+		viewAsCholmod(matrix);
 
-    ~CholmodDecomposition()
-    {
-      if(m_cholmodFactor)
-        M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
-      M_cholmod_finish(&m_cholmod);
-    }
-    
-    inline Index cols() const { return m_cholmodFactor->n; }
-    inline Index rows() const { return m_cholmodFactor->n; }
-    
-    void setMode(CholmodMode mode)
-    {
-      switch(mode)
-      {
-        case CholmodAuto:
-          m_cholmod.final_asis = 1;
-          m_cholmod.supernodal = CHOLMOD_AUTO;
-          break;
-        case CholmodSimplicialLLt:
-          m_cholmod.final_asis = 0;
-          m_cholmod.supernodal = CHOLMOD_SIMPLICIAL;
-          m_cholmod.final_ll = 1;
-          break;
-        case CholmodSupernodalLLt:
-          m_cholmod.final_asis = 1;
-          m_cholmod.supernodal = CHOLMOD_SUPERNODAL;
-          break;
-        case CholmodLDLt:
-          m_cholmod.final_asis = 1;
-          m_cholmod.supernodal = CHOLMOD_SIMPLICIAL;
-          break;
-        default:
-          break;
-      }
-    }
-    
-    /** \brief Reports whether previous computation was successful.
-      *
-      * \returns \c Success if computation was succesful,
-      *          \c NumericalIssue if the matrix.appears to be negative.
-      */
-    ComputationInfo info() const
-    {
-      eigen_assert(m_isInitialized && "Decomposition is not initialized.");
-      return m_info;
-    }
-
-    /** Computes the sparse Cholesky decomposition of \a matrix */
-    void compute(const MatrixType& matrix)
-    {
-      analyzePattern(matrix);
-      factorize(matrix);
-    }
-    
-    /** \returns the solution x of \f$ A x = b \f$ using the current decomposition of A.
-      *
-      * \sa compute()
-      */
-    template<typename Rhs>
-    inline const internal::solve_retval<CholmodDecomposition, Rhs>
-    solve(const MatrixBase<Rhs>& b) const
-    {
-      eigen_assert(m_isInitialized && "LLT is not initialized.");
-      eigen_assert(rows()==b.rows()
-                && "CholmodDecomposition::solve(): invalid number of rows of the right hand side matrix b");
-      return internal::solve_retval<CholmodDecomposition, Rhs>(*this, b.derived());
-    }
-    
-    /** \returns the solution x of \f$ A x = b \f$ using the current decomposition of A.
-      *
-      * \sa compute()
-      */
-    template<typename Rhs>
-    inline const internal::sparse_solve_retval<CholmodDecomposition, Rhs>
-    solve(const SparseMatrixBase<Rhs>& b) const
-    {
-      eigen_assert(m_isInitialized && "LLT is not initialized.");
-      eigen_assert(rows()==b.rows()
-                && "CholmodDecomposition::solve(): invalid number of rows of the right hand side matrix b");
-      return internal::sparse_solve_retval<CholmodDecomposition, Rhs>(*this, b.derived());
-    }
-    
-    /** Performs a symbolic decomposition on the sparcity of \a matrix.
-      *
-      * This function is particularly useful when solving for several problems having the same structure.
-      * 
-      * \sa factorize()
-      */
-    void analyzePattern(const MatrixType& matrix)
-    {
-      if(m_cholmodFactor)
-      {
-        M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
-        m_cholmodFactor = 0;
-      }
-      cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      m_cholmodFactor = M_cholmod_analyze(&A, &m_cholmod);
-      
-      this->m_isInitialized = true;
-      this->m_info = Success;
-      m_analysisIsOk = true;
-      m_factorizationIsOk = false;
-    }
-    
-    /** Performs a numeric decomposition of \a matrix
-      *
-      * The given matrix must has the same sparcity than the matrix on which the symbolic decomposition has been performed.
-      *
-      * \sa analyzePattern()
-      */
-    void factorize(const MatrixType& matrix)
-    {
-      eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
-      cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      M_cholmod_factorize(&A, m_cholmodFactor, &m_cholmod);
-      
-      this->m_info = Success;
-      m_factorizationIsOk = true;
-    }
-    
-    /** Returns a reference to the Cholmod's configuration structure to get a full control over the performed operations.
-     *  See the Cholmod user guide for details. */
-    cholmod_common& cholmod() { return m_cholmod; }
-    
-    #ifndef EIGEN_PARSED_BY_DOXYGEN
-    /** \internal */
-    template<typename Rhs,typename Dest>
-    void _solve(const MatrixBase<Rhs> &b, MatrixBase<Dest> &dest) const
-    {
-      eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
-      const Index size = m_cholmodFactor->n;
-      eigen_assert(size==b.rows());
-
-      // note: cd stands for Cholmod Dense
-      cholmod_dense b_cd = viewAsCholmod(b.const_cast_derived());
-      cholmod_dense* x_cd = M_cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
-      if(!x_cd)
-      {
-        this->m_info = NumericalIssue;
-      }
-      // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
-      dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
-      M_cholmod_free_dense(&x_cd, &m_cholmod);
-    }
-    
-    /** \internal */
-    template<typename RhsScalar, int RhsOptions, typename RhsIndex, typename DestScalar, int DestOptions, typename DestIndex>
-    void _solve(const SparseMatrix<RhsScalar,RhsOptions,RhsIndex> &b, SparseMatrix<DestScalar,DestOptions,DestIndex> &dest) const
-    {
-      eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
-      const Index size = m_cholmodFactor->n;
-      eigen_assert(size==b.rows());
-
-      // note: cs stands for Cholmod Sparse
-      cholmod_sparse b_cs = viewAsCholmod(b);
-      cholmod_sparse* x_cs = M_cholmod_spsolve(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
-      if(!x_cs)
-      {
-        this->m_info = NumericalIssue;
-      }
-      // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
-      dest = viewAsEigen<DestScalar,DestOptions,DestIndex>(*x_cs);
-      M_cholmod_free_sparse(&x_cs, &m_cholmod);
-    }
-    #endif // EIGEN_PARSED_BY_DOXYGEN
-    
-    template<typename Stream>
-    void dumpMemory(Stream& s)
-    {}
-
-  protected:
-    mutable cholmod_common m_cholmod;
-    cholmod_factor* m_cholmodFactor;
-    mutable ComputationInfo m_info;
-    bool m_isInitialized;
-    int m_factorizationIsOk;
-    int m_analysisIsOk;
-};
+	    M_cholmod_factorize_p(&A, &beta, fset.data(), fset.size(),
+				  m_cholmodFactor, &m_cholmod);
+	    
+	    this->m_info = Success;
+	    m_factorizationIsOk = true;
+	}
+	
+	/** Returns a reference to the Cholmod's configuration
+	 *  structure to get a full control over the performed
+	 *  operations.
+	 *
+	 *  See the Cholmod user guide for details. */
+	cholmod_common& cholmod() { return m_cholmod; }
+	
+#ifndef EIGEN_PARSED_BY_DOXYGEN
+	/** \internal */
+	template<typename Rhs,typename Dest>
+	void _solve(const MatrixBase<Rhs> &b, MatrixBase<Dest> &dest) const
+	{
+	    eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
+	    const Index size = m_cholmodFactor->n;
+	    eigen_assert(size==b.rows());
+	    
+	    // note: cd stands for Cholmod Dense
+	    cholmod_dense b_cd = viewAsCholmod(b.const_cast_derived());
+	    cholmod_dense* x_cd = M_cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
+	    if(!x_cd)
+	    {
+		this->m_info = NumericalIssue;
+	    }
+	    // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
+	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
+	    M_cholmod_free_dense(&x_cd, &m_cholmod);
+	}
+	
+	/** \internal */
+	template<typename RhsScalar, int RhsOptions, typename RhsIndex, typename DestScalar, int DestOptions, typename DestIndex>
+	void _solve(const SparseMatrix<RhsScalar,RhsOptions,RhsIndex> &b, SparseMatrix<DestScalar,DestOptions,DestIndex> &dest) const
+	{
+	    eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
+	    const Index size = m_cholmodFactor->n;
+	    eigen_assert(size==b.rows());
+	    
+	    // note: cs stands for Cholmod Sparse
+	    cholmod_sparse b_cs = viewAsCholmod(b);
+	    cholmod_sparse* x_cs = M_cholmod_spsolve(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
+	    if(!x_cs)
+	    {
+		this->m_info = NumericalIssue;
+	    }
+	    // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
+	    dest = viewAsEigen<DestScalar,DestOptions,DestIndex>(*x_cs);
+	    M_cholmod_free_sparse(&x_cs, &m_cholmod);
+	}
+#endif // EIGEN_PARSED_BY_DOXYGEN
+	
+	template<typename Stream>
+	void dumpMemory(Stream& s)
+	{}
+	
+    protected:
+	mutable cholmod_common m_cholmod;
+	cholmod_factor* m_cholmodFactor;
+	mutable ComputationInfo m_info;
+	bool m_isInitialized;
+	int m_factorizationIsOk;
+	int m_analysisIsOk;
+    };
 
 namespace internal {
-  
-template<typename _MatrixType, int _UpLo, typename Rhs>
-struct solve_retval<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
-  : solve_retval_base<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
-{
-  typedef CholmodDecomposition<_MatrixType,_UpLo> Dec;
-  EIGEN_MAKE_SOLVE_HELPERS(Dec,Rhs)
-
-  template<typename Dest> void evalTo(Dest& dst) const
-  {
-    dec()._solve(rhs(),dst);
-  }
-};
-
-template<typename _MatrixType, int _UpLo, typename Rhs>
-struct sparse_solve_retval<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
-  : sparse_solve_retval_base<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
-{
-  typedef CholmodDecomposition<_MatrixType,_UpLo> Dec;
-  EIGEN_MAKE_SPARSE_SOLVE_HELPERS(Dec,Rhs)
-
-  template<typename Dest> void evalTo(Dest& dst) const
-  {
-    dec()._solve(rhs(),dst);
-  }
-};
-
+    
+    template<typename _MatrixType, int _UpLo, typename Rhs>
+    struct solve_retval<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
+	: solve_retval_base<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
+    {
+	typedef CholmodDecomposition<_MatrixType,_UpLo> Dec;
+	EIGEN_MAKE_SOLVE_HELPERS(Dec,Rhs)
+	
+	template<typename Dest> void evalTo(Dest& dst) const
+	{
+	    dec()._solve(rhs(),dst);
+	}
+    };
+    
+    template<typename _MatrixType, int _UpLo, typename Rhs>
+    struct sparse_solve_retval<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
+	: sparse_solve_retval_base<CholmodDecomposition<_MatrixType,_UpLo>, Rhs>
+    {
+	typedef CholmodDecomposition<_MatrixType,_UpLo> Dec;
+	EIGEN_MAKE_SPARSE_SOLVE_HELPERS(Dec,Rhs)
+	
+	template<typename Dest> void evalTo(Dest& dst) const
+	{
+	    dec()._solve(rhs(),dst);
+	}
+    };
+    
 }
 
 #endif // EIGEN_CHOLMODSUPPORT_H
