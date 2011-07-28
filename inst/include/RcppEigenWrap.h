@@ -50,20 +50,20 @@ namespace Rcpp{
         template <typename T> 
         SEXP eigen_wrap_plain_dense( const T& object, Rcpp::traits::false_type ){
             typedef typename T::Scalar Scalar ;
-            const int RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype  ;  
+            const int  RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype  ;  
             int          nnz = object.nonZeros(), p = object.outerSize();
 	        Dimension    dim(object.innerSize(), p);
 	        const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
-	        const Scalar      *xp = object._valuePtr();
+	        const Scalar *xp = object._valuePtr();
 	        IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
 	        Vector<RTYPE> xv(xp, xp + nnz);
-	        
-	        return List::create(_["Dim"] = dim,
-	        								 _["i"]   = iv,
-	        								 _["p"]   = pv,
-	        								 _["x"]   = xv);
+	        S4           ans("dgCMatrix");
+			ans.slot("Dim")  = dim;
+			ans.slot("i")    = iv;
+			ans.slot("p")    = pv;
+			ans.slot("x")    = xv;
+			return  ans;
 	    } 
-        
         
         // plain object, so we can assume data() and size()
         template <typename T>

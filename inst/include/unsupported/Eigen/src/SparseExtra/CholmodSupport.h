@@ -176,22 +176,22 @@ class CholmodDecomposition
     CholmodDecomposition()
       : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
     {
-      cholmod_start(&m_cholmod);
+      M_R_cholmod_start(&m_cholmod);
       setMode(CholmodLDLt);
     }
 
     CholmodDecomposition(const MatrixType& matrix)
       : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
     {
-      cholmod_start(&m_cholmod);
+      M_R_cholmod_start(&m_cholmod);
       compute(matrix);
     }
 
     ~CholmodDecomposition()
     {
       if(m_cholmodFactor)
-        cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
-      cholmod_finish(&m_cholmod);
+        M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
+      M_cholmod_finish(&m_cholmod);
     }
     
     inline Index cols() const { return m_cholmodFactor->n; }
@@ -279,11 +279,11 @@ class CholmodDecomposition
     {
       if(m_cholmodFactor)
       {
-        cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
+        M_cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
         m_cholmodFactor = 0;
       }
       cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      m_cholmodFactor = cholmod_analyze(&A, &m_cholmod);
+      m_cholmodFactor = M_cholmod_analyze(&A, &m_cholmod);
       
       this->m_isInitialized = true;
       this->m_info = Success;
@@ -301,7 +301,7 @@ class CholmodDecomposition
     {
       eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
       cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      cholmod_factorize(&A, m_cholmodFactor, &m_cholmod);
+      M_cholmod_factorize(&A, m_cholmodFactor, &m_cholmod);
       
       this->m_info = Success;
       m_factorizationIsOk = true;
@@ -322,14 +322,14 @@ class CholmodDecomposition
 
       // note: cd stands for Cholmod Dense
       cholmod_dense b_cd = viewAsCholmod(b.const_cast_derived());
-      cholmod_dense* x_cd = cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
+      cholmod_dense* x_cd = M_cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
       if(!x_cd)
       {
         this->m_info = NumericalIssue;
       }
       // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
       dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
-      cholmod_free_dense(&x_cd, &m_cholmod);
+      M_cholmod_free_dense(&x_cd, &m_cholmod);
     }
     
     /** \internal */
@@ -342,14 +342,14 @@ class CholmodDecomposition
 
       // note: cs stands for Cholmod Sparse
       cholmod_sparse b_cs = viewAsCholmod(b);
-      cholmod_sparse* x_cs = cholmod_spsolve(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
+      cholmod_sparse* x_cs = M_cholmod_spsolve(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
       if(!x_cs)
       {
         this->m_info = NumericalIssue;
       }
       // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
       dest = viewAsEigen<DestScalar,DestOptions,DestIndex>(*x_cs);
-      cholmod_free_sparse(&x_cs, &m_cholmod);
+      M_cholmod_free_sparse(&x_cs, &m_cholmod);
     }
     #endif // EIGEN_PARSED_BY_DOXYGEN
     
