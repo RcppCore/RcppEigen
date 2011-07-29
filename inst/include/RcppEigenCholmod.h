@@ -989,6 +989,9 @@ CHM_TR M_cholmod_allocate_triplet (size_t nrow, size_t ncol, size_t nzmax,
 
 int M_cholmod_scale(const_CHM_DN, int scale, CHM_SP, CHM_CM);
 
+// added in the Matrix package - the log of the determinant of the matrix that was factored
+double M_chm_factor_ldetL2(const_CHM_FR);
+
 #ifdef	__cplusplus
 }
 #endif
