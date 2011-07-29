@@ -311,8 +311,11 @@ enum CholmodMode {
 	{
 	    eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
 	    
-	    cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-	    if (M_cholmod_factorize(&A, m_cholmodFactor, &m_cholmod) != CHOLMOD_OK)
+	    cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
+		viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
+		viewAsCholmod(matrix);
+	    
+	    if (!M_cholmod_factorize(&A, m_cholmodFactor, &m_cholmod))
 		throw std::runtime_error("CholmodDecomposition.factorize() error");
 	    
 	    this->m_info = Success;
