@@ -146,7 +146,7 @@ MappedSparseMatrix<Scalar,Flags,Index> viewAsEigen(cholmod_sparse& cm)
 }
 
 enum CholmodMode {
-  CholmodAuto, CholmodSimplicialLLt, CholmodSupernodalLLt, CholmodLDLt
+  CholmodAuto, CholmodAutoLLt, CholmodSimplicialLLt, CholmodSupernodalLLt, CholmodLDLt
 };
 
 /** \brief A Cholesky factorization and solver based on Cholmod
@@ -198,6 +198,12 @@ enum CholmodMode {
 	inline Index cols() const { return m_cholmodFactor->n; }
 	inline Index rows() const { return m_cholmodFactor->n; }
 	inline bool  isInitialized() const {return m_isInitialized;}
+    inline bool        is_ll() const {return m_cholmodFactor->is_ll;}
+    inline bool     is_super() const {return m_cholmodFactor->is_super;}
+    inline bool is_monotonic() const {return m_cholmodFactor->is_monotonic;}
+    inline int         minor() const {return m_cholmodFactor->minor;}
+    inline int      ordering() const {return m_cholmodFactor->ordering;}
+    inline size_t   nonZeros() const {return is_super() ? 0 : m_cholmodFactor->nzmax;}
 	void setMode(CholmodMode mode)
 	{
 	    switch(mode)
@@ -205,6 +211,11 @@ enum CholmodMode {
 	    case CholmodAuto:
 		m_cholmod.final_asis = 1;
 		m_cholmod.supernodal = CHOLMOD_AUTO;
+		break;
+	    case CholmodAutoLLt:
+		m_cholmod.final_asis = 0;
+		m_cholmod.supernodal = CHOLMOD_AUTO;
+	        m_cholmod.final_ll = 1;
 		break;
 	    case CholmodSimplicialLLt:
 		m_cholmod.final_asis = 0;
@@ -347,7 +358,17 @@ enum CholmodMode {
 	    this->m_info = Success;
 	    m_factorizationIsOk = true;
 	}
-	
+
+	void factorize_p(const cholmod_sparse* chm, ArrayXi fset, double beta=0.)
+	{
+	    eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
+	    M_cholmod_factorize_p(chm, &beta, fset.data(), fset.size(),
+				  m_cholmodFactor, &m_cholmod);
+	    
+	    this->m_info = Success;
+	    m_factorizationIsOk = true;
+	}
+    
 	/** Returns a reference to the Cholmod's configuration
 	 *  structure to get a full control over the performed
 	 *  operations.
