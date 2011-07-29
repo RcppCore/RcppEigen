@@ -57,24 +57,56 @@ test.solveCholmod.R <- function() {
     using Eigen::CholmodAuto;
     using Eigen::Success;
 
-    List input(input_) ;
-    const SparseMatrix<double>      m1 = input[0];
-    const Map<VectorXd>             v1 = input[1];
-    SparseMatrix<double>            m2(m1.cols(), m1.cols());
-
+    List input(input_);
+    const MappedSparseMatrix<double> m1 = input[0];
+    const Map<VectorXd>         v1 = input[1];
+    SparseMatrix<double>        m2(m1.cols(), m1.cols());
     m2.selfadjointView<Lower>().rankUpdate(m1.adjoint());
 
-    CholmodDecomposition<SparseMatrix<double> > ff;
-    ff.setMode(CholmodAuto);
-    ff.compute(m2);
-    VectorXd                       res = ff.solve(m1.adjoint() * v1);
+    CholmodDecomposition<SparseMatrix<double> > ff(m2);
+    VectorXd                   res = ff.solve(m1.adjoint() * v1);
     
     return List::create(_["res"]   = res,
                         _["rows"]  = ff.rows(),
                         _["cols"]  = ff.cols());
 ',
-                      plugin = "RcppEigen",
-                      inc='#include "RcppEigenStubs.cpp"')
+                      plugin = "RcppEigen")
+
+    rr <- fx(KNex)
+    checkEquals(rr[[1]], as.vector(solve(crossprod(KNex[[1]]),
+                                         crossprod(KNex[[1]], KNex[[2]]))),
+                                       "Cholmod solution")
+}
+
+test.solveCholmodRect.R <- function() {
+    suppressMessages(require("Matrix", character.only=TRUE))
+    data("KNex", package = "Matrix")
+
+    fx <- cxxfunction( signature(input_ = "list"), '
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
+    using Eigen::Lower;
+    using Eigen::Map;
+    using Eigen::MappedSparseMatrix;
+    using Eigen::SparseMatrix;
+    using Eigen::CholmodDecomposition;
+    using Eigen::CholmodAuto;
+    using Eigen::Success;
+
+    List input(input_);
+    const MappedSparseMatrix<double> m1 = input[0];
+    const Map<VectorXd>         v1 = input[1];
+    SparseMatrix<double>        m2(m1.adjoint());
+
+    CholmodDecomposition<SparseMatrix<double> > ff(m2);
+    VectorXd                   res = ff.solve(m2 * v1);
+    
+    return List::create(_["res"]   = res,
+                        _["rows"]  = ff.rows(),
+                        _["cols"]  = ff.cols());
+',
+                      plugin = "RcppEigen")
+
     rr <- fx(KNex)
     checkEquals(rr[[1]], as.vector(solve(crossprod(KNex[[1]]),
                                          crossprod(KNex[[1]], KNex[[2]]))),
