@@ -393,7 +393,10 @@ enum CholmodMode {
 		this->m_info = NumericalIssue;
 	    }
 	    // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
-	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
+//	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
+	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>(b.rows(),b.cols());
+	    Scalar* xpt=reinterpret_cast<Scalar*>(x_cd->x);
+	    std::copy(xpt, xpt + b.rows() * b.cols(), dest.data());
 	    M_cholmod_free_dense(&x_cd, &m_cholmod);
 	}
 	
@@ -413,7 +416,17 @@ enum CholmodMode {
 		this->m_info = NumericalIssue;
 	    }
 	    // TODO optimize this copy by swapping when possible (be carreful with alignment, etc.)
-	    dest = viewAsEigen<DestScalar,DestOptions,DestIndex>(*x_cs);
+//	    dest = viewAsEigen<DestScalar,DestOptions,DestIndex>(*x_cs);
+	    size_t nnz=M_cholmod_nnz(x_cs, &m_cholmod);
+	    dest = SparseMatrix<DestScalar,DestOptions,DestIndex>(b.rows(), b.cols());
+	    dest.reserve(nnz);
+	    Scalar* xpt=reinterpret_cast<Scalar*>(x_cs->x);
+	    Index*  ppt=reinterpret_cast<Index*>(x_cs->p);
+	    Index*  ipt=reinterpret_cast<Index*>(x_cs->i);
+	    std::copy(xpt, xpt + nnz, dest._valuePtr());
+	    std::copy(ppt, ppt + size + 1, dest._outerIndexPtr());
+	    std::copy(ipt, ipt + nnz, dest._innerIndexPtr());
+			 
 	    M_cholmod_free_sparse(&x_cs, &m_cholmod);
 	}
 #endif // EIGEN_PARSED_BY_DOXYGEN
