@@ -396,7 +396,7 @@ enum CholmodMode {
 //	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
 	    dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>(b.rows(),b.cols());
 	    Scalar* xpt=reinterpret_cast<Scalar*>(x_cd->x);
-	    std::copy(xpt, xpt + b.rows() * b.cols(), dest.data());
+	    std::copy(xpt, xpt + b.rows() * b.cols(), dest.derived().data());
 	    M_cholmod_free_dense(&x_cd, &m_cholmod);
 	}
 	
@@ -423,9 +423,14 @@ enum CholmodMode {
 	    Scalar* xpt=reinterpret_cast<Scalar*>(x_cs->x);
 	    Index*  ppt=reinterpret_cast<Index*>(x_cs->p);
 	    Index*  ipt=reinterpret_cast<Index*>(x_cs->i);
-	    std::copy(xpt, xpt + nnz, dest._valuePtr());
-	    std::copy(ppt, ppt + size + 1, dest._outerIndexPtr());
-	    std::copy(ipt, ipt + nnz, dest._innerIndexPtr());
+	    // std::copy(xpt, xpt + nnz, dest._valuePtr());
+	    // std::copy(ppt, ppt + size + 1, dest._outerIndexPtr());
+	    // std::copy(ipt, ipt + nnz, dest._innerIndexPtr());
+	    for (int j = 0; j < b.cols(); ++j) {
+		dest.startVec(j);
+		for (int k = ppt[j]; k < ppt[j + 1]; ++k) dest.insertBack(ipt[k], j) = xpt[k];
+	    }
+	    dest.finalize();
 			 
 	    M_cholmod_free_sparse(&x_cs, &m_cholmod);
 	}
