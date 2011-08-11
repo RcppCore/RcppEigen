@@ -235,6 +235,24 @@ enum CholmodMode {
 	    }
 	}
 	
+    template<typename OtherDerived>
+    void solveInPlace(const MatrixBase<OtherDerived>& other, int type) const {
+	eigen_assert(m_factorizationIsOk && 
+		     "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
+	const Index size = m_cholmodFactor->n;
+	eigen_assert(size==other.rows());
+	    
+	// note: cd stands for Cholmod Dense
+	cholmod_dense b_cd = viewAsCholmod(other.const_cast_derived());
+	cholmod_dense* x_cd = M_cholmod_solve(type, m_cholmodFactor, &b_cd, &m_cholmod);
+	if(!x_cd) {
+	    this->m_info = NumericalIssue;
+	}
+	Scalar* xpt=reinterpret_cast<Scalar*>(x_cd->x);
+	std::copy(xpt, xpt + other.rows() * other.cols(), other.derived().data());
+	M_cholmod_free_dense(&x_cd, &m_cholmod);
+    }
+
 	void setSolveType(int type) {m_solveType = type;}
 
 	/** \brief Reports whether previous computation was successful.
