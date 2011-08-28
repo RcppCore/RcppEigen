@@ -69,7 +69,7 @@ LDL License:
 //   SimplicialCholeskyLDLt
 // };
 
-/** \brief A direct sparse Cholesky factorizations
+/** \brief A direct sparse Cholesky factorization
   *
   * These classes provide LL^T and LDL^T Cholesky factorizations of sparse matrices that are
   * selfadjoint and positive definite. The factorization allows for solving A.X = B where
