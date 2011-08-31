@@ -212,11 +212,6 @@ enum CholmodMode {
 		m_cholmod.final_asis = 1;
 		m_cholmod.supernodal = CHOLMOD_AUTO;
 		break;
-	    case CholmodAutoLLt:
-		m_cholmod.final_asis = 0;
-		m_cholmod.supernodal = CHOLMOD_AUTO;
-	        m_cholmod.final_ll = 1;
-		break;
 	    case CholmodSimplicialLLt:
 		m_cholmod.final_asis = 0;
 		m_cholmod.supernodal = CHOLMOD_SIMPLICIAL;
