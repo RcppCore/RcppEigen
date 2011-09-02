@@ -1,3 +1,81 @@
+2011-09-02  Douglas Bates <bates@stat.wisc.edu>
+
+	* DESCRIPTION, inst/include/Eigen/src/Core/util/Meta.h: New release.
+	  ifdef the use of "long long" using RCPP_HAS_LONG_LONG_TYPES (thanks,
+	  Dirk)
+
+2011-08-31  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  Delete my addition of a CholmodAutoLLt mode, which is not needed (I
+	  misunderstood something previously).
+
+2011-08-28  Douglas Bates <bates@stat.wisc.edu>
+
+	* many files in inst/include/Eigen and inst/include/unsupported:
+	  Upgrade to Eigen release 3.0.2
+
+2011-08-12  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  By-passing the const reference
+
+2011-08-11  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h: Add a
+	  solveInPlace method to try to avoid memory problems.
+
+2011-08-10  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  Attempted fix of problem of freeing Map'ed memory in the Cholmod
+	  solve.
+
+2011-07-31  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  Trying to fix the memory problems from the CholmodDecomposition solve
+	  methods - apparently unsuccessfully.
+
+2011-07-29  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h: Add
+	  LLtAuto method (which doesn't seem to work), more extractors and a
+	  factorize_p method for a const_CHM_SP argument.
+	* inst/include/RcppEigenCholmod.h: Add a declaration of log determinant
+	  squared function.
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h,
+	  inst/unitTests/runit.sparse.R: Allow rectangular matrix in
+	  CholmodDecomposition's factorize method. Test rectangular version of
+	  KNex example.
+
+2011-07-28  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h: Added
+	  a solveType member - there will be better ways of doing this
+	* inst/include/RcppEigenForward.h: Include the stubs unconditionally
+	* inst/include/RcppEigenStubs.cpp:
+	* inst/include/RcppEigenStubs.h: Inlined the function definitions so it
+	  is a header file now
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  Extended CholmodDecomposition analyzePattern and factorize to support
+	  rectangular matrices. Added factorize_p method, primarily for the
+	  factorization of A'A + I.
+	* DESCRIPTION, NAMESPACE, R/SHLIB.R, R/inline.R,
+	  inst/include/RcppEigen.h, inst/include/RcppEigenConfig.h,
+	  inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h,
+	  inst/include/unsupported/Eigen/SparseExtra,
+	  inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h,
+	  inst/skeleton/Makevars, inst/unitTests/runit.sparse.R: Add support for
+	  Cholmod functions linked through the Matrix package. Tests for same.
+	  Wrap of an Eigen::SparseMatrix now returns an S4 dgCMatrix object.
+	* inst/include/RcppEigenCholmod.h, inst/include/RcppEigenStubs.cpp:
+	  Create stubs and the Cholmod header. (To Do: make the stubs inline
+	  functions in a header file.)
+
+2011-07-27  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/unitTests/runit.sparse.R: Separate the tests for sparse matrices.
 2011-07-26  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/include/unsupported/Eigen/src/SparseExtra/SimplicialCholesky.h:
