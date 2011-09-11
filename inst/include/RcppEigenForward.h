@@ -34,9 +34,7 @@
 /* forward declarations */
 namespace Rcpp {
     /* support for wrap */
-    
-    template<typename T> SEXP wrap(const Eigen::Map<Eigen::SparseMatrix<T> >&);
-    
+   
     namespace traits {
 
 	/* support for as */
