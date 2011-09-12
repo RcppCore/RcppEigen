@@ -1,3 +1,14 @@
+2011-09-12  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
+	  Remove the solvetype specification for the solve method (but type is
+	  retained for solveInPlace).
+
+2011-09-11  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenForward.h: Remove forward declaration of
+	  non-existent templated function.
+
 2011-09-02  Douglas Bates <bates@stat.wisc.edu>
 
 	* DESCRIPTION, inst/include/Eigen/src/Core/util/Meta.h: New release.
