@@ -249,8 +249,6 @@ enum CholmodMode {
 	M_cholmod_free_dense(&x_cd, &m_cholmod);
     }
 
-	void setSolveType(int type) {m_solveType = type;}
-
 	/** \brief Reports whether previous computation was successful.
 	 *
 	 * \returns \c Success if computation was succesful,
@@ -401,7 +399,7 @@ enum CholmodMode {
 	    
 	    // note: cd stands for Cholmod Dense
 	    cholmod_dense b_cd = viewAsCholmod(b.const_cast_derived());
-	    cholmod_dense* x_cd = M_cholmod_solve(m_solveType, m_cholmodFactor, &b_cd, &m_cholmod);
+	    cholmod_dense* x_cd = M_cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
 	    if(!x_cd)
 	    {
 		this->m_info = NumericalIssue;
@@ -424,7 +422,7 @@ enum CholmodMode {
 	    
 	    // note: cs stands for Cholmod Sparse
 	    cholmod_sparse b_cs = viewAsCholmod(b);
-	    cholmod_sparse* x_cs = M_cholmod_spsolve(m_solveType, m_cholmodFactor, &b_cs, &m_cholmod);
+	    cholmod_sparse* x_cs = M_cholmod_spsolve(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
 	    if(!x_cs)
 	    {
 		this->m_info = NumericalIssue;
@@ -458,7 +456,6 @@ enum CholmodMode {
 	mutable cholmod_common m_cholmod;
 	cholmod_factor* m_cholmodFactor;
 	mutable ComputationInfo m_info;
-	mutable int m_solveType;
 	bool m_isInitialized;
 	int m_factorizationIsOk;
 	int m_analysisIsOk;
