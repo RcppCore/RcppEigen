@@ -1,0 +1,551 @@
+\documentclass[10pt]{article}
+%\VignetteIndexEntry{RcppEigen-intro}
+\usepackage{vmargin}
+\setmargrb{0.75in}{0.75in}{0.75in}{0.75in}
+
+\usepackage{color, alltt, bm}
+\usepackage[authoryear,round,longnamesfirst]{natbib}
+\usepackage[colorlinks]{hyperref}
+\definecolor{link}{rgb}{0,0,0.3}	%% next few lines courtesy of RJournal.sty
+\hypersetup{
+    colorlinks,%
+    citecolor=link,%
+    filecolor=link,%
+    linkcolor=link,%
+    urlcolor=link
+}
+
+\newcommand{\proglang}[1]{\textsf{#1}}
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+%% defined as a stop-gap measure til interaction with highlight is sorted out
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0,0,0}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.69,0.49,0}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{1,0,1}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.75,0.01,0.01}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.51,0.51,0}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.51,0.51,0.51}{\it{#1}}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.51,0.51,0.51}{\it{#1}}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0,0.51,0}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.33,0.33,0.33}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0,0,0}{\bf{#1}}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0,0.34,0.68}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0,0}{\bf{#1}}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0,0,0.51}{#1}}
+\definecolor{bgcolor}{rgb}{0.88,0.92,0.93}
+\newsavebox{\hlboxopenbrace}
+\newsavebox{\hlboxclosebrace}
+\newsavebox{\hlboxlessthan}
+\newsavebox{\hlboxgreaterthan}
+\newsavebox{\hlboxdollar}
+\newsavebox{\hlboxunderscore}
+\newsavebox{\hlboxand}
+\newsavebox{\hlboxhash}
+\newsavebox{\hlboxat}
+\newsavebox{\hlboxbackslash}
+\newsavebox{\hlboxpercent}
+\newsavebox{\hlboxhat}
+\setbox\hlboxopenbrace=\hbox{\verb.{.}
+\setbox\hlboxclosebrace=\hbox{\verb.}.}
+\setbox\hlboxlessthan=\hbox{\verb.<.}
+\setbox\hlboxgreaterthan=\hbox{\verb.>.}
+\setbox\hlboxdollar=\hbox{\verb.$.}
+\setbox\hlboxunderscore=\hbox{\verb._.}
+\setbox\hlboxand=\hbox{\verb.&.}
+\setbox\hlboxhash=\hbox{\verb.#.}
+\setbox\hlboxat=\hbox{\verb.@.}
+\setbox\hlboxbackslash=\hbox{\verb.\.}
+\setbox\hlboxpercent=\hbox{\verb.\%.}
+\setbox\hlboxhat=\hbox{\verb.^.}
+\def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}
+
+<<echo=FALSE,print=FALSE>>=
+prettyVersion <- packageDescription("RcppEigen")$Version
+prettyDate <- format(Sys.Date(), "%B %e, %Y")
+@
+
+\author{Douglas Bates}
+\title{An Introduction to \pkg{RcppEigen}}
+\date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
+
+<<echo=FALSE>>=
+link <- function( f, package, text = f, root = "http://finzi.psych.upenn.edu/R/library/" ){
+	h <- if( missing(package) ) {
+		as.character( help( f ) )
+	} else {
+		as.character( help( f, package = paste( package, sep = "" ) ) )
+	}
+	if( ! length(h) ){
+		sprintf( "\\\\textbf{%s}", f )
+	} else {
+		rx <- "^.*/([^/]*?)/help/(.*?)$"
+		package <- sub( rx, "\\1", h, perl = TRUE )
+		page <- sub( rx, "\\2", h, perl = TRUE )
+		sprintf( "\\\\href{%s%s/html/%s.html}{\\\\texttt{%s}}", root, package, page, text )
+	}
+}
+linkS4class <- function( cl, package, text = cl, root = "http://finzi.psych.upenn.edu/R/library/" ){
+	link( sprintf("%s-class", cl), package, text, root )
+}
+# this will be integrated to package highlight later
+ex_highlight <- function( file, external.highlight = TRUE, verbatim = FALSE ){
+	if( verbatim ){
+		writeLines( "\\begin{verbatim}" )
+		writeLines( readLines( file ) )
+		writeLines( "\\end{verbatim}" )
+	} else {
+		tf <- tempfile()
+		if( external.highlight ){
+			cmd <- sprintf( 'highlight --input="%s" --output="%s" --out-format=latex --pretty-symbols', file, tf )
+			tryCatch( {
+				system( cmd )
+				tex <- readLines( tf )
+				keep <- seq( which( tex == "\\noindent" ), which( tex == "\\normalfont" ) )
+				tex <- c(
+					"\\vspace{1em}\\noindent\\fbox{\\begin{minipage}{0.9\\textwidth}" ,
+					tex[ keep ],
+					"\\end{minipage}}\\vspace{1em}" )
+				writeLines( tex )
+			})
+		} else {
+			r = renderer_latex( minipage = TRUE, doc = FALSE )
+			tex <- highlight( file, renderer = r , output = NULL )
+			writeLines( tex )
+		}
+	}
+	invisible(NULL)
+}
+
+require( inline )
+require( RcppEigen )
+@
+
+\begin{document}
+\maketitle
+
+\abstract{
+  \noindent
+  The \pkg{RcppEigen} package provides access to the \pkg{Eigen}
+  \proglang{C++} template library from \proglang{R}. \pkg{Rcpp}
+  classes and especially the packages \proglang{C++} templated
+  functions \code{as} and \code{wrap} provide the ``glue'' for passing
+  objects from \proglang{R} to \proglang{C++} and back.
+}
+
+\section{Introduction}
+\label{sec:intro}
+
+As stated in the \pkg{Rcpp} vignette, ``Extending \pkg{Rcpp}''
+\begin{quote}
+  \pkg{Rcpp} facilitates data interchange between \proglang{R} and
+  \proglang{C++} through the templated functions \texttt{Rcpp::as} (for
+  conversion of objects from \proglang{R} to \proglang{C++}) and
+  \texttt{Rcpp::wrap} (for conversion from \proglang{C++} to \proglang{R}).
+\end{quote}
+The \pkg{RcppEigen} package provides the header files composing the
+\pkg{Eigen} \proglang{C++} template library and implementations of
+\texttt{Rcpp::as} and \texttt{Rcpp::wrap} for the \proglang{C++}
+classes defined in \pkg{Eigen}.
+
+The \pkg{Eigen} classes themselves provide a high-performance,
+versatile and comprehensive representation of dense and sparse
+matrices and vectors, as well as decompositions and other functions
+to be applied to these objects.  In the next section we introduce some
+of these classes and show how to interface to them from R.
+
+\section{Eigen classes}
+\label{sec:eclasses}
+
+Eigen provides templated classes for matrices, vectors and arrays.  As
+in many \proglang{C++} template libraries using template
+meta-programming
+\citep{Abrahams+Gurtovoy:2004:TemplateMetaprogramming}, the templates
+themselves are very complicated.  However, \pkg{Eigen} provides
+typedef's for the classes that correspond to \proglang{R} matrices and
+vectors, as shown in Table~\ref{tab:REigen}, and we will use these
+typedef's throughout this document.
+\begin{table}[tb]
+  \centering
+  \begin{tabular}{l l}
+    \hline
+    \multicolumn{1}{c}{\proglang{R} object type} & \multicolumn{1}{c}{\pkg{Eigen} class typedef}\\
+    \hline\\
+    numeric matrix & \code{MatrixXd}\\
+    integer matrix & \code{MatrixXi}\\
+    complex matrix & \code{MatrixXcd}\\
+    numeric vector & \code{VectorXd}\\
+    integer vector & \code{VectorXi}\\
+    complex vector & \code{VectorXcd}\\
+    \code{Matrix::dgCMatrix} & \code{SparseMatrix<double>}\\
+    \hline
+  \end{tabular}
+  \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
+  \label{tab:REigen}
+\end{table}
+
+The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
+\code{Eigen} namespace, which means that they must be written as
+\code{Eigen::MatrixXd}.  However, if we preface our use of these class
+names with a declaration like
+
+<<echo=FALSE>>=
+code <- 'using Eigen::MatrixXd;'
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+\\we can use these names without the qualifier.  I prefer this approach.
+
+\subsection{Mapped matrices in Eigen}
+\label{sec:mapped}
+
+Storage for the contents of matrices from the classes shown in
+Table~\ref{tab:REigen} is allocated and controlled by the class
+constructors and destructors.  Creating an instance of such a class
+from an \proglang{R} object involves copying its contents.  An
+alternative is to have the contents of the \proglang{R} matrix or
+vector mapped to the contents of the object from the Eigen class.  For
+dense matrices we use the Eigen templated class \code{Map}.  For
+sparse matrices we use the Eigen templated class \code{MappedSparseMatrix}.
+
+We must, of course, be careful not to modify the contents of the
+\proglang{R} object in the \proglang{C++} code.  It is a good idea to
+declare such objects as const.
+
+\subsection{Arrays in Eigen}
+\label{sec:arrays}
+
+For matrix and vector classes \pkg{Eigen} overloads the \texttt{'*'}
+operator to indicate matrix multiplication.  Occasionally we want
+component-wise operations instead of matrix operations.  The
+\code{Array} templated classes are used in \pkg{Eigen} for
+component-wise operations.  Most often we use the \code{array} method
+for Matrix or Vector objects to create the array.
+
+\subsection{Structured matrices in \pkg{Eigen}}
+\label{sec:structured}
+
+There are \pkg{Eigen} classes for matrices with special structure such
+as symmetric matrices, triangular matrices and banded matrices.  For
+dense matrices, these special structures are described as ``views'',
+meaning that the full dense matrix is stored but only part of the
+matrix is used in operations.  For a symmetric matrix we need to
+specify whether the lower triangle or the upper triangle is to be used as
+the contents, with the other triangle defined by the implicit symmetry.
+
+
+\section{Some simple examples}
+\label{sec:simple}
+
+\proglang{C++} functions to perform simple operations on matrices or
+vectors can follow a pattern of:
+\begin{enumerate}
+\item Map the \proglang{R} objects passed as arguments into Eigen objects.
+\item Create the result.
+\item Return \code{Rcpp::wrap} applied to the result.
+\end{enumerate}
+
+An idiom for the first step is
+
+<<echo=FALSE>>=
+code <- 'using Eigen::Map;
+using Eigen::MatrixXd;
+using Rcpp::as;
+
+const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));'
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+\\where \code{AA} is the name of the R object (called an \code{SEXP} in
+\proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
+
+The \code{cxxfunction} from the \pkg{inline} package for \proglang{R}
+and its \pkg{RcppEigen} plugin provide a convenient way of developing
+and debugging the \proglang{C++} code.  For actual production code we
+generally incorporate the \proglang{C++} source code files in a
+package and include the line \code{LinkingTo: Rcpp, RcppEigen} in the
+package's \code{DESCRIPTION} file.
+
+
+The \code{cxxfunction} with the \code{"Rcpp"} or \code{"RcppEigen"}
+plugins has the \code{as} and \code{wrap} functions already defined as
+\code{Rcpp::as} and \code{Rcpp::wrap}.  In the examples below we will
+omit these declarations.  Do remember that you will need them in
+\proglang{C++} source code for a package.
+
+The first few examples are simply for illustration as the operations
+shown could be more effectively performed directly in \proglang{R}.
+We do compare the results from \pkg{Eigen} to those from the direct
+\proglang{R} results.
+
+\subsection{Transpose of an integer matrix}
+\label{sec:transpose}
+
+We create a simple matrix of integers
+<<Adef>>=
+(A <- matrix(1:6, ncol=2))
+str(A)
+@ 
+and use the \code{transpose} method for the \pkg{Eigen::MatrixXi}
+class to return its transpose. 
+
+<<echo=FALSE>>=
+code <- 'using Eigen::Map;
+using Eigen::MatrixXi;
+                 // Map the integer matrix AA from R
+const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
+                 // evaluate and return the transpose of A
+const MatrixXi      At(A.transpose());
+return wrap(At);'
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+<<>>=
+ftrans <- cxxfunction(signature(AA = "matrix"),
+                      paste(readLines( "code.cpp" ), collapse = "\n"),
+                      plugin = "RcppEigen")
+(At <- ftrans(A))
+stopifnot(all.equal(At, t(A)))
+@
+
+For numeric or integer matrices the \code{adjoint} method is
+equivalent to the \code{transpose} method.  For complex matrices, the
+adjoint is the conjugate of the transpose.  In keeping with the
+conventions in the \pkg{Eigen} documentation we prefer the name
+\code{adjoint} with numeric or integer matrices.
+
+\subsection{Products and cross-products}
+\label{sec:products}
+
+As mentioned in Sec.~\ref{sec:arrays}, the \code{'*'} operator
+performs matrix multiplication on Matrix or Vector objects.
+<<echo=FALSE>>=
+code <- 'using Eigen::Map;
+using Eigen::MatrixXi;
+const Map<MatrixXi>    B(as<Map<MatrixXi> >(BB));
+const Map<MatrixXi>    C(as<Map<MatrixXi> >(CC));
+return List::create(_["A %*% B"]         = B * C,
+                    _["crossprod(A, B)"] = B.adjoint() * C);'
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+
+<<>>=
+fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"),
+                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+B <- matrix(1:4, ncol=2); C <- matrix(6:1, nrow=2)
+str(fp <- fprod(B, C))
+stopifnot(all.equal(fp[[1]], B %*% C), all.equal(fp[[2]], crossprod(B, C)))
+@
+
+Notice that the \code{create} method for the \pkg{Rcpp} class
+\code{List} implicitly applies \code{Rcpp::wrap} to its arguments.
+
+\subsection{Crossproduct of a single matrix}
+\label{sec:crossproduct}
+
+As shown in the last example, the \proglang{R} function
+\code{crossprod} calculates the product of the transpose of its first
+argument with its second argument.  The single argument form,
+\code{crossprod(X)}, evaluates $\bm X^\prime\bm X$.  We could, of course, calculate this product as
+<<eval=FALSE>>=
+t(X) %*% X
+@
+but \code{crossprod(X)} takes roughly half as long because
+the result is known to be symmetric.  The function \code{tcrossprod}
+evaluates \code{crossprod(t(X))} without actually forming the transpose.
+
+To express these calculations in Eigen we create a \code{SelfAdjointView},
+which is a dense matrix of which only one triangle is used, the other
+triangle being inferred from the symmetry.  (``self-adjoint'' is
+equivalent to symmetric when applied to non-complex matrices.)
+
+<<echo=FALSE>>=
+code <- 'using Eigen::Map;
+using Eigen::MatrixXi;
+using Eigen::Lower;
+
+const Map<MatrixXi> A(as<Map<MatrixXi> >(AA));
+const int           m(A.rows()), n(A.cols());                        
+MatrixXi AtA(MatrixXi(n, n).setZero().selfadjointView<Lower>().rankUpdate(A.adjoint()));
+MatrixXi AAt(MatrixXi(m, m).setZero().selfadjointView<Lower>().rankUpdate(A));
+
+return List::create(_["crossprod(A)"]  = AtA,
+                    _["tcrossprod(A)"] = AAt); '
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+<<>>=
+fcprd <- cxxfunction(signature(AA = "matrix"),
+                paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+str(crp <- fcprd(A))
+stopifnot(all.equal(crp[[1]], crossprod(A)), all.equal(crp[[2]], tcrossprod(A)))
+@
+
+To some, the expressions to construct \code{AtA} and \code{AAt} in
+that code fragment are compact and elegant.  To others they are
+hopelessly confusing.  If you find yourself in the latter group, you
+just need to read the expression left to right.  So, for example, we
+construct \code{AAt} by creating a general integer matrix of size
+$m\times m$ (where $\bm A$ is $m\times n$), ensure that all its
+elements are zero, regard it as a self-adjoint (i.e. symmetric) matrix
+using the elements in the lower triangle, then add $\bm A\bm A^\prime$
+to it and convert back to a general matrix form (i.e.the strict
+lower triangle is copied into the strict upper triangle).
+
+For these products we could use either the lower triangle or the upper
+triangle because the result is going to be symmetrized before being returned.
+
+\subsection{Cholesky decomposition of the crossprod}
+\label{sec:chol}
+
+The Cholesky decomposition of the positive-definite, symmetric matrix,
+$\bm A$, can be written in several forms.  Numerical analysts define
+the ``LLt'' form as the lower triangular matrix, $\bm L$, such that
+$\bm A=\bm L\bm L^\prime$ and the ``LDLt'' form as a unit lower
+triangular matrix $\bm L$ and a diagonal matrix $\bm D$ with positive
+diagonal elements such that $\bm A=\bm L\bm D\bm L^\prime$.
+Statisticians often write the decomposition as $\bm A=\bm R^\prime\bm
+R$ where $\bm R$ is an upper triangular matrix.  Of course, this $\bm
+R$ is simply the transpose of $\bm L$ from the ``LLt'' form.
+
+The templated \pkg{Eigen} classes for the LLt and LDLt forms are
+called \code{LLT} and \code{LDLT}.  In general we would preserve the
+objects from these classes so that we could use them for solutions of
+linear systems.  For illustration we simply return the matrix $\bm L$
+from the ``LLt'' form.
+
+Because the Cholesky decomposition involves taking square roots we
+switch to numeric matrices.
+<<storage>>=
+storage.mode(A) <- "double"
+@ 
+<<echo=FALSE>>=
+code <- 'using Eigen::Map;
+using Eigen::MatrixXd;
+using Eigen::LLT;
+using Eigen::Lower;
+
+const Map<MatrixXd> A(as<Map<MatrixXd> >(AA));
+const int           n(A.cols());
+const LLT<MatrixXd> llt(MatrixXd(n, n).setZero().
+                        selfadjointView<Lower>().
+                        rankUpdate(A.adjoint()));
+
+return List::create(_["L"] = MatrixXd(llt.matrixL()),
+                    _["R"] = MatrixXd(llt.matrixU()));'
+writeLines( code, "code.cpp" )
+@ 
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+<<>>=
+fchol <- cxxfunction(signature(AA = "matrix"),
+                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+(ll <- fchol(A))
+stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
+@
+
+\subsection{Determinant of the cross-product matrix}
+\label{sec:determinant}
+
+The ``D-optimal'' criterion for experimental design chooses the design
+that maximizes the determinant, $|\bm X^\prime\bm X|$, for the
+$n\times p$ model matrix (or Jacobian matrix), $\bm X$.  The
+determinant, $|\bm L|$, of the the $p\times p$ lower Cholesky factor
+$\bm L$, defined so that $\bm L\bm L^\prime=\bm X^\prime\bm X$, is
+the product of its diagonal elements.  (This is true for any
+triangular matrix.)  By the properties of determinants,
+\begin{displaymath}
+  |\bm X^\prime\bm X|=|\bm L\bm L^\prime|=|\bm L|\,|\bm L^\prime|=|\bm L|^2
+\end{displaymath}
+
+Alternatively, if we use the ``LDLt'' decomposition, $\bm L\bm D\bm
+L^\prime=\bm X^\prime\bm X$ where $\bm L$ is unit lower triangular and
+$\bm D$ is diagonal then $|\bm X^\prime\bm X|$ is the product of the
+diagonal elements of $\bm D$.  Because we know that the diagonals of
+$\bm D$ must be non-negative, we often evaluate the logarithm of the
+determinant as the sum of the logarithms of the diagonal elements of
+$\bm D$.
+
+<<echo=FALSE>>=
+code <- 'using Eigen::Lower;
+using Eigen::Map;
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
+const Map<MatrixXd>   A(as<Map<MatrixXd> >(AA));
+const int             n(A.cols());
+const MatrixXd      AtA(MatrixXd(n, n).setZero().
+                        selfadjointView<Lower>().rankUpdate(A.adjoint()));
+const MatrixXd     Lmat(AtA.llt().matrixL());
+const double       detL(Lmat.diagonal().prod());
+const VectorXd     Dvec(AtA.ldlt().vectorD());
+
+return List::create(_["d1"] = detL * detL,
+                    _["d2"] = Dvec.prod(),
+                    _["ld"] = Dvec.array().log().sum());'
+writeLines(code, "code.cpp")
+@ 
+<<echo=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+<<>>=
+fdet <- cxxfunction(signature(AA = "matrix"),
+                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+unlist(ll <- fdet(A))
+@
+
+\section{Least squares solutions}
+\label{sec:structured}
+
+
+
+
+\bibliographystyle{plainnat}
+\bibliography{Rcpp}
+
+
+<<echo=FALSE>>=
+unlink( "code.cpp" )
+@
+
+\end{document}
+
+\subsection{Transpose and adjoint of a complex matrix}
+\label{sec:complex}
+%% this example exposes a problem in converting Rcomplex* to std::complex<double>
+<<echo=FALSE,eval=FALSE>>=
+code <- '
+using Eigen::Map;
+using Eigen::MatrixXcd;
+  // Map the complex matrix A_ from R
+const Map<MatrixXcd>    A(as<Map<MatrixXcd> >(A_));
+return List::create(_["transpose"] = A.transpose(),
+                    _["adjoint"]   = A.adjoint());
+'
+writeLines( code, "code.cpp" )
+@
+<<echo=FALSE,eval=FALSE,results=tex>>=
+ex_highlight( "code.cpp" )
+@
+
+<<eval=FALSE>>=
+fadj <-
+    cxxfunction(signature( A_ = "matrix"),
+                paste(readLines( "code.cpp" ), collapse = "\n"),
+                plugin = "RcppEigen")
+A <- matrix(1:6 + 1i*(6:1), nc=2)
+fadj(A)
+@

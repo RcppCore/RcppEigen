@@ -1,8 +1,6 @@
 useDynLib(RcppEigen)
-#import(Rcpp)
 
 importClassesFrom("Matrix"
-                  , ddiMatrix
                   , dgCMatrix
                   , dgeMatrix
                   , dsCMatrix
