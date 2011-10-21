@@ -34,7 +34,10 @@ fastLm(X, \dots)
 
   \item{method}{an integer scalar with value 0 for the column-pivoted QR
     decomposition, 1 for the unpivoted QR decomposition, 2 for the LLT
-    Cholesky, 3 for the LDLT Cholesky.  Default is zero.}
+    Cholesky, 3 for the LDLT Cholesky, 4 for the Jacobi singular value
+    decomposition (SVD) and 5 for a method based on the
+    eigenvalue-eigenvector decomposition of
+    \eqn{\mathbf{X}^\prime\mathbf{X}}{X'X}.  Default is zero.} 
 
   \item{\dots}{not used}
 }
@@ -49,9 +52,11 @@ fastLm(X, \dots)
   a linear model fit, offering both a default and a formula interface as
   well as \code{print}, \code{summary} and \code{predict} methods.
 
-  Internally the \code{fastLm} function uses a QR decomposition with
-  column pivots, which is a rank-revealing decomposition, so that it can
-  handle rank-deficient cases effectively.
+  Internally the \code{fastLm} function, by default, uses a QR
+  decomposition with column pivots, which is a rank-revealing
+  decomposition, so that it can handle rank-deficient cases
+  effectively.  Other methods for determining least squares solutions
+  are available according to the value of the \code{method} argument.
   
   An example of the type of situation requiring extra care in checking
   for rank deficiency is a two-way layout with missing cells (see the
@@ -64,13 +69,14 @@ fastLm(X, \dots)
   \item{coefficients}{a vector of coefficients}
   \item{rank}{a scalar denoting the computed rank of the model matrix}
   \item{df.residual}{a scalar denoting the degrees of freedom in the model}
-  \item{stderr}{a vector of the (estimated) standard errors of the coefficient estimates}
+  \item{stderr}{a vector of the standard errors of the coefficient estimates}
   \item{s}{a numeric scalar - the root mean square for residuals}
   \item{residuals}{the vector of residuals}
   \item{fitted.values}{the vector of fitted value}
-  \item{Rinv}{the inverse of the upper-left r by r portion of matrix R
-    from the QR decomposition}
   \item{perm}{the 0-based permutation vector from the QR decomposition}
+  \item{unsc}{the unscaled variance-covariance matrix.  This is the
+  inverse (or pseudo-inverse in the rank-deficient case when using a
+  rank-revealing decomposition) of \eqn{\mathbf{X}^\prime\mathbf{X}}{X'X}.}
 
   \code{fastLm} returns a richer object which also includes the
      call argument similar to the \code{\link{lm}} or
@@ -85,8 +91,6 @@ fastLm(X, \dots)
   data(trees, package="datasets")
   mm <- cbind(1, log(trees$Girth))   # model matrix
   y  <- log(trees$Volume)            # response
-  crossprod(mm)
-  .Call("crossprod", mm, PACKAGE="RcppEigen")
 
   ## bare-bones direct interface
   flm <- fastLmPure(mm, y)
