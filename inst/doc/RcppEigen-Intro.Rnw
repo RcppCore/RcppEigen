@@ -167,11 +167,13 @@ typedef's for the classes that correspond to \proglang{R} matrices and
 vectors, as shown in Table~\ref{tab:REigen}, and we will use these
 typedef's throughout this document.
 \begin{table}[tb]
-  \centering
+  \centering 
+  \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
+  \label{tab:REigen}
   \begin{tabular}{l l}
     \hline
     \multicolumn{1}{c}{\proglang{R} object type} & \multicolumn{1}{c}{\pkg{Eigen} class typedef}\\
-    \hline\\
+    \hline
     numeric matrix & \code{MatrixXd}\\
     integer matrix & \code{MatrixXi}\\
     complex matrix & \code{MatrixXcd}\\
@@ -181,8 +183,6 @@ typedef's throughout this document.
     \code{Matrix::dgCMatrix} & \code{SparseMatrix<double>}\\
     \hline
   \end{tabular}
-  \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
-  \label{tab:REigen}
 \end{table}
 
 The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
@@ -331,8 +331,8 @@ code <- 'using Eigen::Map;
 using Eigen::MatrixXi;
 const Map<MatrixXi>    B(as<Map<MatrixXi> >(BB));
 const Map<MatrixXi>    C(as<Map<MatrixXi> >(CC));
-return List::create(_["A %*% B"]         = B * C,
-                    _["crossprod(A, B)"] = B.adjoint() * C);'
+return List::create(_["B %*% C"]         = B * C,
+                    _["crossprod(B, C)"] = B.adjoint() * C);'
 writeLines( code, "code.cpp" )
 @
 <<echo=FALSE,results=tex>>=
@@ -360,14 +360,28 @@ argument with its second argument.  The single argument form,
 <<eval=FALSE>>=
 t(X) %*% X
 @
-but \code{crossprod(X)} takes roughly half as long because
-the result is known to be symmetric.  The function \code{tcrossprod}
-evaluates \code{crossprod(t(X))} without actually forming the transpose.
+but \code{crossprod(X)} is roughly twice as fast because the result is
+known to be symmetric and only half the result needs to be
+calculated..  The function \code{tcrossprod} evaluates
+\code{crossprod(t(X))} without actually forming the transpose.
 
 To express these calculations in Eigen we create a \code{SelfAdjointView},
 which is a dense matrix of which only one triangle is used, the other
 triangle being inferred from the symmetry.  (``self-adjoint'' is
 equivalent to symmetric when applied to non-complex matrices.)
+
+The \pkg{Eigen} class name is \code{SelfAdjointView}.  The method for
+general matrices that produces such a view is called
+\code{selfadjointView}.  Both require specification of either the
+\code{Lower} or \code{Upper} triangle.
+
+For triangular matrices the class is \code{TriangularView} and the
+method is \code{triangularView}.  The triangle can be specified as
+\code{Lower}, \code{UnitLower}, \code{StrictlyLower} and the
+equivalent specifications for \code{Upper}.
+
+For self-adjoint views the \code{rankUpdate} method adds a scalar multiple
+(which defaults to 1) of $\bm A\bm A^\prime$ to the current symmetric matrix.
 
 <<echo=FALSE>>=
 code <- 'using Eigen::Map;
@@ -510,7 +524,18 @@ unlist(ll <- fdet(A))
 \section{Least squares solutions}
 \label{sec:structured}
 
-
+A common operation in statistical computing is calculating the least squares solution
+\begin{displaymath}
+  \widehat{\bm\beta}=\arg\min_{\beta}\|\bm y-\bm X\bm\beta\|^2
+\end{displaymath}
+where the model matrix, $\bm X$, is $n\times p$ ($n\ge p$) and $\bm y$
+is an $n$-dimensional response vector.  There are several ways based
+on matrix decompositions, to determine such a solution.  We have
+already seen two forms of the Cholesky decomposition: ``LLt'' and
+``LDLt'', that can be used to solve for $\widehat{\bm\beta}$.  Other
+decompositions that can be used as the QR decomposition, with or
+without column pivoting, the singular value decomposition and the
+eigendecomposition of a symmetric matrix.
 
 
 \bibliographystyle{plainnat}
