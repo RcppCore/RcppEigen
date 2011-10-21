@@ -521,10 +521,16 @@ fdet <- cxxfunction(signature(AA = "matrix"),
 unlist(ll <- fdet(A))
 @
 
+Note the use of the \code{array()} method in the calculation of the
+log-determinant.  Because the \code{log()} method applies to arrays,
+not to vectors or matrices, we must create an array from \code{Dvec}
+before applying the \code{log()} method.
+
 \section{Least squares solutions}
 \label{sec:structured}
 
-A common operation in statistical computing is calculating the least squares solution
+A common operation in statistical computing is calculating a least
+squares solution, $\widehat{\bm\beta}$, defined as
 \begin{displaymath}
   \widehat{\bm\beta}=\arg\min_{\beta}\|\bm y-\bm X\bm\beta\|^2
 \end{displaymath}
@@ -537,6 +543,40 @@ decompositions that can be used as the QR decomposition, with or
 without column pivoting, the singular value decomposition and the
 eigendecomposition of a symmetric matrix.
 
+One important consideration when determining least squares solutions
+is whether $\rank(\bm X)$ is $p$, a situation we describe by saying
+that $\bm X$ has ``full column rank''.   When $\bm X$ does not have
+full column rank we say it is ``rank deficient''.  
+
+Although the theoretical rank of a matrix is well-defined, its 
+evaluation in practice is not.  At best we determine a computational
+rank according to some tolerance.  We refer to decompositions that
+allow us to estimate the rank of the matrix in this way as
+``rank-revealing''. 
+
+Because the \code{model.matrix} function in \proglang{R} does a
+considerable amount of symbolic analysis behind the scenes, we usually
+end up with full-rank model matrices.  The common cases of
+rank-deficiency, such as incorporating both a constant term and a full
+set of indicators columns for the levels of a factor, are eliminated.
+Other, more subtle, situations will not be detected at this stage,
+however.  A simple example occurs when there is a ``missing cell'' in a
+two-way layout and the interaction of the two factors is included in
+the model.
+
+<<missingcell>>=
+dd <- data.frame(f1 = gl(4, 6, labels = LETTERS[1:4]),
+                 f2 = gl(3, 2, labels = letters[1:3]))[-(7:8), ]
+xtabs(~ f2 + f1, dd)     # one missing cell
+mm <- model.matrix(~ f1 * f2, dd)
+kappa(mm)                # large, indicating rank deficiency
+(c(rank=qr(mm)$rank, p=ncol(mm))) # alternative evaluation
+set.seed(1)
+dd$y <- mm %*% seq_len(ncol(mm)) + rnorm(nrow(mm), sd = 0.1)
+                         # lm detects the rank deficiency
+writeLines(capture.output(print(summary(lm(y ~ f1 * f2, dd)),
+                                signif.stars=FALSE))[9:22])
+@ 
 
 \bibliographystyle{plainnat}
 \bibliography{Rcpp}
