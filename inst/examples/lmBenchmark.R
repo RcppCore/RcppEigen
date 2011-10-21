@@ -20,7 +20,7 @@ exprs$lm.fit <- expression(stats::lm.fit(mm, y))
 ## column-pivoted QR decomposition - similar to lm.fit
 exprs$PivQR <- expression(.Call("fastLm", mm, y, 0L, PACKAGE="RcppEigen"))
 ## LDLt Cholesky decomposition with rank detection
-exprs$LDLt <- expression(.Call("fastLm", mm, y, 3L, PACKAGE="RcppEigen"))
+exprs$LDLt <- expression(.Call("fastLm", mm, y, 2L, PACKAGE="RcppEigen"))
 ## SVD
 exprs$SVD <- expression(.Call("fastLm", mm, y, 4L, PACKAGE="RcppEigen"))
 ## eigenvalues and eigenvectors of X'X
@@ -32,7 +32,7 @@ exprs$SymmEig <- expression(.Call("fastLm", mm, y, 5L, PACKAGE="RcppEigen"))
 ## Unpivoted  QR decomposition
 exprs$QR <- expression(.Call("fastLm", mm, y, 1L, PACKAGE="RcppEigen"))
 ## LLt Cholesky decomposition
-exprs$LLt <- expression(.Call("fastLm", mm, y, 2L, PACKAGE="RcppEigen"))
+exprs$LLt <- expression(.Call("fastLm", mm, y, 3L, PACKAGE="RcppEigen"))
 
 if (require("RcppArmadillo", character=TRUE, quietly=TRUE)) {
     exprs$arma <- expression(.Call("fastLm", mm, y, PACKAGE="RcppArmadillo"))
@@ -46,8 +46,7 @@ do_bench <- function(n=100000L, p=40L, nrep=20L, suppressSVD=(n > 100000L)) {
     mm <- cbind(1, matrix(rnorm(n * (p - 1L)), nc=p-1L))
     y <- rnorm(n)
     if (suppressSVD) exprs <- exprs[!names(exprs) %in% c("SVD", "GSL")]
-    cat(paste("lm benchmark for n = ", n, " and p = ", p, ": nrep = ",
-              nrep, "\n", sep=''))
+    cat("lm benchmark for n = ", n, " and p = ", p, ": nrep = ", nrep, "\n", sep='')
     do.call(benchmark, c(exprs,
                          list(order="relative",
                               columns = c("test", "relative",
