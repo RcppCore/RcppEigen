@@ -13,7 +13,7 @@ Description: R and Eigen integration using Rcpp.
  best implementations based on Lapack and level-3 BLAS.
  .
  The RcppEigen package includes the header files from the Eigen C++
- template library (currently version 3.0.2). Thus users do not need to
+ template library (currently version 3.0.3). Thus users do not need to
  install Eigen itself in order to use RcppEigen.
  .
  Eigen is licensed under the GNU LGPL version 3 or later, and also
@@ -21,7 +21,7 @@ Description: R and Eigen integration using Rcpp.
  bindings/bridge to Eigen) is licensed under the GNU GPL version 2 or
  later, as is the rest of Rcpp.
 License: GPL (>= 2)
-Depends: Rcpp (>= 0.9.5.1), methods
+Depends: Rcpp (>= 0.9.5.1)
 LazyLoad: yes
 LinkingTo: Rcpp
 Imports: Matrix
