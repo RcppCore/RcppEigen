@@ -125,16 +125,17 @@ require( RcppEigen )
 \abstract{
   \noindent
   The \pkg{RcppEigen} package provides access to the \pkg{Eigen}
-  \proglang{C++} template library from \proglang{R}. \pkg{Rcpp}
-  classes and instantiations of the \proglang{C++} templated functions
-  \code{as} and \code{wrap} from \pkg{Rcpp} provide the ``glue'' for
-  passing objects from \proglang{R} to \proglang{C++} and back.
+  \proglang{C++} template library for numerical linear algebra from
+  \proglang{R}. \pkg{Rcpp} \citep{JSS:Rcpp} classes and
+  specializations of the \proglang{C++} templated functions \code{as}
+  and \code{wrap} from \pkg{Rcpp} provide the ``glue'' for passing
+  objects from \proglang{R} to \proglang{C++} and back.
 }
 
 \section{Introduction}
 \label{sec:intro}
 
-As stated in the \pkg{Rcpp} vignette, ``Extending \pkg{Rcpp}''
+As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending \pkg{Rcpp}''
 \begin{quote}
   \pkg{Rcpp} facilitates data interchange between \proglang{R} and
   \proglang{C++} through the templated functions \texttt{Rcpp::as} (for
@@ -172,9 +173,9 @@ typedef's for common classes that correspond to \proglang{R} matrices and
 vectors, as shown in Table~\ref{tab:REigen}. We will use these
 typedef's throughout this document.
 \begin{table}[tb]
-  \centering 
   \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
   \label{tab:REigen}
+  \centering 
   \begin{tabular}{l l}
     \hline
     \multicolumn{1}{c}{\proglang{R} object type} & \multicolumn{1}{c}{\pkg{Eigen} class typedef}\\
@@ -271,7 +272,7 @@ ex_highlight( "code.cpp" )
 \\where \code{AA} is the name of the R object (called an \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
-The \code{cxxfunction} from the \pkg{inline} package for \proglang{R}
+The \Sexpr{link("cxxfunction")} from the \pkg{inline} \citep{CRAN:inline} package for \proglang{R}
 and its \pkg{RcppEigen} plugin provide a convenient way of developing
 and debugging the \proglang{C++} code.  For actual production code we
 generally incorporate the \proglang{C++} source code files in a
@@ -298,7 +299,7 @@ We create a simple matrix of integers
 (A <- matrix(1:6, ncol=2))
 str(A)
 @ 
-and use the \code{transpose} method for the \pkg{Eigen::MatrixXi}
+and use the \code{transpose} method for the \code{Eigen::MatrixXi}
 class to return its transpose. 
 
 <<echo=FALSE>>=
@@ -652,8 +653,8 @@ const HouseholderQR<MatrixXd> QR(X);
 const VectorXd           betahat(QR.solve(y));
 const VectorXd            fitted(X * betahat);
 const int                     df(n - p);
-const VectorXd                se(QR.matrixQR().topRows(m_p).triangularView<Upper>().
-                                 solve(MatrixXd::Identity(m_p,m_p)).rowwise().norm());'
+const VectorXd                se(QR.matrixQR().topRows(p).triangularView<Upper>().
+                                 solve(MatrixXd::Identity(p,p)).rowwise().norm());'
 writeLines( code, "code.cpp" )
 @ 
 <<echo=FALSE,results=tex>>=
@@ -757,7 +758,7 @@ writeLines( code, "code.cpp" )
 ex_highlight( "code.cpp" )
 @
 
-\subsection{Least squares with the SVD}
+\subsection{Least squares using the SVD}
 \label{sec:SVDls}
 
 With these definitions the code for least squares using the singular
@@ -789,7 +790,7 @@ happens that this solution is the minimum norm solution.
 The interpretation of the standard errors from this code is also
 problematic when $\bm X$ is rank-deficient.
 
-\subsection{Least squares with the eigendecomposition}
+\subsection{Least squares using the eigendecomposition}
 \label{sec:eigendecomp}
 
 The eigendecomposition of $\bm X^\prime\bm X$ is defined as
@@ -812,8 +813,8 @@ code <- 'using Eigen::SelfAdjointEigenSolver;
 const SelfAdjointEigenSolver<MatrixXd>
     VLV(MatrixXd(p, p).setZero().selfadjointView<Lower>.rankUpdate(X.adjoint()));
 const ArrayXd               D(eig.eigenvalues());
-const int                   r((D > D[m_p - 1] * threshold()).count());
-const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(), m_r, true));
+const int                   r((D > D[p - 1] * threshold()).count());
+const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(), r, true));
 const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
 const VectorXd             se(s * VDp.rowwise().norm());'
 writeLines( code, "code.cpp" )
@@ -822,7 +823,7 @@ writeLines( code, "code.cpp" )
 ex_highlight( "code.cpp" )
 @
 
-\subsection{Least squares with the column-pivoted QR decomposition}
+\subsection{Least squares using the column-pivoted QR decomposition}
 \label{sec:colPivQR}
 
 The column-pivoted QR decomposition provides results similar to those
@@ -870,9 +871,9 @@ const int                              r(PQR.rank());
 VectorXd                       betahat, fitted, se;
 if (r == X.cols()) {	// full rank case
     betahat  = PQR.solve(y);
-    fitted   = X * m_coef;
-    se       = Pmat * PQR.matrixQR().topRows(m_p).triangularView<Upper>().
-	       solve(MatrixXd::Identity(m_p, m_p)).rowwise().norm();
+    fitted   = X * betahat;
+    se       = Pmat * PQR.matrixQR().topRows(p).triangularView<Upper>().
+	       solve(MatrixXd::Identity(p, p)).rowwise().norm();
 } else {
     MatrixXd                      Rinv(PQR.matrixQR().topLeftCorner(r, r).
 				       triangularView<Upper>().
@@ -881,7 +882,7 @@ if (r == X.cols()) {	// full rank case
     betahat.head(r)                    = Rinv * effects.head(r);
     betahat                            = Pmat * betahat;
 			// create fitted values from effects
-			// (cannot use X * m_coef when X is rank-deficient)
+			// (cannot use X * betahat when X is rank-deficient)
     effects.tail(X.rows() - r).setZero();
     fitted                             = PQR.householderQ() * effects;
     se.head(r)                         = Rinv.rowwise().norm();
@@ -910,7 +911,7 @@ all.equal(unname(fitted(fm1)), fitted(fmSVD))
 all.equal(unname(residuals(fm1)), residuals(fmSVD))
 @ 
 The coefficients from the symmetric eigendecomposition method are the same as those from the SVD
-<<rankdeficientSVD>>=
+<<rankdeficientVLV>>=
 print(summary(fmVLV <- fastLm(y ~ f1 * f2, dd, method=5L)), signif.stars=FALSE)
 all.equal(coef(fmSVD), coef(fmVLV))
 all.equal(unname(fitted(fm1)), fitted(fmSVD))
@@ -925,10 +926,11 @@ natural question to ask is, ``Is it indeed fast to use these methods
 based on \pkg{Eigen}?''.  We have provided benchmarking code for these
 methods, plus the default method using \proglang{R}'s \code{lm}
 function and the \code{fastLm} implementations in the
-\pkg{RcppArmadillo} and \pkg{RcppGSL} packages, if they are installed.
-The benchmark code, which uses the \pkg{rbenchmark} package, is in a
-file named \code{lmBenchmark.R} in the \code{examples} subdirectory of
-the installed \pkg{RcppEigen} package.
+\pkg{RcppArmadillo} \citep{CRAN:RcppArmadillo} and \pkg{RcppGSL}
+\citep{CRAN:RcppGSL} packages, if they are installed.  The benchmark
+code, which uses the \pkg{rbenchmark} \citep{CRAN:rbenchmark} package,
+is in a file named \code{lmBenchmark.R} in the \code{examples}
+subdirectory of the installed \pkg{RcppEigen} package.
 
 
 It can be run as 
@@ -943,13 +945,13 @@ but the other methods do.)
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}
 \begin{table}[tb]
-  \centering
   \caption{\code{lmBenchmark} results on a desktop computer for the
     default size, $100,000\times 40$, full-rank model matrix running
     20 repetitions for each method.  Times (Elapsed, User and Sys) are
     in seconds.  The BLAS in use is a single-threaded version of Atlas
     (Automatically Tuned Linear Algebra System).}
   \label{tab:lmRes}
+  \centering
   \begin{tabular}{r r r r r}
     \hline
     \multicolumn{1}{c}{Method} & \multicolumn{1}{c}{Relative} &
@@ -979,8 +981,8 @@ Because there are 100,000 rows in $\bm X$ methods that decompose the
 whole $\bm X$ matrix (all the methods except those named above) will
 be at a disadvantage.
 
-The pivoted QR method is 1.6 times faster than R's \code{lm.fit} on
-this test and provides nearly the same information as \code{lm.fit}.
+The pivoted QR method is 1.6 times faster than R's \Sexpr{link("lm.fit")} on
+this test and provides nearly the same information as \Sexpr{link("lm.fit")}.
 Methods based on the singular value decomposition (SVD and GSL) are
 much slower but, as mentioned above, this is caused in part by $\bm X$
 having many more rows than columns.  The GSL method from the GNU
@@ -1039,8 +1041,8 @@ for return to \proglang{R}.
 \label{sec:sparse}
 
 \pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
-class \code{dgCMatrix} (from the \pkg{Matrix} package) can be mapped
-as shown below.
+class \Sexpr{linkS4class("dgCMatrix")} (from the \pkg{Matrix}
+\citep{CRAN:Matrix} package) can be mapped as shown below.
 
 <<echo=FALSE>>=
 code <- 'using Eigen::Map;
