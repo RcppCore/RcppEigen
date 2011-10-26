@@ -40,6 +40,14 @@ test.fastLm <- function() {
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 3L,
                   PACKAGE="RcppEigen")
+    flm4 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 4L,
+                  PACKAGE="RcppEigen")
+    flm5 <- .Call("fastLm",
+                  cbind(1, log(trees$Girth)),
+                  log(trees$Volume), 5L,
+                  PACKAGE="RcppEigen")
     fit <- lm(log(Volume) ~ log(Girth), data=trees)
     fitCoef <- unname(coef(fit))
     fitStdErr <- unname(coef(summary(fit))[, "Std. Error", drop = TRUE])
@@ -51,6 +59,10 @@ test.fastLm <- function() {
     checkEquals(flm2$se, fitStdErr, msg="fastLm2.stderr")
     checkEquals(flm3$coefficients, fitCoef, msg="fastLm3.coef")
     checkEquals(flm3$se, fitStdErr, msg="fastLm3.stderr")
+    checkEquals(flm4$coefficients, fitCoef, msg="fastLm0.coef")
+    checkEquals(flm4$se, fitStdErr, msg="fastLm0.stderr")
+    checkEquals(flm5$coefficients, fitCoef, msg="fastLm0.coef")
+    checkEquals(flm5$se, fitStdErr, msg="fastLm0.stderr")
 }
 
 
