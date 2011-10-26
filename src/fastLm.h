@@ -27,6 +27,8 @@
 namespace lmsol {
     using Eigen::ArrayXd;
     using Eigen::ColPivHouseholderQR;
+    using Eigen::DiagonalMatrix;
+    using Eigen::Dynamic;
     using Eigen::HouseholderQR;
     using Eigen::JacobiSVD;
     using Eigen::LDLT;
@@ -35,6 +37,7 @@ namespace lmsol {
     using Eigen::Map;
     using Eigen::MatrixXd;
     using Eigen::SelfAdjointEigenSolver;
+    using Eigen::SelfAdjointView;
     using Eigen::TriangularView;
     using Eigen::VectorXd;
     using Eigen::Upper;
@@ -47,26 +50,34 @@ namespace lmsol {
 
     class lm {
     protected:
-	Index      m_n;		/**< number of rows */
-	Index      m_p;		/**< number of columns */
-	VectorXd   m_coef;	/**< coefficient vector */
-	int        m_r;		/**< computed rank or NA_INTEGER */
-	int        m_df;	/**< residual degrees of freedom */
-	Indices    m_perm;	/**< column permutation */
-	VectorXd   m_fitted;	/**< vector of fitted values */
-	MatrixXd   m_unsc;	/**< unscaled variance-covariance  */
-	RealScalar m_prescribedThreshold; /**< user specified tolerance */
-	bool       m_usePrescribedThreshold;
+	Map<MatrixXd> m_X;	/**< model matrix */
+	Map<VectorXd> m_y;	/**< response vector */
+	Index         m_n;	/**< number of rows of X */
+	Index         m_p;	/**< number of columns of X */
+	VectorXd      m_coef;	/**< coefficient vector */
+	int           m_r;	/**< computed rank or NA_INTEGER */
+	int           m_df;	/**< residual degrees of freedom */
+	VectorXd      m_fitted;	/**< vector of fitted values */
+	VectorXd      m_se;	/**< standard errors  */
+	RealScalar    m_prescribedThreshold; /**< user specified tolerance */
+	bool          m_usePrescribedThreshold;
     public:
 	lm(const Map<MatrixXd>&, const Map<VectorXd>&);
-	lm&        setThreshold(const RealScalar&); // patterned after ColPivHouseholderQR code
-	RealScalar    threshold() const;
-	const VectorXd&    coef() const {return m_coef;}
-	int                rank() const {return m_r;}
-	int                  df() const {return m_df;}
-	const Indices&     perm() const {return m_perm;}
-	const VectorXd&  fitted() const {return m_fitted;}
-	const MatrixXd&    unsc() const {return m_unsc;}
+
+         // setThreshold and threshold are based on ColPivHouseholderQR methods
+	MatrixXd                        I_p() const {
+	    return MatrixXd::Identity(m_p, m_p);
+	}
+	RealScalar                threshold() const;
+	SelfAdjointView<MatrixXd,Lower> XtX() const {
+	    return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().rankUpdate(m_X.adjoint());
+	};
+	const VectorXd&                  se() const {return m_se;}
+	const VectorXd&                coef() const {return m_coef;}
+	const VectorXd&              fitted() const {return m_fitted;}
+	int                              df() const {return m_df;}
+	int                            rank() const {return m_r;}
+	lm&                    setThreshold(const RealScalar&); 
     };
 
     class ColPivQR : public lm {
