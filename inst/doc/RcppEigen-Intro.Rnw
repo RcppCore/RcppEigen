@@ -155,7 +155,7 @@ of these classes and show how to interface to them from R.
 \section{Eigen classes}
 \label{sec:eclasses}
 
-Eigen (\url{http://eigen.tuxfamily.org}) is a \proglang{C++} template
+\pkg{Eigen} (\url{http://eigen.tuxfamily.org}) is a \proglang{C++} template
 library providing classes for many forms of matrices, vectors, arrays
 and decompositions.  These classes are flexible and comprehensive
 allowing for both high performance and well structured code
@@ -223,12 +223,14 @@ practice is always to declare mapped objects as \code{const}.
 \subsection{Arrays in Eigen}
 \label{sec:arrays}
 
-For matrix and vector classes \pkg{Eigen} overloads the \texttt{'*'}
+For matrix and vector classes \pkg{Eigen} overloads the \texttt{`*'}
 operator to indicate matrix multiplication.  Occasionally we want
 component-wise operations instead of matrix operations.  The
 \code{Array} templated classes are used in \pkg{Eigen} for
 component-wise operations.  Most often we use the \code{array} method
-for Matrix or Vector objects to create the array.
+for Matrix or Vector objects to create the array.  On those occasions
+when we wish to convert an array to a matrix or vector object we use
+the \code{matrix} method.
 
 \subsection{Structured matrices in \pkg{Eigen}}
 \label{sec:structured}
@@ -329,7 +331,7 @@ conventions in the \pkg{Eigen} documentation we prefer the name
 \subsection{Products and cross-products}
 \label{sec:products}
 
-As mentioned in Sec.~\ref{sec:arrays}, the \code{'*'} operator
+As mentioned in Sec.~\ref{sec:arrays}, the \code{`*'} operator
 performs matrix multiplication on Matrix or Vector objects.
 <<echo=FALSE>>=
 code <- 'using Eigen::Map;
@@ -361,19 +363,20 @@ Notice that the \code{create} method for the \pkg{Rcpp} class
 As shown in the last example, the \proglang{R} function
 \code{crossprod} calculates the product of the transpose of its first
 argument with its second argument.  The single argument form,
-\code{crossprod(X)}, evaluates $\bm X^\prime\bm X$.  We could, of course, calculate this product as
+\code{crossprod(X)}, evaluates $\bm X^\prime\bm X$.  We could, of
+course, calculate this product as
 <<eval=FALSE>>=
 t(X) %*% X
 @
 but \code{crossprod(X)} is roughly twice as fast because the result is
-known to be symmetric and only half the result needs to be
-calculated..  The function \code{tcrossprod} evaluates
-\code{crossprod(t(X))} without actually forming the transpose.
+known to be symmetric and only one triangle needs to be calculated.
+The function \code{tcrossprod} evaluates \code{crossprod(t(X))}
+without actually forming the transpose.
 
 To express these calculations in Eigen we create a \code{SelfAdjointView},
 which is a dense matrix of which only one triangle is used, the other
-triangle being inferred from the symmetry.  (``self-adjoint'' is
-equivalent to symmetric when applied to non-complex matrices.)
+triangle being inferred from the symmetry.  (``Self-adjoint'' is
+equivalent to symmetric for non-complex matrices.)
 
 The \pkg{Eigen} class name is \code{SelfAdjointView}.  The method for
 general matrices that produces such a view is called
@@ -421,7 +424,7 @@ construct \code{AAt} by creating a general integer matrix of size
 $m\times m$ (where $\bm A$ is $m\times n$), ensure that all its
 elements are zero, regard it as a self-adjoint (i.e. symmetric) matrix
 using the elements in the lower triangle, then add $\bm A\bm A^\prime$
-to it and convert back to a general matrix form (i.e.the strict
+to it and convert back to a general matrix form (i.e. the strict
 lower triangle is copied into the strict upper triangle).
 
 For these products we could use either the lower triangle or the upper
@@ -457,8 +460,8 @@ using Eigen::MatrixXd;
 using Eigen::LLT;
 using Eigen::Lower;
 
-const Map<MatrixXd> A(as<Map<MatrixXd> >(AA));
-const int           n(A.cols());
+const Map<MatrixXd>   A(as<Map<MatrixXd> >(AA));
+const int             n(A.cols());
 const LLT<MatrixXd> llt(MatrixXd(n, n).setZero().
                         selfadjointView<Lower>().rankUpdate(A.adjoint()));
 
@@ -484,8 +487,8 @@ that maximizes the determinant, $|\bm X^\prime\bm X|$, for the
 $n\times p$ model matrix (or Jacobian matrix), $\bm X$.  The
 determinant, $|\bm L|$, of the $p\times p$ lower Cholesky factor
 $\bm L$, defined so that $\bm L\bm L^\prime=\bm X^\prime\bm X$, is
-the product of its diagonal elements.  (This is true for any
-triangular matrix.)  By the properties of determinants,
+the product of its diagonal elements, as is the case for any
+triangular matrix.  By the properties of determinants,
 \begin{displaymath}
   |\bm X^\prime\bm X|=|\bm L\bm L^\prime|=|\bm L|\,|\bm L^\prime|=|\bm L|^2
 \end{displaymath}
@@ -602,7 +605,7 @@ stopifnot(all.equal(lltFit[["Std. Error"]],
 
 There are several aspects of the \proglang{C++} code worth mentioning.
 The \code{solve} method for the \code{LLT} object evaluates, in this
-case, $\left(\bm X^\prime\bm X\right)^{-1}\bm X^\prime y$ but without
+case, $\left(\bm X^\prime\bm X\right)^{-1}\bm X^\prime\bm y$ but without
 actually evaluating the inverse.  The calculation of the residuals,
 $\bm y-\widehat{\bm y}$, can be written, as in \proglang{R}, as
 \code{y - fitted}. (But note that \pkg{Eigen} classes do not have a
@@ -614,14 +617,14 @@ evaluate $\bm L^{-1}$ to obtain the standard errors.  Note also the
 use of the \code{colwise} method in the evaluation of the standard errors.
 
 In the descriptions of other methods for solving least squares
-problems, much of the code parallels that shown here and we omit this.
-We show only the evaluation of the coefficients, the rank and the
-standard errors.  Actually, we only calculate the standard errors up
-to the scalar multiple of $s$, the residual standard error, in these
-code fragments.  The calculation of the residuals and $s$ and the
-scaling of the coefficient standard errors is the same for all
-methods.  (See the file \code{fastLm.cpp} of the \pkg{RcppEigen}
-source package for details.)
+problems, much of the code parallels that shown here.  We will omit
+the redundant parts and show only the evaluation of the coefficients,
+the rank and the standard errors.  Actually, we only calculate the
+standard errors up to the scalar multiple of $s$, the residual
+standard error, in these code fragments.  The calculation of the
+residuals and $s$ and the scaling of the coefficient standard errors
+is the same for all methods.  (See the files \code{fastLm.h} and
+\code{fastLm.cpp} in the \pkg{RcppEigen} source package for details.)
 
 \subsection{Least squares using the unpivoted QR decomposition}
 \label{sec:QR}
@@ -631,11 +634,11 @@ A QR decomposition has the form
   \bm X=\bm Q\bm R=\bm Q_1\bm R_1
 \end{displaymath}
 where $\bm Q$ is an $n\times n$ orthogonal matrix, which means that
-$\bm Q^\prime\bm Q=\bm Q\bm Q^\prime=\bm I_n$, and $\bm R$ is $n\times
-p$ and zero below the main diagonal.  The $n\times p$ matrix $\bm Q_1$
-is the first $p$ columns of $\bm Q$ and the $p\times p$ upper
-triangular matrix $\bm R_1$ is the top $p$ rows of $\bm R$.  There are
-three \pkg{Eigen} classes for the QR decomposition:
+$\bm Q^\prime\bm Q=\bm Q\bm Q^\prime=\bm I_n$, and the $n\times p$
+matrix $\bm R$ is zero below the main diagonal.  The $n\times p$
+matrix $\bm Q_1$ is the first $p$ columns of $\bm Q$ and the $p\times
+p$ upper triangular matrix $\bm R_1$ is the top $p$ rows of $\bm R$.
+There are three \pkg{Eigen} classes for the QR decomposition:
 \code{HouseholderQR} provides the basic QR decomposition using
 Householder transformations, \code{ColPivHouseholderQR} incorporates
 column pivots and \code{FullPivHouseholderQR} incorporates both row
@@ -650,7 +653,7 @@ const VectorXd           betahat(QR.solve(y));
 const VectorXd            fitted(X * betahat);
 const int                     df(n - p);
 const VectorXd                se(QR.matrixQR().topRows(m_p).triangularView<Upper>().
-	                         solve(MatrixXd::Identity(m_p,m_p)).rowwise().norm());'
+                                 solve(MatrixXd::Identity(m_p,m_p)).rowwise().norm());'
 writeLines( code, "code.cpp" )
 @ 
 <<echo=FALSE,results=tex>>=
@@ -705,7 +708,7 @@ The \code{lm} function for fitting linear models in \proglang{R} uses
 a rank-revealing form of the QR decomposition.  When the model matrix
 is determined to be rank deficient, according to the threshold used in
 \proglang{R}'s QR decomposition, the model matrix is reduced to
-$\rank{X}$ columns by pivoting selected columns (those that are
+$\rank{(\bm X)}$ columns by pivoting selected columns (those that are
 apparently linearly dependent on columns to their left) to the right
 hand side of the matrix.  A solution for this reduced model matrix is
 determined and the coefficients and standard errors for the redundant
@@ -720,7 +723,7 @@ eigendecomposition of $\bm X^\prime\bm X$.  The SVD is of the form
 where $\bm U$ is an orthogonal $n\times n$ matrix and $\bm U_1$ is its
 leftmost $p$ columns, $\bm D$ is $n\times p$ and zero off the main
 diagonal so that $\bm D_1$ is a $p\times p$ diagonal matrix with
-non-decreasing positive diagonal elements, and $\bm V$ is a $p\times
+non-decreasing non-negative diagonal elements, and $\bm V$ is a $p\times
 p$ orthogonal matrix.  The pseudo-inverse of $\bm D_1$, written $\bm
 D_1^+$ is a $p\times p$ diagonal matrix whose first $r=\rank(\bm X)$
 diagonal elements are the inverses of the corresponding diagonal
@@ -732,15 +735,20 @@ singular value (i.e. the $(1,1)$ element of $\bm D$).
 
 We define a utility function, \code{Dplus} to return the
 pseudo-inverse as a diagonal matrix, given the singular values (the
-diagonal of $\bm D$) and the apparent rank.
+diagonal of $\bm D$) and the apparent rank.  To be able to use this
+function with the eigendecomposition where the eigenvalues are in
+increasing order we include a Boolean argument \code{rev} indicating
+whether the order is reversed.
 
 <<echo=FALSE>>=
 code <- 'using Eigen::DiagonalMatrix;
 using Eigen::Dynamic;
 
-inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D, int r) {
+inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
+                                             int r, bool rev=false) {
     VectorXd   Di(VectorXd::Constant(D.size(), 0.));
-    Di.head(r)    = D.head(r).inverse();
+    if (rev) Di.tail(r)  = D.tail(r).inverse();
+    else Di.head(r)      = D.head(r).inverse();
     return DiagonalMatrix<double, Dynamic>(Di);
 }'
 writeLines( code, "code.cpp" )
@@ -773,7 +781,7 @@ ex_highlight( "code.cpp" )
 
 In the rank-deficient case this code will produce a complete set of
 coefficients and their standard errors.  It is up to the user to note
-that the rank is less than $p$, the number of columns in $\bm X$ and
+that the rank is less than $p$, the number of columns in $\bm X$, and
 hence that the estimated coefficients are just one of an infinite
 number of coefficient vectors that produce the same fitted values.  It
 happens that this solution is the minimum norm solution.
@@ -803,12 +811,11 @@ code <- 'using Eigen::SelfAdjointEigenSolver;
 
 const SelfAdjointEigenSolver<MatrixXd>
     VLV(MatrixXd(p, p).setZero().selfadjointView<Lower>.rankUpdate(X.adjoint()));
-const ArrayXd               D(VLV.eigenvalues().array().sqrt());
-const int                   r((D > D[0] * threshold()).count());
-const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
+const ArrayXd               D(eig.eigenvalues());
+const int                   r((D > D[m_p - 1] * threshold()).count());
+const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(), m_r, true));
 const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
-const int                  df(n - p);
-const VectorXd             se(s * VDp.rowwise().squaredNorm().array().sqrt());'
+const VectorXd             se(s * VDp.rowwise().norm());'
 writeLines( code, "code.cpp" )
 @ 
 <<echo=FALSE,results=tex>>=
@@ -846,7 +853,7 @@ easier to employ the relationship
 \begin{displaymath}
   \widehat{\bm y} = \bm Q_1\bm Q_1^\prime\bm y=\bm Q
   \begin{bmatrix}
-    \bm I_r & \bm 0
+    \bm I_r & \bm 0\\
     \bm 0   & \bm 0
   \end{bmatrix}
   \bm Q^\prime\bm y
@@ -887,7 +894,7 @@ ex_highlight( "code.cpp" )
 @
 
 Just to check that this does indeed provide the desired answer
-<<rankdeficient>>=
+<<rankdeficientPQR>>=
 print(summary(fmPQR <- fastLm(y ~ f1 * f2, dd)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmPQR))
 all.equal(unname(fitted(fm1)), fitted(fmPQR))
@@ -896,34 +903,42 @@ all.equal(unname(residuals(fm1)), residuals(fmPQR))
 
 The rank-revealing SVD method produces the same fitted
 values but not the same coefficients.
-<<rankdeficient>>=
+<<rankdeficientSVD>>=
 print(summary(fmSVD <- fastLm(y ~ f1 * f2, dd, method=4L)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmSVD))
 all.equal(unname(fitted(fm1)), fitted(fmSVD))
 all.equal(unname(residuals(fm1)), residuals(fmSVD))
 @ 
+The coefficients from the symmetric eigendecomposition method are the same as those from the SVD
+<<rankdeficientSVD>>=
+print(summary(fmVLV <- fastLm(y ~ f1 * f2, dd, method=5L)), signif.stars=FALSE)
+all.equal(coef(fmSVD), coef(fmVLV))
+all.equal(unname(fitted(fm1)), fitted(fmSVD))
+all.equal(unname(residuals(fm1)), residuals(fmSVD))
+@ 
 
-For this example the method based on the eigendecomposition gets the rank wrong
 \subsection{Comparative speed}
 
 In the \pkg{RcppEigen} package the \proglang{R} function to fit linear
 models using the methods described above is called \code{fastLm}.  The
 natural question to ask is, ``Is it indeed fast to use these methods
-based on \pkg{Eigen}?''.  We have provided a comparative benchmarking
-of these methods, plus the default method using \proglang{R}'s
-\code{lm} function and the \code{fastLm} implementations in the
-\pkg{RcppArmadillo} and \pkg{RcppGSL} packages, if they are
-installed.  The benchmark is a file called \code{lmBenchmark.R} and it
-uses the \pkg{rbenchmark} package.
+based on \pkg{Eigen}?''.  We have provided benchmarking code for these
+methods, plus the default method using \proglang{R}'s \code{lm}
+function and the \code{fastLm} implementations in the
+\pkg{RcppArmadillo} and \pkg{RcppGSL} packages, if they are installed.
+The benchmark code, which uses the \pkg{rbenchmark} package, is in a
+file named \code{lmBenchmark.R} in the \code{examples} subdirectory of
+the installed \pkg{RcppEigen} package.
+
 
 It can be run as 
 <<benchmark,eval=FALSE>>=
 source(system.file("examples", "lmBenchmark.R", package="RcppEigen"))
 @
-Results will vary according to the speed of the processor and the
+Results will vary according to the speed of the processor, the
 number of cores and the implementation of the BLAS (Basic Linear
-Algebra Subroutines) that is being used.  (\pkg{Eigen} methods do not
-use the BLAS but the other methods do.)
+Algebra Subroutines) used.  (\pkg{Eigen} methods do not use the BLAS
+but the other methods do.)
 
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}
@@ -1036,7 +1051,7 @@ using Eigen::VectorXd;
 const MappedSparseMatrix<double>  A(as<MappedSparseMatrix<double> >(AA));
 const Map<VectorXd>               y(as<Map<VectorXd> >(yy));
 const SparseMatrix<double>       At(A.adjoint());
-return List::create(_["At"] = At,
+return List::create(_["At"]  = At,
                     _["Aty"] = At * y);'
 writeLines( code, "code.cpp" )
 @
