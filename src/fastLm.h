@@ -71,7 +71,7 @@ namespace lmsol {
 	    return MatrixXd::Identity(m_p, m_p);
 	}
 	RealScalar                threshold() const;
-	SelfAdjointView<MatrixXd,Lower> XtX() const;
+	MatrixXd                        XtX() const;
 	const VectorXd&                  se() const {return m_se;}
 	const VectorXd&                coef() const {return m_coef;}
 	const VectorXd&              fitted() const {return m_fitted;}
