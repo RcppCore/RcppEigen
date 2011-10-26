@@ -34,11 +34,11 @@ exprs$QR <- expression(.Call("fastLm", mm, y, 1L, PACKAGE="RcppEigen"))
 ## LLt Cholesky decomposition
 exprs$LLt <- expression(.Call("fastLm", mm, y, 3L, PACKAGE="RcppEigen"))
 
-if (require("RcppArmadillo", character=TRUE, quietly=TRUE)) {
+if (suppressMessages(require("RcppArmadillo", character=TRUE, quietly=TRUE))) {
     exprs$arma <- expression(.Call("fastLm", mm, y, PACKAGE="RcppArmadillo"))
 }
 
-if (require("RcppGSL", character=TRUE, quietly=TRUE)) {
+if (suppressMessages(require("RcppGSL", character=TRUE, quietly=TRUE))) {
     exprs$GSL <- expression(.Call("fastLm", mm, y, PACKAGE="RcppGSL"))
 }
 
@@ -55,3 +55,9 @@ do_bench <- function(n=100000L, p=40L, nrep=20L, suppressSVD=(n > 100000L)) {
 }
 
 print(do_bench())
+
+sessionInfo()
+
+.Call("eigen_version", FALSE, PACKAGE="RcppEigen")
+
+.Call("Eigen_SSE", FALSE, PACKAGE="RcppEigen")
