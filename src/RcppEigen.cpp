@@ -21,21 +21,32 @@
 
 #include <RcppEigen.h>
 
-extern "C" SEXP eigen_version(SEXP single_){
-    using Rcpp::_;
-    using Rcpp::IntegerVector;
-    using Rcpp::wrap;
-
-    bool single = Rcpp::as<bool>(single_) ;
-    if( single ){
-	return wrap( 10000 * EIGEN_WORLD_VERSION +
-		     100 * EIGEN_MAJOR_VERSION + 
-		     EIGEN_MINOR_VERSION ) ;
+extern "C" {
+    SEXP eigen_version(SEXP single_){
+	using Rcpp::_;
+	using Rcpp::IntegerVector;
+	
+	BEGIN_RCPP;
+	bool single = Rcpp::as<bool>(single_) ;
+	if( single ){
+	    return Rcpp::wrap( 10000 * EIGEN_WORLD_VERSION +
+			       100 * EIGEN_MAJOR_VERSION + 
+			       EIGEN_MINOR_VERSION ) ;
+	}
+	
+	return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
+				     _["minor"] = EIGEN_MAJOR_VERSION,
+				     _["patch"] = EIGEN_MINOR_VERSION);
+	END_RCPP;
     }
 
-    return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
-				 _["minor"] = EIGEN_MAJOR_VERSION,
-				 _["patch"] = EIGEN_MINOR_VERSION);
+    SEXP Eigen_SSE() {
+	BEGIN_RCPP;
+	return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
+	END_RCPP;
+    }
 }
+
+
 
 
