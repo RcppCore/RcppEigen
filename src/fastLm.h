@@ -27,6 +27,8 @@
 namespace lmsol {
     using Eigen::ArrayXd;
     using Eigen::ColPivHouseholderQR;
+    using Eigen::ComputeThinU;
+    using Eigen::ComputeThinV;
     using Eigen::DiagonalMatrix;
     using Eigen::Dynamic;
     using Eigen::HouseholderQR;
@@ -69,9 +71,7 @@ namespace lmsol {
 	    return MatrixXd::Identity(m_p, m_p);
 	}
 	RealScalar                threshold() const;
-	SelfAdjointView<MatrixXd,Lower> XtX() const {
-	    return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().rankUpdate(m_X.adjoint());
-	};
+	SelfAdjointView<MatrixXd,Lower> XtX() const;
 	const VectorXd&                  se() const {return m_se;}
 	const VectorXd&                coef() const {return m_coef;}
 	const VectorXd&              fitted() const {return m_fitted;}

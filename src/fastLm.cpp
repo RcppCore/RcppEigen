@@ -49,13 +49,19 @@ namespace lmsol {
 	  m_usePrescribedThreshold(false) {
     }
 
-    lm& lm::setThreshold(const RealScalar& threshold)
-    {
+    lm& lm::setThreshold(const RealScalar& threshold) {
 	m_usePrescribedThreshold = true;
 	m_prescribedThreshold = threshold;
 	return *this;
     }
 
+    SelfAdjointView<MatrixXd,Lower> lm::XtX() const {
+	return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().
+	    rankUpdate(m_X.adjoint());
+    }
+// For some reason that function returning a SelfAdjointView encounters a bad_alloc error
+// Use a macro for the time being
+#define XtX MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().rankUpdate(m_X.adjoint())
     /** Returns the threshold that will be used by certain methods such as rank().
      * 
      *  The default value comes from experimenting (see "LU precision
@@ -64,13 +70,13 @@ namespace lmsol {
      *
      *  @return The user-prescribed threshold or the default.
      */
-    RealScalar lm::threshold() const
-    {
+    RealScalar lm::threshold() const {
 	return m_usePrescribedThreshold ? m_prescribedThreshold
 	    : numeric_limits<double>::epsilon() * m_p; 
     }
 
-    ColPivQR::ColPivQR(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
+    ColPivQR::ColPivQR(const Map<MatrixXd> &X, const Map<VectorXd> &y)
+	: lm(X, y) {
 	ColPivHouseholderQR<MatrixXd> PQR(X); // decompose the model matrix
 	Permutation                  Pmat(PQR.colsPermutation());
 	m_r                               = PQR.rank();
@@ -89,7 +95,7 @@ namespace lmsol {
 	m_coef.head(m_r)                  = Rinv * effects.head(m_r);
 	m_coef                            = Pmat * m_coef;
 				// create fitted values from effects
-				// (can't use X * m_coef when X is rank-deficient)
+				// (can't use X*m_coef if X is rank-deficient)
 	effects.tail(m_df).setZero();
 	m_fitted                          = PQR.householderQ() * effects;
 	m_se.head(m_r)                    = Rinv.rowwise().norm();
@@ -98,36 +104,40 @@ namespace lmsol {
     
     QR::QR(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	HouseholderQR<MatrixXd> QR(X);
-	m_se                       = QR.matrixQR().topRows(m_p).
-	    triangularView<Upper>().solve(I_p()).rowwise().norm();
 	m_coef                     = QR.solve(y);
 	m_fitted                   = X * m_coef;
+	m_se                       = QR.matrixQR().topRows(m_p).
+	    triangularView<Upper>().solve(I_p()).rowwise().norm();
     }
     
     
     Llt::Llt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	LLT<MatrixXd>  Ch(XtX());
+	LLT<MatrixXd>  Ch(XtX);
 	m_coef            = Ch.solve(X.adjoint() * y);
 	m_fitted          = X * m_coef;
 	m_se              = Ch.matrixL().solve(I_p()).colwise().norm();
     }
     
-    Ldlt::Ldlt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	LDLT<MatrixXd> Ch(XtX());
-	m_coef            = Ch.solve(X.adjoint() * y);
-	m_fitted          = X * m_coef;
-	m_se              = Ch.solve(I_p()).diagonal().array().sqrt();
-    }
-    
-    inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D, Index r, bool rev=false) {
+    inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
+						 Index r, bool rev=false) {
 	VectorXd   Di(VectorXd::Constant(D.size(), 0.));
 	if (rev) Di.tail(r)  = D.tail(r).inverse();
 	else Di.head(r)      = D.head(r).inverse();
 	return DiagonalMatrix<double, Dynamic>(Di);
     }
 
+    Ldlt::Ldlt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
+	LDLT<MatrixXd> Ch(XtX);
+	ArrayXd         D(Ch.vectorD());
+	m_r               = (D > D.maxCoeff() * threshold()).count();
+	// FIXME: work out how to use Dplus with elements of D unsorted.
+	m_coef            = Ch.solve(X.adjoint() * y);
+	m_fitted          = X * m_coef;
+	m_se              = Ch.solve(I_p()).diagonal().array().sqrt();
+    }
+    
     SVD::SVD(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
+	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(ComputeThinU|ComputeThinV));
 	ArrayXd                D(UDV.singularValues());
 	m_r                      = (D > D[0] * threshold()).count();
 	m_df                     = m_n - m_r;
@@ -137,16 +147,17 @@ namespace lmsol {
 	m_se                     = VDi.rowwise().norm();
     }
 
-    SymmEigen::SymmEigen(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	SelfAdjointEigenSolver<MatrixXd> eig(XtX());
-	ArrayXd                            D(eig.eigenvalues());
-	m_r                                  = (D > D[m_p - 1] * threshold()).count();
-	D                                    = D.sqrt();
-	m_df                                 = m_n - m_r;
-	MatrixXd                         VDi(eig.eigenvectors() * Dplus(D, m_r, true));
-	m_coef                               = VDi * VDi.adjoint() * X.adjoint() * y;
-	m_fitted                             = X * m_coef;
-	m_se                                 = VDi.rowwise().norm();
+    SymmEigen::SymmEigen(const Map<MatrixXd> &X, const Map<VectorXd> &y)
+	: lm(X, y) {
+	SelfAdjointEigenSolver<MatrixXd> eig(XtX);
+	ArrayXd                      D(eig.eigenvalues());
+	m_r                            = (D > D[m_p - 1] * threshold()).count();
+	D                              = D.sqrt();
+	m_df                           = m_n - m_r;
+	MatrixXd                   VDi(eig.eigenvectors() * Dplus(D, m_r, true));
+	m_coef                         = VDi * VDi.adjoint() * X.adjoint() * y;
+	m_fitted                       = X * m_coef;
+	m_se                           = VDi.rowwise().norm();
     }
 
     enum {ColPivQR_t = 0, QR_t, LLT_t, LDLT_t, SVD_t, SymmEigen_t};
