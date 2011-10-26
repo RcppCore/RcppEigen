@@ -58,11 +58,11 @@ inline CHM_SP M_as_cholmod_sparse(CHM_SP ans, SEXP x, Rboolean check_Udiag, Rboo
     return fun(ans, x, check_Udiag, sort_in_place);
 }
 
-inline CHM_SP M_as_cholmod_triplet(CHM_SP ans, SEXP x, Rboolean check_Udiag)
+inline CHM_TR M_as_cholmod_triplet(CHM_TR ans, SEXP x, Rboolean check_Udiag)
 {
-    static CHM_SP(*fun)(CHM_SP,SEXP,Rboolean)= NULL;
+    static CHM_TR(*fun)(CHM_TR,SEXP,Rboolean)= NULL;
     if(fun == NULL)
-	fun = (CHM_SP(*)(CHM_SP,SEXP,Rboolean))
+	fun = (CHM_TR(*)(CHM_TR,SEXP,Rboolean))
 	    R_GetCCallable("Matrix", "as_cholmod_triplet");
     return fun(ans, x, check_Udiag);
 }
@@ -108,11 +108,11 @@ M_chm_factor_update(CHM_FR f, const_CHM_SP A, double mult)
 
 inline SEXP
 M_chm_sparse_to_SEXP(const_CHM_SP a, int dofree,
-		     int uploT, int Rkind, char *diag, SEXP dn)
+		     int uploT, int Rkind, const char *diag, SEXP dn)
 {
-    static SEXP(*fun)(const_CHM_SP,int,int,int,char*,SEXP) = NULL;
+    static SEXP(*fun)(const_CHM_SP,int,int,int,const char*,SEXP) = NULL;
     if(fun == NULL)
-	fun = (SEXP(*)(const_CHM_SP,int,int,int,char*,SEXP))
+	fun = (SEXP(*)(const_CHM_SP,int,int,int,const char*,SEXP))
 	    R_GetCCallable("Matrix", "chm_sparse_to_SEXP");
     return fun(a, dofree, uploT, Rkind, diag, dn);
 }

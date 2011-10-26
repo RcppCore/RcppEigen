@@ -957,6 +957,7 @@ CHM_SP M_cholmod_copy_sparse(const_CHM_SP, CHM_CM);
 CHM_DN M_cholmod_copy_dense(const_CHM_DN, CHM_CM);
 CHM_SP M_cholmod_aat(const_CHM_SP, int *fset, size_t fsize, int mode,
 		     CHM_CM);
+int M_cholmod_band_inplace(CHM_SP A, int k1, int k2, int mode, CHM_CM);
 CHM_SP M_cholmod_add(const_CHM_SP, const_CHM_SP, double alpha[2], double beta[2],
 		     int values, int sorted, CHM_CM);
 CHM_DN M_cholmod_allocate_dense(size_t nrow, size_t ncol, size_t d,
