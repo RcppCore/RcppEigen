@@ -55,13 +55,11 @@ namespace lmsol {
 	return *this;
     }
 
-    SelfAdjointView<MatrixXd,Lower> lm::XtX() const {
+    MatrixXd lm::XtX() const {
 	return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().
 	    rankUpdate(m_X.adjoint());
     }
-// For some reason that function returning a SelfAdjointView encounters a bad_alloc error
-// Use a macro for the time being
-#define XtX MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().rankUpdate(m_X.adjoint())
+
     /** Returns the threshold that will be used by certain methods such as rank().
      * 
      *  The default value comes from experimenting (see "LU precision
@@ -112,7 +110,7 @@ namespace lmsol {
     
     
     Llt::Llt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	LLT<MatrixXd>  Ch(XtX);
+	LLT<MatrixXd>  Ch(XtX().selfadjointView<Lower>());
 	m_coef            = Ch.solve(X.adjoint() * y);
 	m_fitted          = X * m_coef;
 	m_se              = Ch.matrixL().solve(I_p()).colwise().norm();
@@ -127,7 +125,7 @@ namespace lmsol {
     }
 
     Ldlt::Ldlt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	LDLT<MatrixXd> Ch(XtX);
+	LDLT<MatrixXd> Ch(XtX().selfadjointView<Lower>());
 	ArrayXd         D(Ch.vectorD());
 	m_r               = (D > D.maxCoeff() * threshold()).count();
 	// FIXME: work out how to use Dplus with elements of D unsorted.
@@ -149,7 +147,7 @@ namespace lmsol {
 
     SymmEigen::SymmEigen(const Map<MatrixXd> &X, const Map<VectorXd> &y)
 	: lm(X, y) {
-	SelfAdjointEigenSolver<MatrixXd> eig(XtX);
+	SelfAdjointEigenSolver<MatrixXd> eig(XtX().selfadjointView<Lower>());
 	ArrayXd                      D(eig.eigenvalues());
 	m_r                            = (D > D[m_p - 1] * threshold()).count();
 	D                              = D.sqrt();
