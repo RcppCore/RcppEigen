@@ -75,9 +75,9 @@ print.summary.fastLm <- function(x, ...) {
     print(x$call)
     cat("\n")
 
-    printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE)
+    printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE, ...)
     digits <- max(3, getOption("digits") - 3)
-    cat("\nResidual standard error: ", formatC(sqrt(x$s2), digits=digits), " on ",
+    cat("\nResidual standard error: ", formatC(sqrt(x$s), digits=digits), " on ",
         formatC(x$df), " degrees of freedom\n", sep="")
     cat("Multiple R-squared: ", formatC(x$r.squared, digits=digits),
         ",\tAdjusted R-squared: ",formatC(x$adj.r.squared, digits=digits),
