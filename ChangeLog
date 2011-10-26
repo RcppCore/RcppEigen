@@ -1,3 +1,32 @@
+2011-10-26  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/doc/Rcpp.bib, inst/doc/RcppEigen-Intro.Rnw,
+	  inst/doc/RcppEigen-Intro.pdf: Add an introductory vignette.
+	* src/fastLm.cpp, src/fastLm.h: Use a method for XtX but returning a
+	  MatrixXd, not a view.
+	* inst/doc/RcppEigen-Intro.Rnw: Describe the SymmEig method correctly.
+	* src/fastLm.cpp, src/fastLm.h: Use a macro for XtX temporarily. Clean
+	  up code.
+	* inst/include/RcppEigenCholmod.h, inst/include/RcppEigenStubs.h: Update
+	  to Matrix_1.0.2 versions
+	* inst/include/Eigen, inst/include/unsupported: update to eigen 3.0.3
+	* src/RcppEigen.cpp: Add externally callable functions for Eigen version
+	  and SSE instruction sets in use.
+	* inst/examples/lmBenchmark.R: Suppress messages and provide additional
+	  information about Eigen version and SSE instructions in use.
+	* R/fastLm.R: Allow optional arguments to be passed to printCoefmat;
+	  adapt to new returned structure.
+
+2011-09-16  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h: Avoid
+	  compiler warnings about comparing signed and unsigned values.
+
+2011-09-13  Douglas Bates <bates@stat.wisc.edu>
+
+	* src/Makevars: Force the -DNDEBUG flag to satisfy R CMD check in
+	  R-2.14.0 and higher
+
 2011-09-12  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/include/unsupported/Eigen/src/SparseExtra/CholmodSupport.h:
