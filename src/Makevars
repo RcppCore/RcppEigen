@@ -2,7 +2,7 @@
 
 PKG_CXXFLAGS=-I../inst/include -DNDEBUG
 
-## In practice the compiler flags show be
+## In practice the compiler flags should be
 #PKG_CXXFLAGS=-I../inst/include
 ## to enable error checking.  However, checking for errors is flagged
 ## in R CMD check as an undesirable practice.
