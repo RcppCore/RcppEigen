@@ -1,8 +1,8 @@
 \documentclass[10pt]{article}
 %\VignetteIndexEntry{RcppEigen-intro}
-\usepackage{vmargin}
-\setmargrb{0.75in}{0.75in}{0.75in}{0.75in}
-\usepackage{color, alltt, bm, amsmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{color, alltt, bm, amsmath, listings}
+\lstset{language=C++,basicstyle=\small}
 \usepackage[authoryear,round,longnamesfirst]{natbib}
 \usepackage[colorlinks]{hyperref}
 \definecolor{link}{rgb}{0,0,0.3}	%% next few lines courtesy of RJournal.sty
@@ -17,58 +17,15 @@
 \newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\rank}{\operatorname{rank}}
-%% defined as a stop-gap measure til interaction with highlight is sorted out
-\newcommand{\hlstd}[1]{\textcolor[rgb]{0,0,0}{#1}}
-\newcommand{\hlnum}[1]{\textcolor[rgb]{0.69,0.49,0}{#1}}
-\newcommand{\hlesc}[1]{\textcolor[rgb]{1,0,1}{#1}}
-\newcommand{\hlstr}[1]{\textcolor[rgb]{0.75,0.01,0.01}{#1}}
-\newcommand{\hlpps}[1]{\textcolor[rgb]{0.51,0.51,0}{#1}}
-\newcommand{\hlslc}[1]{\textcolor[rgb]{0.51,0.51,0.51}{\it{#1}}}
-\newcommand{\hlcom}[1]{\textcolor[rgb]{0.51,0.51,0.51}{\it{#1}}}
-\newcommand{\hlppc}[1]{\textcolor[rgb]{0,0.51,0}{#1}}
-\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
-\newcommand{\hllin}[1]{\textcolor[rgb]{0.33,0.33,0.33}{#1}}
-\newcommand{\hlkwa}[1]{\textcolor[rgb]{0,0,0}{\bf{#1}}}
-\newcommand{\hlkwb}[1]{\textcolor[rgb]{0,0.34,0.68}{#1}}
-\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0,0}{\bf{#1}}}
-\newcommand{\hlkwd}[1]{\textcolor[rgb]{0,0,0.51}{#1}}
-\definecolor{bgcolor}{rgb}{0.88,0.92,0.93}
-\newsavebox{\hlboxopenbrace}
-\newsavebox{\hlboxclosebrace}
-\newsavebox{\hlboxlessthan}
-\newsavebox{\hlboxgreaterthan}
-\newsavebox{\hlboxdollar}
-\newsavebox{\hlboxunderscore}
-\newsavebox{\hlboxand}
-\newsavebox{\hlboxhash}
-\newsavebox{\hlboxat}
-\newsavebox{\hlboxbackslash}
-\newsavebox{\hlboxpercent}
-\newsavebox{\hlboxhat}
-\setbox\hlboxopenbrace=\hbox{\verb.{.}
-\setbox\hlboxclosebrace=\hbox{\verb.}.}
-\setbox\hlboxlessthan=\hbox{\verb.<.}
-\setbox\hlboxgreaterthan=\hbox{\verb.>.}
-\setbox\hlboxdollar=\hbox{\verb.$.}
-\setbox\hlboxunderscore=\hbox{\verb._.}
-\setbox\hlboxand=\hbox{\verb.&.}
-\setbox\hlboxhash=\hbox{\verb.#.}
-\setbox\hlboxat=\hbox{\verb.@.}
-\setbox\hlboxbackslash=\hbox{\verb.\.}
-\setbox\hlboxpercent=\hbox{\verb.\%.}
-\setbox\hlboxhat=\hbox{\verb.^.}
-\def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}
-
-<<echo=FALSE,print=FALSE>>=
+<<version,echo=FALSE,print=FALSE>>=
 prettyVersion <- packageDescription("RcppEigen")$Version
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
 @
-
 \author{Douglas Bates}
 \title{An Introduction to \pkg{RcppEigen}}
 \date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
 
-<<echo=FALSE>>=
+<<preliminaries,echo=FALSE>>=
 link <- function( f, package, text = f, root = "http://finzi.psych.upenn.edu/R/library/" ){
 	h <- if( missing(package) ) {
 		as.character( help( f ) )
@@ -87,35 +44,6 @@ link <- function( f, package, text = f, root = "http://finzi.psych.upenn.edu/R/l
 linkS4class <- function( cl, package, text = cl, root = "http://finzi.psych.upenn.edu/R/library/" ){
 	link( sprintf("%s-class", cl), package, text, root )
 }
-# this will be integrated to package highlight later
-ex_highlight <- function( file, external.highlight = TRUE, verbatim = FALSE ){
-	if( verbatim ){
-		writeLines( "\\begin{verbatim}" )
-		writeLines( readLines( file ) )
-		writeLines( "\\end{verbatim}" )
-	} else {
-		tf <- tempfile()
-		if( external.highlight ){
-			cmd <- sprintf( 'highlight --input="%s" --output="%s" --out-format=latex --pretty-symbols', file, tf )
-			tryCatch( {
-				system( cmd )
-				tex <- readLines( tf )
-				keep <- seq( which( tex == "\\noindent" ), which( tex == "\\normalfont" ) )
-				tex <- c(
-					"\\vspace{1em}\\noindent\\fbox{\\begin{minipage}{0.9\\textwidth}" ,
-					tex[ keep ],
-					"\\end{minipage}}\\vspace{1em}" )
-				writeLines( tex )
-			})
-		} else {
-			r = renderer_latex( minipage = TRUE, doc = FALSE )
-			tex <- highlight( file, renderer = r , output = NULL )
-			writeLines( tex )
-		}
-	}
-	invisible(NULL)
-}
-
 require( inline )
 require( RcppEigen )
 @
@@ -124,13 +52,12 @@ require( RcppEigen )
 
 \abstract{
   \noindent
-  The \pkg{RcppEigen} package provides access to the \pkg{Eigen}
-  \proglang{C++} template library for numerical linear algebra from
-  \proglang{R}. \pkg{Rcpp} \citep{JSS:Rcpp} classes and
-  specializations of the \proglang{C++} templated functions \code{as}
-  and \code{wrap} from \pkg{Rcpp} provide the ``glue'' for passing
-  objects from \proglang{R} to \proglang{C++} and back.
-}
+  The \pkg{RcppEigen} package provides access from \proglang{R} to the
+  \pkg{Eigen} \proglang{C++} template library for numerical linear
+  algebra. \pkg{Rcpp} \citep{JSS:Rcpp} classes and specializations of
+  the \proglang{C++} templated functions \code{as} and \code{wrap}
+  from \pkg{Rcpp} provide the ``glue'' for passing objects from
+  \proglang{R} to \proglang{C++} and back.  }
 
 \section{Introduction}
 \label{sec:intro}
@@ -195,15 +122,10 @@ The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \code{Eigen} namespace, which means that they must be written as
 \code{Eigen::MatrixXd}.  However, if we preface our use of these class
 names with a declaration like
-
-<<echo=FALSE>>=
-code <- 'using Eigen::MatrixXd;'
-writeLines( code, "code.cpp" )
-@
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-\\we can use these names without the qualifier.  I prefer this approach.
+\begin{lstlisting}[language=C++]
+using Eigen::MatrixXd;
+\end{lstlisting}
+we can use these names without the qualifier.
 
 \subsection{Mapped matrices in Eigen}
 \label{sec:mapped}
@@ -219,7 +141,7 @@ sparse matrices we use the Eigen templated class \code{MappedSparseMatrix}.
 
 We must, of course, be careful not to modify the contents of the
 \proglang{R} object in the \proglang{C++} code.  A recommended
-practice is always to declare mapped objects as \code{const}.
+practice is always to declare mapped objects as \lstinline!const!.
 
 \subsection{Arrays in Eigen}
 \label{sec:arrays}
@@ -228,10 +150,10 @@ For matrix and vector classes \pkg{Eigen} overloads the \texttt{`*'}
 operator to indicate matrix multiplication.  Occasionally we want
 component-wise operations instead of matrix operations.  The
 \code{Array} templated classes are used in \pkg{Eigen} for
-component-wise operations.  Most often we use the \code{array} method
+component-wise operations.  Most often we use the \code{array()} method
 for Matrix or Vector objects to create the array.  On those occasions
 when we wish to convert an array to a matrix or vector object we use
-the \code{matrix} method.
+the \code{matrix()} method.
 
 \subsection{Structured matrices in \pkg{Eigen}}
 \label{sec:structured}
@@ -257,28 +179,26 @@ vectors can follow a pattern of:
 \end{enumerate}
 
 An idiom for the first step is
-
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+\begin{lstlisting}[language=C++]
+using Eigen::Map;
 using Eigen::MatrixXd;
 using Rcpp::as;
 
-const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));'
-writeLines( code, "code.cpp" )
-@
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-\\where \code{AA} is the name of the R object (called an \code{SEXP} in
+const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));  
+\end{lstlisting}
+where \code{AA} is the name of the R object (called an \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
-The \Sexpr{link("cxxfunction")} from the \pkg{inline} \citep{CRAN:inline} package for \proglang{R}
-and its \pkg{RcppEigen} plugin provide a convenient way of developing
-and debugging the \proglang{C++} code.  For actual production code we
-generally incorporate the \proglang{C++} source code files in a
-package and include the line \code{LinkingTo: Rcpp, RcppEigen} in the
-package's \code{DESCRIPTION} file.
-
+The \Sexpr{link("cxxfunction")} from the \pkg{inline}
+\citep{CRAN:inline} package for \proglang{R} and its \pkg{RcppEigen}
+plugin provide a convenient way of developing and debugging the
+\proglang{C++} code.  For actual production code we generally
+incorporate the \proglang{C++} source code files in a package and
+include the line \code{LinkingTo: Rcpp, RcppEigen} in the package's
+\code{DESCRIPTION} file.  The
+\Sexpr{link("RcppEigen.package.skeleton")} function provides a quick
+way of generating the skeleton of a package using \pkg{RcppEigen}
+facilities.
 
 The \code{cxxfunction} with the \code{"Rcpp"} or \code{"RcppEigen"}
 plugins has the \code{as} and \code{wrap} functions already defined as
@@ -299,57 +219,65 @@ We create a simple matrix of integers
 (A <- matrix(1:6, ncol=2))
 str(A)
 @ 
-and use the \code{transpose} method for the \code{Eigen::MatrixXi}
-class to return its transpose. 
+and, in Listing~\ref{trans}, use the \code{transpose()} method for the
+\code{Eigen::MatrixXi} class to return its transpose. The \proglang{R}
+matrix in the \code{SEXP} \code{AA} is mapped to an
+\code{Eigen::MatrixXi} object then the matrix \code{At} is constructed
+from its transpose and returned to \proglang{R}.  We check that it
+works as intended.
 
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+<<transCpp,echo=FALSE>>=
+transCpp <-'
+using Eigen::Map;
 using Eigen::MatrixXi;
                  // Map the integer matrix AA from R
 const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
                  // evaluate and return the transpose of A
 const MatrixXi      At(A.transpose());
-return wrap(At);'
-writeLines( code, "code.cpp" )
+return wrap(At);
+'
 @
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-<<>>=
-ftrans <- cxxfunction(signature(AA = "matrix"),
-                      paste(readLines( "code.cpp" ), collapse = "\n"),
-                      plugin = "RcppEigen")
+\begin{lstlisting}[frame=tb,float,caption={transCpp: Transpose a matrix of integers},label=trans]
+<<transCppLst,results=tex,echo=FALSE>>=
+cat(transCpp, "\n")
+@ 
+\end{lstlisting}
+<<ftrans>>=
+ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
 (At <- ftrans(A))
 stopifnot(all.equal(At, t(A)))
 @
-
-For numeric or integer matrices the \code{adjoint} method is
-equivalent to the \code{transpose} method.  For complex matrices, the
+For numeric or integer matrices the \code{adjoint()} method is
+equivalent to the \code{transpose()} method.  For complex matrices, the
 adjoint is the conjugate of the transpose.  In keeping with the
-conventions in the \pkg{Eigen} documentation we prefer the name
-\code{adjoint} with numeric or integer matrices.
+conventions in the \pkg{Eigen} documentation we will, in what follows,
+use the \code{adjoint()} method to create the transpose of numeric or
+integer matrices.
 
 \subsection{Products and cross-products}
 \label{sec:products}
 
 As mentioned in Sec.~\ref{sec:arrays}, the \code{`*'} operator
-performs matrix multiplication on Matrix or Vector objects.
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+performs matrix multiplication on \code{Eigen::Matrix} or
+\code{Eigen::Vector} objects. The \proglang{C++} code in
+Listing~\ref{prod} produces
+<<prodCpp,echo=FALSE>>=
+prodCpp <- '
+using Eigen::Map;
 using Eigen::MatrixXi;
 const Map<MatrixXi>    B(as<Map<MatrixXi> >(BB));
 const Map<MatrixXi>    C(as<Map<MatrixXi> >(CC));
 return List::create(_["B %*% C"]         = B * C,
-                    _["crossprod(B, C)"] = B.adjoint() * C);'
-writeLines( code, "code.cpp" )
+                    _["crossprod(B, C)"] = B.adjoint() * C);
+'
 @
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-
-<<>>=
-fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"),
-                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+\begin{lstlisting}[frame=tb,float,caption={prodCpp: Product and cross-product of two matrices},label=prod]
+<<prodCppLst,results=tex,echo=FALSE>>=
+cat(prodCpp, "\n")
+@ 
+\end{lstlisting}
+<<prod>>=
+fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), prodCpp, "RcppEigen")
 B <- matrix(1:4, ncol=2); C <- matrix(6:1, nrow=2)
 str(fp <- fprod(B, C))
 stopifnot(all.equal(fp[[1]], B %*% C), all.equal(fp[[2]], crossprod(B, C)))
@@ -391,28 +319,32 @@ method is \code{triangularView}.  The triangle can be specified as
 
 For self-adjoint views the \code{rankUpdate} method adds a scalar multiple
 of $\bm A\bm A^\prime$ to the current symmetric matrix.  The scalar
-multiple defaults to 1.
+multiple defaults to 1.  The code in Listing~\ref{crossprod} produces
 
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+<<crossprod,echo=FALSE>>=
+crossprodCpp <- '
+using Eigen::Map;
 using Eigen::MatrixXi;
 using Eigen::Lower;
 
 const Map<MatrixXi> A(as<Map<MatrixXi> >(AA));
 const int           m(A.rows()), n(A.cols());                        
-MatrixXi AtA(MatrixXi(n, n).setZero().selfadjointView<Lower>().rankUpdate(A.adjoint()));
-MatrixXi AAt(MatrixXi(m, m).setZero().selfadjointView<Lower>().rankUpdate(A));
+MatrixXi          AtA(MatrixXi(n, n).setZero().
+                      selfadjointView<Lower>().rankUpdate(A.adjoint()));
+MatrixXi          AAt(MatrixXi(m, m).setZero().
+                      selfadjointView<Lower>().rankUpdate(A));
 
 return List::create(_["crossprod(A)"]  = AtA,
-                    _["tcrossprod(A)"] = AAt); '
-writeLines( code, "code.cpp" )
+                    _["tcrossprod(A)"] = AAt);
+'
 @
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
+\begin{lstlisting}[frame=tb,float,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
+<<crossprodCppLst,results=tex,echo=FALSE>>=
+cat(crossprodCpp, "\n")
+@ 
+\end{lstlisting}
 <<>>=
-fcprd <- cxxfunction(signature(AA = "matrix"),
-                paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
 str(crp <- fcprd(A))
 stopifnot(all.equal(crp[[1]], crossprod(A)), all.equal(crp[[2]], tcrossprod(A)))
 @
@@ -451,12 +383,14 @@ linear systems.  For illustration we simply return the matrix $\bm L$
 from the ``LLt'' form.
 
 Because the Cholesky decomposition involves taking square roots we
-switch to numeric matrices.
+switch to numeric matrices
 <<storage>>=
 storage.mode(A) <- "double"
 @ 
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+before applying the code in Listing~\ref{chol}.
+<<cholCpp,echo=FALSE>>=
+cholCpp <- '
+using Eigen::Map;
 using Eigen::MatrixXd;
 using Eigen::LLT;
 using Eigen::Lower;
@@ -467,15 +401,16 @@ const LLT<MatrixXd> llt(MatrixXd(n, n).setZero().
                         selfadjointView<Lower>().rankUpdate(A.adjoint()));
 
 return List::create(_["L"] = MatrixXd(llt.matrixL()),
-                    _["R"] = MatrixXd(llt.matrixU()));'
-writeLines( code, "code.cpp" )
+                    _["R"] = MatrixXd(llt.matrixU()));
+'
 @ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-<<>>=
-fchol <- cxxfunction(signature(AA = "matrix"),
-                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+\begin{lstlisting}[frame=tb,float,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
+<<cholCppLst,results=tex,echo=FALSE>>=
+cat(cholCpp, "\n")
+@ 
+\end{lstlisting}
+<<fchol>>=
+fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen")
 (ll <- fchol(A))
 stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
 @
@@ -500,10 +435,11 @@ $\bm D$ is diagonal then $|\bm X^\prime\bm X|$ is the product of the
 diagonal elements of $\bm D$.  Because we know that the diagonals of
 $\bm D$ must be non-negative, we often evaluate the logarithm of the
 determinant as the sum of the logarithms of the diagonal elements of
-$\bm D$.
+$\bm D$.  Several options are shown in Listing~\ref{cholDet}.
 
 <<echo=FALSE>>=
-code <- 'using Eigen::Lower;
+cholDetCpp <- '
+using Eigen::Lower;
 using Eigen::Map;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -518,15 +454,16 @@ const VectorXd     Dvec(AtA.ldlt().vectorD());
 
 return List::create(_["d1"] = detL * detL,
                     _["d2"] = Dvec.prod(),
-                    _["ld"] = Dvec.array().log().sum());'
-writeLines(code, "code.cpp")
+                    _["ld"] = Dvec.array().log().sum());
+'
 @ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-<<>>=
-fdet <- cxxfunction(signature(AA = "matrix"),
-                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+\begin{lstlisting}[frame=tb,float,caption={cholDetCpp: Determinant of a cross-product using the Cholesky decomposition},label=cholDet]
+<<cholDetCppLst,results=tex,echo=FALSE>>=
+cat(cholDetCpp, "\n")
+@ 
+\end{lstlisting}
+<<fdet>>=
+fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen")
 unlist(ll <- fdet(A))
 @
 
@@ -552,9 +489,9 @@ decompositions that can be used are the QR decomposition, with or
 without column pivoting, the singular value decomposition and the
 eigendecomposition of a symmetric matrix.
 
-Determining a least squares solution is relatively straightforward.  However,
-in statistical computing we often require a bit more information, such
-as the standard errors of the coefficient estimates.  Calculating
+Determining a least squares solution is relatively straightforward.
+However, in statistical computing we often require additional information,
+such as the standard errors of the coefficient estimates.  Calculating
 these involves evaluating the diagonal elements of $\left(\bm
   X^\prime\bm X\right)^{-1}$ and the residual sum of squares, $\|\bm
 y-\bm X\widehat{\bm\beta}\|^2$.
@@ -562,8 +499,10 @@ y-\bm X\widehat{\bm\beta}\|^2$.
 \subsection{Least squares using the ``LLt'' Cholesky}
 \label{sec:LLtLeastSquares}
 
-<<echo=FALSE>>=
-code <- 'using Eigen::LLT;
+Listing~\ref{lltLS}
+<<lltLSCpp,echo=FALSE>>=
+lltLSCpp <- '
+using Eigen::LLT;
 using Eigen::Lower;
 using Eigen::Map;
 using Eigen::MatrixXd;
@@ -579,22 +518,31 @@ const VectorXd   fitted(X * betahat);
 const VectorXd    resid(y - fitted);
 const int            df(n - p);
 const double          s(resid.norm() / std::sqrt(double(df)));
-const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p)).colwise().norm());
+const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p)).
+                        colwise().norm());
 return     List::create(_["coefficients"]   = betahat,
                         _["fitted.values"]  = fitted,
                         _["residuals"]      = resid,
                         _["s"]              = s,
                         _["df.residual"]    = df,
                         _["rank"]           = p,
-                        _["Std. Error"]     = se);'
-writeLines( code, "code.cpp" )
+                        _["Std. Error"]     = se);
+'
 @ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-<<>>=
-lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
-                     paste(readLines( "code.cpp" ), collapse = "\n"), "RcppEigen")
+\begin{lstlisting}[frame=tb,float,caption={lltLSCpp: Least squares using the Cholesky decomposition},label=lltLS]
+<<lltLSCppLst,results=tex,echo=FALSE>>=
+cat(lltLSCpp, "\n")
+@ 
+\end{lstlisting}
+shows a calculation of the least squares coefficient estimates
+(\code{betahat}) and the standard errors (\code{se}) through an
+``LLt'' Cholesky decomposition of the crossproduct of the model
+matrix, $\bm X$.  We check that the results from this calculation do
+correspond to those from the \code{lm.fit} function in \proglang{R}
+(\code{lm.fit} is the workhorse function called by \code{lm} once the
+model matrix and response have been evaluated).
+<<lltLS>>=
+lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), lltLSCpp, "RcppEigen")
 data(trees, package="datasets")
 str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
 str(lmFit <- with(trees, lm.fit(cbind(1, log(Girth)), log(Volume))))
@@ -604,28 +552,33 @@ stopifnot(all.equal(lltFit[["Std. Error"]],
                     unname(coef(summary(lm(log(Volume) ~ log(Girth), trees)))[,2])))
 @
 
-There are several aspects of the \proglang{C++} code worth mentioning.
-The \code{solve} method for the \code{LLT} object evaluates, in this
-case, $\left(\bm X^\prime\bm X\right)^{-1}\bm X^\prime\bm y$ but without
-actually evaluating the inverse.  The calculation of the residuals,
-$\bm y-\widehat{\bm y}$, can be written, as in \proglang{R}, as
-\code{y - fitted}. (But note that \pkg{Eigen} classes do not have a
-``recycling rule as in \proglang{R}.  That is, the two vector operands must
-have the same length.)  The \code{norm} method evaluates the square root of the
+There are several aspects of the \proglang{C++} code in
+Listing~\ref{lltLS} worth mentioning.  The \code{solve} method for the
+\code{LLT} object evaluates, in this case, $\left(\bm X^\prime\bm
+  X\right)^{-1}\bm X^\prime\bm y$ but without actually evaluating the
+inverse.  The calculation of the residuals, $\bm y-\widehat{\bm y}$,
+can be written, as in \proglang{R}, as \code{y - fitted}. (But note
+that \pkg{Eigen} classes do not have a ``recycling rule as in
+\proglang{R}.  That is, the two vector operands must have the same
+length.)  The \code{norm()} method evaluates the square root of the
 sum of squares of the elements of a vector.  Although we don't
 explicitly evaluate $\left(\bm X^\prime\bm X\right)^{-1}$ we do
 evaluate $\bm L^{-1}$ to obtain the standard errors.  Note also the
-use of the \code{colwise} method in the evaluation of the standard errors.
+use of the \code{colwise()} method in the evaluation of the standard
+errors.  It applies a method to the columns of a matrix, returning a
+vector.  The \pkg{Eigen} \code{colwise()} and \code{rowwise()} methods
+are similar in effect to the \code{apply} function in \proglang{R}.
 
 In the descriptions of other methods for solving least squares
-problems, much of the code parallels that shown here.  We will omit
-the redundant parts and show only the evaluation of the coefficients,
-the rank and the standard errors.  Actually, we only calculate the
-standard errors up to the scalar multiple of $s$, the residual
-standard error, in these code fragments.  The calculation of the
-residuals and $s$ and the scaling of the coefficient standard errors
-is the same for all methods.  (See the files \code{fastLm.h} and
-\code{fastLm.cpp} in the \pkg{RcppEigen} source package for details.)
+problems, much of the code parallels that shown in
+Listing~\ref{lltLS}.  We will omit the redundant parts and show only
+the evaluation of the coefficients, the rank and the standard errors.
+Actually, we only calculate the standard errors up to the scalar
+multiple of $s$, the residual standard error, in these code fragments.
+The calculation of the residuals and $s$ and the scaling of the
+coefficient standard errors is the same for all methods.  (See the
+files \code{fastLm.h} and \code{fastLm.cpp} in the \pkg{RcppEigen}
+source package for details.)
 
 \subsection{Least squares using the unpivoted QR decomposition}
 \label{sec:QR}
@@ -645,26 +598,23 @@ Householder transformations, \code{ColPivHouseholderQR} incorporates
 column pivots and \code{FullPivHouseholderQR} incorporates both row
 and column pivots.
 
-For the unpivoted QR decomposition the code is of the form\\
-<<echo=FALSE>>=
-code <- 'using Eigen::HouseholderQR;
+Listing~\ref{QRLS} shows a least squares solution using the unpivoted
+QR decomposition.
+\begin{lstlisting}[frame=tb,float,caption={QRLSCpp: Least squares using the unpivoted QR decomposition},label=QRLS]
+using Eigen::HouseholderQR;
 
 const HouseholderQR<MatrixXd> QR(X);
 const VectorXd           betahat(QR.solve(y));
 const VectorXd            fitted(X * betahat);
 const int                     df(n - p);
 const VectorXd                se(QR.matrixQR().topRows(p).triangularView<Upper>().
-                                 solve(MatrixXd::Identity(p,p)).rowwise().norm());'
-writeLines( code, "code.cpp" )
-@ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-
-We see that this code is very close to the code for the ``LLt'' case.
-In fact, if we had extracted the upper triangular factor (the
-\code{matrixU} method) from the \code{LLT} object, the code would be
-nearly identical.
+                                 solve(MatrixXd::Identity(p,p)).rowwise().norm());
+\end{lstlisting}
+The calculations in Listing~\ref{QRLS} are quite similar to those in
+Listing~\ref{lltLS}.  In fact, if we had extracted the upper
+triangular factor (the \code{matrixU()} method) from the \code{LLT}
+object in Listing~\ref{lltLS}, the rest of the code would be nearly
+identical.
 
 \subsection{Handling the rank-deficient case}
 \label{sec:rankdeficient}
@@ -675,7 +625,7 @@ that $\bm X$ has ``full column rank''.   When $\bm X$ does not have
 full column rank we say it is ``rank deficient''.  
 
 Although the theoretical rank of a matrix is well-defined, its 
-evaluation in practice is not.  At best we determine a computational
+evaluation in practice is not.  At best we can compute an effective
 rank according to some tolerance.  We refer to decompositions that
 allow us to estimate the rank of the matrix in this way as
 ``rank-revealing''. 
@@ -734,15 +684,16 @@ The tolerance for determining if an element of the diagonal of $\bm D$
 is considered to be (effectively) zero is a multiple of the largest
 singular value (i.e. the $(1,1)$ element of $\bm D$).
 
-We define a utility function, \code{Dplus} to return the
-pseudo-inverse as a diagonal matrix, given the singular values (the
-diagonal of $\bm D$) and the apparent rank.  To be able to use this
-function with the eigendecomposition where the eigenvalues are in
-increasing order we include a Boolean argument \code{rev} indicating
-whether the order is reversed.
+In Listing~\ref{Dplus} we define a utility function, \code{Dplus}, to
+return the pseudo-inverse as a diagonal matrix, given the singular
+values (the diagonal of $\bm D$) and the apparent rank.  To be able to
+use this function with the eigendecomposition where the eigenvalues
+are in increasing order we include a Boolean argument \code{rev}
+indicating whether the order is reversed.
 
-<<echo=FALSE>>=
-code <- 'using Eigen::DiagonalMatrix;
+\begin{lstlisting}[frame=tb,float,caption={DplusCpp: Create the
+    diagonal matrix $\bm D^+$ from the array of singular values $\bm d$},label=Dplus]
+using Eigen::DiagonalMatrix;
 using Eigen::Dynamic;
 
 inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
@@ -751,21 +702,16 @@ inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
     if (rev) Di.tail(r)  = D.tail(r).inverse();
     else Di.head(r)      = D.head(r).inverse();
     return DiagonalMatrix<double, Dynamic>(Di);
-}'
-writeLines( code, "code.cpp" )
-@ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
+}
+\end{lstlisting}
 
 \subsection{Least squares using the SVD}
 \label{sec:SVDls}
 
 With these definitions the code for least squares using the singular
-value decomposition can be written
-
-<<echo=FALSE>>=
-code <- 'using Eigen::JacobiSVD;
+value decomposition can be written as in Listing~\ref{SVDLS}.
+\begin{lstlisting}[frame=tb,float,caption={SVDLSCpp: Least squares using the SVD},label=SVDLS]
+using Eigen::JacobiSVD;
 
 const JacobiSVD<MatrixXd> UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
 const ArrayXd               D(UDV.singularValues());
@@ -773,13 +719,8 @@ const int                   r((D > D[0] * threshold()).count());
 const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
 const VectorXd        betahat(VDp * UDV.matrixU().adjoint() * y);
 const int                  df(n - r);
-const VectorXd             se(s * VDp.rowwise().norm());'
-writeLines( code, "code.cpp" )
-@ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-
+const VectorXd             se(s * VDp.rowwise().norm());
+\end{lstlisting}
 In the rank-deficient case this code will produce a complete set of
 coefficients and their standard errors.  It is up to the user to note
 that the rank is less than $p$, the number of columns in $\bm X$, and
@@ -787,8 +728,18 @@ hence that the estimated coefficients are just one of an infinite
 number of coefficient vectors that produce the same fitted values.  It
 happens that this solution is the minimum norm solution.
 
-The interpretation of the standard errors from this code is also
-problematic when $\bm X$ is rank-deficient.
+The standard errors of the coefficient estimates in the rank-deficient
+case must be interpreted carefully.  The solution with one or more missing
+coefficients, as returned by the \code{lm.fit} function in
+\proglang{R} and the column-pivoted QR decomposition described in
+Section~\ref{sec:colPivQR} does not provide standard errors for the
+missing coefficients.  That is, both the coefficient and its standard
+error are returned as \code{NA} because the least squares solution is
+performed on a reduced model matrix.  It is also true that the
+solution returned by the SVD method is with respect to a reduced model
+matrix but the $p$ coefficient estimates and their $p$ standard errors
+don't show this.  They are, in fact, linear combinations of a set of
+$r$ coefficient estimates and their standard errors.
 
 \subsection{Least squares using the eigendecomposition}
 \label{sec:eigendecomp}
@@ -805,10 +756,9 @@ V$ is the same as that in the SVD.  Also the eigenvalues of $\bm
 X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 
 With these definitions we can adapt much of the code from the SVD
-method for the eigendecomposition.
-
-<<echo=FALSE>>=
-code <- 'using Eigen::SelfAdjointEigenSolver;
+method for the eigendecomposition, as shown in Listing~\ref{SymmEigLS}.
+\begin{lstlisting}[frame=tb,float,caption={SymmEigLSCpp: Least squares using the eigendecomposition},label=SymmEigLS]
+using Eigen::SelfAdjointEigenSolver;
 
 const SelfAdjointEigenSolver<MatrixXd>
     VLV(MatrixXd(p, p).setZero().selfadjointView<Lower>.rankUpdate(X.adjoint()));
@@ -816,12 +766,8 @@ const ArrayXd               D(eig.eigenvalues());
 const int                   r((D > D[p - 1] * threshold()).count());
 const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(), r, true));
 const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
-const VectorXd             se(s * VDp.rowwise().norm());'
-writeLines( code, "code.cpp" )
-@ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
+const VectorXd             se(s * VDp.rowwise().norm());
+\end{lstlisting}
 
 \subsection{Least squares using the column-pivoted QR decomposition}
 \label{sec:colPivQR}
@@ -839,7 +785,7 @@ columns of $\bm I_p$.  It serves to reorder the columns of $\bm X$ so
 that the diagonal elements of $\bm R$ are non-increasing in magnitude.
 
 An instance of the class \code{Eigen::ColPivHouseholderQR} has a
-\code{rank} method returning the computational rank of the matrix.
+\code{rank()} method returning the computational rank of the matrix.
 When $\bm X$ is of full rank we can use essentially the same code as
 in the unpivoted decomposition except that we must reorder the
 standard errors.  When $\bm X$ is rank-deficient we evaluate the
@@ -847,7 +793,7 @@ coefficients and standard errors for the leading $r$ columns of $\bm
 X\bm P$ only.
 
 In the rank-deficient case the straightforward calculation of the
-fitted values, as $\bm X\widehat{\bm\beta}$ cannot be used.  We 
+fitted values, as $\bm X\widehat{\bm\beta}$, cannot be used.  We 
 could do some complicated rearrangement of the columns of X and the
 coefficient estimates but it is conceptually (and computationally)
 easier to employ the relationship
@@ -861,8 +807,8 @@ easier to employ the relationship
 \end{displaymath}
 The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
 
-<<echo=FALSE>>=
-code <- 'using Eigen::ColPivHouseholderQR;
+\begin{lstlisting}[frame=tb,float,caption={ColPivQRLSCpp: Least squares using the pivoted QR decomposition},label=ColPivQRLS]
+using Eigen::ColPivHouseholderQR;
 typedef ColPivHouseholderQR<MatrixXd>::PermutationType  Permutation;
 
 const ColPivHouseholderQR<MatrixXd> PQR(X);
@@ -887,14 +833,10 @@ if (r == X.cols()) {	// full rank case
     fitted                             = PQR.householderQ() * effects;
     se.head(r)                         = Rinv.rowwise().norm();
     se                                 = Pmat * se;
-}'
-writeLines( code, "code.cpp" )
-@ 
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
+}
+\end{lstlisting}
 
-Just to check that this does indeed provide the desired answer
+Just to check that the code in Listing~\ref{ColPivQRLS} does indeed provide the desired answer
 <<rankdeficientPQR>>=
 print(summary(fmPQR <- fastLm(y ~ f1 * f2, dd)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmPQR))
@@ -924,13 +866,13 @@ In the \pkg{RcppEigen} package the \proglang{R} function to fit linear
 models using the methods described above is called \code{fastLm}.  The
 natural question to ask is, ``Is it indeed fast to use these methods
 based on \pkg{Eigen}?''.  We have provided benchmarking code for these
-methods, plus the default method using \proglang{R}'s \code{lm}
-function and the \code{fastLm} implementations in the
-\pkg{RcppArmadillo} \citep{CRAN:RcppArmadillo} and \pkg{RcppGSL}
-\citep{CRAN:RcppGSL} packages, if they are installed.  The benchmark
-code, which uses the \pkg{rbenchmark} \citep{CRAN:rbenchmark} package,
-is in a file named \code{lmBenchmark.R} in the \code{examples}
-subdirectory of the installed \pkg{RcppEigen} package.
+methods, \proglang{R}'s \code{lm.fit} function and the \code{fastLm}
+implementations in the \pkg{RcppArmadillo} \citep{CRAN:RcppArmadillo}
+and \pkg{RcppGSL} \citep{CRAN:RcppGSL} packages, if they are
+installed.  The benchmark code, which uses the \pkg{rbenchmark}
+\citep{CRAN:rbenchmark} package, is in a file named
+\code{lmBenchmark.R} in the \code{examples} subdirectory of the
+installed \pkg{RcppEigen} package.
 
 
 It can be run as 
@@ -977,7 +919,7 @@ faster than the others.  The SymmEig method, using a rank-revealing
 decomposition, would be preferred, although the LDLt method could
 probably be modified to be rank-revealing.  Do bear in mind that the
 dimensions of the problem will influence the comparative results.
-Because there are 100,000 rows in $\bm X$ methods that decompose the
+Because there are 100,000 rows in $\bm X$, methods that decompose the
 whole $\bm X$ matrix (all the methods except those named above) will
 be at a disadvantage.
 
@@ -1002,34 +944,36 @@ instead return an ``expression object'' that is evaluated when
 needed.  As an example, even though we write the $\bm X^\prime\bm X$
 evaluation using \code{.rankUpdate(X.adjoint())} the
 \code{X.adjoint()} part is not evaluated immediately.  The
-\code{.rankUpdate} method detects that it has been passed a matrix
+\code{rankUpdate} method detects that it has been passed a matrix
 that is to be used in its transposed form and evaluates the update
 by taking inner products of columns of $\bm X$ instead of rows of $\bm
 X^\prime$.
 
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
-an ``infelicity'' in the code, if not an outright bug.  In the first
-example of the transpose of an integer matrix we assigned the
-transpose as a \code{MatrixXi} before returning it with \code{wrap}.
-The assignment forces the evaluation.  If we skip this step we get an
-answer with the correct shape but the wrong contents.
+an ``infelicity'' in the code, if not an outright bug.  In the code
+for the transpose of an integer matrix shown in Listing~\ref{trans} we
+assigned the transpose as a \code{MatrixXi} before returning it with
+\code{wrap}.  The assignment forces the evaluation.  If we skip this
+step, as in Listing~\ref{badtrans} we get an answer with the correct
+shape but incorrect contents.
 
-<<echo=FALSE>>=
-code <- 'using Eigen::Map;
+<<badtransCpp,echo=FALSE>>=
+badtransCpp <- '
+using Eigen::Map;
 using Eigen::MatrixXi;
 const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
-return wrap(A.transpose());'
-writeLines( code, "code.cpp" )
+return wrap(A.transpose());
+'
 @
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
-<<>>=
+\begin{lstlisting}[frame=tb,float,caption={badtransCpp: Transpose producing incorrect results},label=badtrans]
+<<badtransCppLst,results=tex,echo=FALSE>>=
+cat(badtransCpp, "\n")
+@ 
+\end{lstlisting}
+<<ftrans2>>=
 Ai <- matrix(1:6, ncol=2L)
-ftrans2 <- cxxfunction(signature(AA = "matrix"),
-                      paste(readLines( "code.cpp" ), collapse = "\n"),
-                      plugin = "RcppEigen")
+ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp, "RcppEigen")
 (At <- ftrans2(Ai))
 all.equal(At, t(Ai))
 @
@@ -1042,10 +986,10 @@ for return to \proglang{R}.
 
 \pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
 class \Sexpr{linkS4class("dgCMatrix")} (from the \pkg{Matrix}
-\citep{CRAN:Matrix} package) can be mapped as shown below.
-
+\citep{CRAN:Matrix} package) can be mapped as in Listing~\ref{sparseProd}.
 <<echo=FALSE>>=
-code <- 'using Eigen::Map;
+sparseProdCpp <- '
+using Eigen::Map;
 using Eigen::MappedSparseMatrix;
 using Eigen::SparseMatrix;
 using Eigen::VectorXd;
@@ -1054,16 +998,18 @@ const MappedSparseMatrix<double>  A(as<MappedSparseMatrix<double> >(AA));
 const Map<VectorXd>               y(as<Map<VectorXd> >(yy));
 const SparseMatrix<double>       At(A.adjoint());
 return List::create(_["At"]  = At,
-                    _["Aty"] = At * y);'
-writeLines( code, "code.cpp" )
+                    _["Aty"] = At * y);
+'
 @
-<<echo=FALSE,results=tex>>=
-ex_highlight( "code.cpp" )
-@
+\begin{lstlisting}[frame=tb,float,
+  caption={sparseProdCpp: Transpose and product with sparse matrices},label=sparseProd]
+<<sparseProdCppLst,results=tex,echo=FALSE>>=
+cat(sparseProdCpp, "\n")
+@ 
+\end{lstlisting}
 <<>>=
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-                      paste(readLines( "code.cpp" ), collapse = "\n"),
-                      plugin = "RcppEigen")
+                       sparseProdCpp, "RcppEigen")
 data(KNex, package="Matrix")
 rr <- sparse1(KNex$mm, KNex$y)
 stopifnot(all.equal(rr$At, t(KNex$mm)),
@@ -1077,11 +1023,6 @@ these are regarded as experimental.
 
 \bibliographystyle{plainnat}
 \bibliography{Rcpp}
-
-
-<<echo=FALSE>>=
-unlink( "code.cpp" )
-@
 
 \end{document}
 
