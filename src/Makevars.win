@@ -2,6 +2,12 @@
 ## Use the R_HOME indirection to support installations of multiple R version
 PKG_LIBS = $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "Rcpp:::LdFlags()")
 
-PKG_CPPFLAGS = -I../inst/include -I.
+PKG_CPPFLAGS = -I../inst/include -I. -DNDEBUG
+
+## For development use the package CXXFLAGS as
+#PKG_CXXFLAGS= -I../inst/include -I.
+## to activate assertions in Eigen.  For the purposes of R CMD check the
+## assertions should be suppressed.
+
 
 
