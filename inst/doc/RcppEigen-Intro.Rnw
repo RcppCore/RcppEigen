@@ -4,6 +4,7 @@
 \usepackage{color, alltt, bm, amsmath, listings}
 \lstset{language=C++,basicstyle=\small}
 \usepackage[authoryear,round,longnamesfirst]{natbib}
+\usepackage{booktabs,flafter,thumbpdf} % booktabs for nice tables, flafter for float control, thumbpdf is a tip from Achim
 \usepackage[colorlinks]{hyperref}
 \definecolor{link}{rgb}{0,0,0.3}	%% next few lines courtesy of RJournal.sty
 \hypersetup{
@@ -21,7 +22,7 @@
 prettyVersion <- packageDescription("RcppEigen")$Version
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
 @
-\author{Douglas Bates}
+\author{Douglas Bates \and Dirk Eddelbuettel \and Romain Fran\c{c}ois}
 \title{An Introduction to \pkg{RcppEigen}}
 \date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
 
@@ -48,19 +49,82 @@ require( inline )
 require( RcppEigen )
 @
 \begin{document}
+
+%% Below is what DE currently uses somewhere else -- I am not religuous about
+%% the grey background etc -- comment out and see if you like any of it
+%% Just like DB below, DE also uses  frame=tb  for top+bottom frame lines
+% \definecolor{darkgray}{rgb}{0.95,0.95,0.95}
+% \lstset{backgroundcolor=\color{darkgray}}
+% \lstset{numbers=left, numberstyle=\tiny, stepnumber=2, numbersep=5pt}
+% \lstset{keywordstyle=\color{black}\bfseries\tt}
+% \lstset{ %
+%   %language=Octave,                % the language of the code
+%   %basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+%   basicstyle=\small,              % the size of the fonts that are used for the code
+%   numbers=left,                   % where to put the line-numbers
+%   %numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+%   stepnumber=2,                   % the step between two line-numbers. If it's 1, each line
+%                                   % will be numbered
+%   numbersep=5pt,                  % how far the line-numbers are from the code
+%   %backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+%   showspaces=false,               % show spaces adding particular underscores
+%   showstringspaces=false,         % underline spaces within strings
+%   showtabs=false,                 % show tabs within strings adding particular underscores
+%   %frame=single,                   % adds a frame around the code
+%   tabsize=2,                      % sets default tabsize to 2 spaces
+%   captionpos=b,                   % sets the caption-position to bottom
+%   breaklines=true,                % sets automatic line breaking
+%   breakatwhitespace=false         % sets if automatic breaks should only happen at whitespace
+%   %title=\lstname,                 % show the filename of files included with \lstinputlisting;
+%                                   % also try caption instead of title
+%   %escapeinside={\%*}{*)},         % if you want to add a comment within your code
+%   %morekeywords={*,...}            % if you want to add more keywords to the set
+% }
+
+
 \maketitle
 
 \abstract{
   \noindent
-  The \pkg{RcppEigen} package provides access from \proglang{R} to the
-  \pkg{Eigen} \proglang{C++} template library for numerical linear
-  algebra. \pkg{Rcpp} \citep{JSS:Rcpp} classes and specializations of
-  the \proglang{C++} templated functions \code{as} and \code{wrap}
-  from \pkg{Rcpp} provide the ``glue'' for passing objects from
+  The \pkg{RcppEigen} package provides access from \proglang{R}
+  \citep{R:Main} to the \pkg{Eigen} \proglang{C++} template library for
+  numerical linear algebra. \pkg{Rcpp} \citep{JSS:Rcpp} classes and
+  specializations of the \proglang{C++} templated functions \code{as} and
+  \code{wrap} from \pkg{Rcpp} provide the ``glue'' for passing objects from
   \proglang{R} to \proglang{C++} and back.  }
 
 \section{Introduction}
 \label{sec:intro}
+
+Linear algebra is an essential building block of statistical computing.
+Operations such as matrix decompositions, linear program solvers, and
+eigenvalue / eigenvector computations are used in many estimation and
+analysis routines. As such, libraries supporting linear algebra have long been
+provided by statistical programmers for different programming languages and
+environments. \proglang{C++}, one the central modern languages for numerical
+and statistical computing, can be extended particularly well due to its
+object-oriented nature, and numerous class libraries providing linear algebra
+routines have been written over the years.
+% Could cite Eddelbuettel (1996) here, but a real survey would be better.
+
+As both the \proglang{C++} language and standards have evolved
+\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++}, so have the
+compilers implementing the language.  Relatively modern language constructs
+such as template meta-programming are particularly useful. It provides both
+overloading of operations (allowing expressive code in the compiled language
+similar to what can be done in scripting languages) and can shift some of the
+computational burden from the run-time to the compile-time (though a more
+detailed discussions of template programming is however beyond this
+paper). \cite{Veldhuizen:1998:Blitz} provided an early and influential
+implementation that already demonstrated key features of this approach.  Its
+usage however was held back at the time by the somewhat limited availability
+of compilers implementing all necessary features of the \proglang{C++}
+language.
+
+This situation has greatly improved over the last decade, and many more such
+libraries have been contributed. One such \proglang{C++} library is
+\pkg{Eigen} by \citet*{Eigen:Web}.  \marginpar{TODO: short Eigen history. Then pivot to
+R and Rcpp.}
 
 As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending \pkg{Rcpp}''
 \begin{quote}
@@ -78,43 +142,43 @@ The \pkg{Eigen} classes themselves provide high-performance,
 versatile and comprehensive representations of dense and sparse
 matrices and vectors, as well as decompositions and other functions
 to be applied to these objects.  In the next section we introduce some
-of these classes and show how to interface to them from R.
+of these classes and show how to interface to them from \proglang{R}.
 
 \section{Eigen classes}
 \label{sec:eclasses}
 
-\pkg{Eigen} (\url{http://eigen.tuxfamily.org}) is a \proglang{C++} template
+\pkg{Eigen} \citep*{Eigen:Web} is a \proglang{C++} template
 library providing classes for many forms of matrices, vectors, arrays
 and decompositions.  These classes are flexible and comprehensive
 allowing for both high performance and well structured code
 representing high-level operations. \proglang{C++} code based on Eigen
 is often more like \proglang{R} code, working on the ``whole object'',
-than compiled code in other languages where operations often must be
+rather than compiled code in other languages where operations often must be
 coded in loops.
 
 As in many \proglang{C++} template libraries using template
 meta-programming
 \citep{Abrahams+Gurtovoy:2004:TemplateMetaprogramming}, the templates
 themselves can be very complicated.  However, \pkg{Eigen} provides
-typedef's for common classes that correspond to \proglang{R} matrices and
+\code{typedef}s for common classes that correspond to \proglang{R} matrices and
 vectors, as shown in Table~\ref{tab:REigen}. We will use these
-typedef's throughout this document.
+\code{typedef}s throughout this document.
 \begin{table}[tb]
   \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
   \label{tab:REigen}
-  \centering 
+  \centering
   \begin{tabular}{l l}
-    \hline
+    \toprule
     \multicolumn{1}{c}{\proglang{R} object type} & \multicolumn{1}{c}{\pkg{Eigen} class typedef}\\
-    \hline
-    numeric matrix & \code{MatrixXd}\\
-    integer matrix & \code{MatrixXi}\\
-    complex matrix & \code{MatrixXcd}\\
-    numeric vector & \code{VectorXd}\\
-    integer vector & \code{VectorXi}\\
-    complex vector & \code{VectorXcd}\\
-    \code{Matrix::dgCMatrix} & \code{SparseMatrix<double>}\\
-    \hline
+    \midrule
+    numeric matrix                          & \code{MatrixXd}\\
+    integer matrix                          & \code{MatrixXi}\\
+    complex matrix                          & \code{MatrixXcd}\\
+    numeric vector                          & \code{VectorXd}\\
+    integer vector                          & \code{VectorXi}\\
+    complex vector                          & \code{VectorXcd}\\
+    \code{Matrix::dgCMatrix} \phantom{XXX}  & \code{SparseMatrix<double>}\\
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -184,13 +248,13 @@ using Eigen::Map;
 using Eigen::MatrixXd;
 using Rcpp::as;
 
-const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));  
+const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));
 \end{lstlisting}
 where \code{AA} is the name of the R object (called an \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
 The \Sexpr{link("cxxfunction")} from the \pkg{inline}
-\citep{CRAN:inline} package for \proglang{R} and its \pkg{RcppEigen}
+package \citep*{CRAN:inline} for \proglang{R} and its \pkg{RcppEigen}
 plugin provide a convenient way of developing and debugging the
 \proglang{C++} code.  For actual production code we generally
 incorporate the \proglang{C++} source code files in a package and
@@ -218,7 +282,7 @@ We create a simple matrix of integers
 <<Adef>>=
 (A <- matrix(1:6, ncol=2))
 str(A)
-@ 
+@
 and, in Listing~\ref{trans}, use the \code{transpose()} method for the
 \code{Eigen::MatrixXi} class to return its transpose. The \proglang{R}
 matrix in the \code{SEXP} \code{AA} is mapped to an
@@ -237,10 +301,10 @@ const MatrixXi      At(A.transpose());
 return wrap(At);
 '
 @
-\begin{lstlisting}[frame=tb,float,caption={transCpp: Transpose a matrix of integers},label=trans]
-<<transCppLst,results=tex,echo=FALSE>>=
+\begin{lstlisting}[frame=tb,caption={transCpp: Transpose a matrix of integers},label=trans]
+<<transCppLst,results=tex,echo=FALSE >>=
 cat(transCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<ftrans>>=
 ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
@@ -271,10 +335,10 @@ return List::create(_["B %*% C"]         = B * C,
                     _["crossprod(B, C)"] = B.adjoint() * C);
 '
 @
-\begin{lstlisting}[frame=tb,float,caption={prodCpp: Product and cross-product of two matrices},label=prod]
+\begin{lstlisting}[frame=tb,caption={prodCpp: Product and cross-product of two matrices},label=prod]
 <<prodCppLst,results=tex,echo=FALSE>>=
 cat(prodCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<prod>>=
 fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), prodCpp, "RcppEigen")
@@ -328,7 +392,7 @@ using Eigen::MatrixXi;
 using Eigen::Lower;
 
 const Map<MatrixXi> A(as<Map<MatrixXi> >(AA));
-const int           m(A.rows()), n(A.cols());                        
+const int           m(A.rows()), n(A.cols());
 MatrixXi          AtA(MatrixXi(n, n).setZero().
                       selfadjointView<Lower>().rankUpdate(A.adjoint()));
 MatrixXi          AAt(MatrixXi(m, m).setZero().
@@ -338,10 +402,10 @@ return List::create(_["crossprod(A)"]  = AtA,
                     _["tcrossprod(A)"] = AAt);
 '
 @
-\begin{lstlisting}[frame=tb,float,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
+\begin{lstlisting}[frame=tb,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
 <<crossprodCppLst,results=tex,echo=FALSE>>=
 cat(crossprodCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<>>=
 fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
@@ -386,7 +450,7 @@ Because the Cholesky decomposition involves taking square roots we
 switch to numeric matrices
 <<storage>>=
 storage.mode(A) <- "double"
-@ 
+@
 before applying the code in Listing~\ref{chol}.
 <<cholCpp,echo=FALSE>>=
 cholCpp <- '
@@ -403,11 +467,11 @@ const LLT<MatrixXd> llt(MatrixXd(n, n).setZero().
 return List::create(_["L"] = MatrixXd(llt.matrixL()),
                     _["R"] = MatrixXd(llt.matrixU()));
 '
-@ 
-\begin{lstlisting}[frame=tb,float,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
+@
+\begin{lstlisting}[frame=tb,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
 <<cholCppLst,results=tex,echo=FALSE>>=
 cat(cholCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<fchol>>=
 fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen")
@@ -456,11 +520,11 @@ return List::create(_["d1"] = detL * detL,
                     _["d2"] = Dvec.prod(),
                     _["ld"] = Dvec.array().log().sum());
 '
-@ 
-\begin{lstlisting}[frame=tb,float,caption={cholDetCpp: Determinant of a cross-product using the Cholesky decomposition},label=cholDet]
+@
+\begin{lstlisting}[frame=tb,caption={cholDetCpp: Determinant of a cross-product using the Cholesky decomposition},label=cholDet]
 <<cholDetCppLst,results=tex,echo=FALSE>>=
 cat(cholDetCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<fdet>>=
 fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen")
@@ -528,11 +592,11 @@ return     List::create(_["coefficients"]   = betahat,
                         _["rank"]           = p,
                         _["Std. Error"]     = se);
 '
-@ 
-\begin{lstlisting}[frame=tb,float,caption={lltLSCpp: Least squares using the Cholesky decomposition},label=lltLS]
+@
+\begin{lstlisting}[frame=tb,caption={lltLSCpp: Least squares using the Cholesky decomposition},label=lltLS]
 <<lltLSCppLst,results=tex,echo=FALSE>>=
 cat(lltLSCpp, "\n")
-@ 
+@
 \end{lstlisting}
 shows a calculation of the least squares coefficient estimates
 (\code{betahat}) and the standard errors (\code{se}) through an
@@ -600,7 +664,7 @@ and column pivots.
 
 Listing~\ref{QRLS} shows a least squares solution using the unpivoted
 QR decomposition.
-\begin{lstlisting}[frame=tb,float,caption={QRLSCpp: Least squares using the unpivoted QR decomposition},label=QRLS]
+\begin{lstlisting}[frame=tb,caption={QRLSCpp: Least squares using the unpivoted QR decomposition},label=QRLS]
 using Eigen::HouseholderQR;
 
 const HouseholderQR<MatrixXd> QR(X);
@@ -622,13 +686,13 @@ identical.
 One important consideration when determining least squares solutions
 is whether $\rank(\bm X)$ is $p$, a situation we describe by saying
 that $\bm X$ has ``full column rank''.   When $\bm X$ does not have
-full column rank we say it is ``rank deficient''.  
+full column rank we say it is ``rank deficient''.
 
-Although the theoretical rank of a matrix is well-defined, its 
+Although the theoretical rank of a matrix is well-defined, its
 evaluation in practice is not.  At best we can compute an effective
 rank according to some tolerance.  We refer to decompositions that
 allow us to estimate the rank of the matrix in this way as
-``rank-revealing''. 
+``rank-revealing''.
 
 Because the \code{model.matrix} function in \proglang{R} does a
 considerable amount of symbolic analysis behind the scenes, we usually
@@ -653,7 +717,7 @@ dd$y <- mm %*% seq_len(ncol(mm)) + rnorm(nrow(mm), sd = 0.1)
                          # lm detects the rank deficiency
 fm1 <- lm(y ~ f1 * f2, dd)
 writeLines(capture.output(print(summary(fm1), signif.stars=FALSE))[9:22])
-@ 
+@
 
 The \code{lm} function for fitting linear models in \proglang{R} uses
 a rank-revealing form of the QR decomposition.  When the model matrix
@@ -691,7 +755,7 @@ use this function with the eigendecomposition where the eigenvalues
 are in increasing order we include a Boolean argument \code{rev}
 indicating whether the order is reversed.
 
-\begin{lstlisting}[frame=tb,float,caption={DplusCpp: Create the
+\begin{lstlisting}[frame=tb,caption={DplusCpp: Create the
     diagonal matrix $\bm D^+$ from the array of singular values $\bm d$},label=Dplus]
 using Eigen::DiagonalMatrix;
 using Eigen::Dynamic;
@@ -710,7 +774,7 @@ inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
 
 With these definitions the code for least squares using the singular
 value decomposition can be written as in Listing~\ref{SVDLS}.
-\begin{lstlisting}[frame=tb,float,caption={SVDLSCpp: Least squares using the SVD},label=SVDLS]
+\begin{lstlisting}[frame=tb,caption={SVDLSCpp: Least squares using the SVD},label=SVDLS]
 using Eigen::JacobiSVD;
 
 const JacobiSVD<MatrixXd> UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
@@ -757,7 +821,7 @@ X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 
 With these definitions we can adapt much of the code from the SVD
 method for the eigendecomposition, as shown in Listing~\ref{SymmEigLS}.
-\begin{lstlisting}[frame=tb,float,caption={SymmEigLSCpp: Least squares using the eigendecomposition},label=SymmEigLS]
+\begin{lstlisting}[frame=tb,caption={SymmEigLSCpp: Least squares using the eigendecomposition},label=SymmEigLS]
 using Eigen::SelfAdjointEigenSolver;
 
 const SelfAdjointEigenSolver<MatrixXd>
@@ -793,7 +857,7 @@ coefficients and standard errors for the leading $r$ columns of $\bm
 X\bm P$ only.
 
 In the rank-deficient case the straightforward calculation of the
-fitted values, as $\bm X\widehat{\bm\beta}$, cannot be used.  We 
+fitted values, as $\bm X\widehat{\bm\beta}$, cannot be used.  We
 could do some complicated rearrangement of the columns of X and the
 coefficient estimates but it is conceptually (and computationally)
 easier to employ the relationship
@@ -807,7 +871,7 @@ easier to employ the relationship
 \end{displaymath}
 The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
 
-\begin{lstlisting}[frame=tb,float,caption={ColPivQRLSCpp: Least squares using the pivoted QR decomposition},label=ColPivQRLS]
+\begin{lstlisting}[frame=tb,caption={ColPivQRLSCpp: Least squares using the pivoted QR decomposition},label=ColPivQRLS]
 using Eigen::ColPivHouseholderQR;
 typedef ColPivHouseholderQR<MatrixXd>::PermutationType  Permutation;
 
@@ -842,7 +906,7 @@ print(summary(fmPQR <- fastLm(y ~ f1 * f2, dd)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmPQR))
 all.equal(unname(fitted(fm1)), fitted(fmPQR))
 all.equal(unname(residuals(fm1)), residuals(fmPQR))
-@ 
+@
 
 The rank-revealing SVD method produces the same fitted
 values but not the same coefficients.
@@ -851,14 +915,14 @@ print(summary(fmSVD <- fastLm(y ~ f1 * f2, dd, method=4L)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmSVD))
 all.equal(unname(fitted(fm1)), fitted(fmSVD))
 all.equal(unname(residuals(fm1)), residuals(fmSVD))
-@ 
+@
 The coefficients from the symmetric eigendecomposition method are the same as those from the SVD
 <<rankdeficientVLV>>=
 print(summary(fmVLV <- fastLm(y ~ f1 * f2, dd, method=5L)), signif.stars=FALSE)
 all.equal(coef(fmSVD), coef(fmVLV))
 all.equal(unname(fitted(fm1)), fitted(fmSVD))
 all.equal(unname(residuals(fm1)), residuals(fmSVD))
-@ 
+@
 
 \subsection{Comparative speed}
 
@@ -875,7 +939,7 @@ installed.  The benchmark code, which uses the \pkg{rbenchmark}
 installed \pkg{RcppEigen} package.
 
 
-It can be run as 
+It can be run as
 <<benchmark,eval=FALSE>>=
 source(system.file("examples", "lmBenchmark.R", package="RcppEigen"))
 @
@@ -966,10 +1030,10 @@ const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
 return wrap(A.transpose());
 '
 @
-\begin{lstlisting}[frame=tb,float,caption={badtransCpp: Transpose producing incorrect results},label=badtrans]
+\begin{lstlisting}[frame=tb,caption={badtransCpp: Transpose producing incorrect results},label=badtrans]
 <<badtransCppLst,results=tex,echo=FALSE>>=
 cat(badtransCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<ftrans2>>=
 Ai <- matrix(1:6, ncol=2L)
@@ -1001,11 +1065,11 @@ return List::create(_["At"]  = At,
                     _["Aty"] = At * y);
 '
 @
-\begin{lstlisting}[frame=tb,float,
+\begin{lstlisting}[frame=tb,
   caption={sparseProdCpp: Transpose and product with sparse matrices},label=sparseProd]
 <<sparseProdCppLst,results=tex,echo=FALSE>>=
 cat(sparseProdCpp, "\n")
-@ 
+@
 \end{lstlisting}
 <<>>=
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
@@ -1020,6 +1084,7 @@ A sparse Cholesky decomposition is provided in \pkg{Eigen} as the
 \code{SimplicialCholesky} class. There are also linkages to the
 \pkg{CHOLMOD} code from the \pkg{Matrix} package.  At present, both of
 these are regarded as experimental.
+
 
 \bibliographystyle{plainnat}
 \bibliography{Rcpp}
