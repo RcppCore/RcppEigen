@@ -123,9 +123,24 @@ language.
 
 This situation has greatly improved over the last decade, and many more such
 libraries have been contributed. One such \proglang{C++} library is
-\pkg{Eigen} by \citet*{Eigen:Web}.  \marginpar{TODO: short Eigen history. Then pivot to
-R and Rcpp.}
+\pkg{Eigen} by \citet*{Eigen:Web}. \pkg{Eigen} started as a sub-project to
+KDE (a popular Linux desktop environment), initially focussing on fixed-size
+matrices which are projections in a visualization application. \pkg{Eigen}
+grew from there and has over the course of about a decade produced three
+major releases with ``Eigen3'' being the current version.
 
+\pkg{Eigen} is of interest as the \proglang{R} system for statistical
+computation and graphics \citep{R:Main} is itself easily extensible. This is
+particular true via the \proglang{C} language that most of \proglang{R}'s
+compiled core parts are written in, but also for the \proglang{C++} language
+which can interface with \proglang{C}-based systems rather easily. The manual
+``Writing R Extensions'' \citep{R:Extensions} is the basic reference for
+extending \proglang{R} with either \proglang{C} or \proglang{C++}.
+
+The \pkg{Rcpp} package by \citet{CRAN:Rcpp} facilitates extending
+\proglang{R} with \proglang{C++} code by providing seamless object mapping
+between both languages.
+%
 As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending \pkg{Rcpp}''
 \begin{quote}
   \pkg{Rcpp} facilitates data interchange between \proglang{R} and
@@ -287,8 +302,7 @@ and, in Listing~\ref{trans}, use the \code{transpose()} method for the
 \code{Eigen::MatrixXi} class to return its transpose. The \proglang{R}
 matrix in the \code{SEXP} \code{AA} is mapped to an
 \code{Eigen::MatrixXi} object then the matrix \code{At} is constructed
-from its transpose and returned to \proglang{R}.  We check that it
-works as intended.
+from its transpose and returned to \proglang{R}.
 
 <<transCpp,echo=FALSE>>=
 transCpp <-'
@@ -306,11 +320,16 @@ return wrap(At);
 cat(transCpp, "\n")
 @
 \end{lstlisting}
+
+We compile and link this code segment (stored as text in a variable named
+\code{transCpp}) into an executable function \code{ftrans} and check that it
+works as intended.
 <<ftrans>>=
 ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
 (At <- ftrans(A))
 stopifnot(all.equal(At, t(A)))
 @
+
 For numeric or integer matrices the \code{adjoint()} method is
 equivalent to the \code{transpose()} method.  For complex matrices, the
 adjoint is the conjugate of the transpose.  In keeping with the
@@ -324,7 +343,9 @@ integer matrices.
 As mentioned in Sec.~\ref{sec:arrays}, the \code{`*'} operator
 performs matrix multiplication on \code{Eigen::Matrix} or
 \code{Eigen::Vector} objects. The \proglang{C++} code in
-Listing~\ref{prod} produces
+Listing~\ref{prod} produces a list containing both the product and
+cross-product of its two arguments.
+
 <<prodCpp,echo=FALSE>>=
 prodCpp <- '
 using Eigen::Map;
@@ -563,7 +584,6 @@ y-\bm X\widehat{\bm\beta}\|^2$.
 \subsection{Least squares using the ``LLt'' Cholesky}
 \label{sec:LLtLeastSquares}
 
-Listing~\ref{lltLS}
 <<lltLSCpp,echo=FALSE>>=
 lltLSCpp <- '
 using Eigen::LLT;
@@ -598,7 +618,7 @@ return     List::create(_["coefficients"]   = betahat,
 cat(lltLSCpp, "\n")
 @
 \end{lstlisting}
-shows a calculation of the least squares coefficient estimates
+Listing~\ref{lltLS} shows a calculation of the least squares coefficient estimates
 (\code{betahat}) and the standard errors (\code{se}) through an
 ``LLt'' Cholesky decomposition of the crossproduct of the model
 matrix, $\bm X$.  We check that the results from this calculation do
@@ -671,8 +691,10 @@ const HouseholderQR<MatrixXd> QR(X);
 const VectorXd           betahat(QR.solve(y));
 const VectorXd            fitted(X * betahat);
 const int                     df(n - p);
-const VectorXd                se(QR.matrixQR().topRows(p).triangularView<Upper>().
-                                 solve(MatrixXd::Identity(p,p)).rowwise().norm());
+const VectorXd                se(QR.matrixQR().topRows(p).
+                                 triangularView<Upper>().
+                                 solve(MatrixXd::Identity(p,p)).
+                                 rowwise().norm());
 \end{lstlisting}
 The calculations in Listing~\ref{QRLS} are quite similar to those in
 Listing~\ref{lltLS}.  In fact, if we had extracted the upper
@@ -777,7 +799,8 @@ value decomposition can be written as in Listing~\ref{SVDLS}.
 \begin{lstlisting}[frame=tb,caption={SVDLSCpp: Least squares using the SVD},label=SVDLS]
 using Eigen::JacobiSVD;
 
-const JacobiSVD<MatrixXd> UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
+const JacobiSVD<MatrixXd>
+                UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
 const ArrayXd               D(UDV.singularValues());
 const int                   r((D > D[0] * threshold()).count());
 const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
@@ -825,10 +848,12 @@ method for the eigendecomposition, as shown in Listing~\ref{SymmEigLS}.
 using Eigen::SelfAdjointEigenSolver;
 
 const SelfAdjointEigenSolver<MatrixXd>
-    VLV(MatrixXd(p, p).setZero().selfadjointView<Lower>.rankUpdate(X.adjoint()));
+                          VLV(MatrixXd(p, p).setZero()
+                                            .selfadjointView<Lower>
+                                            .rankUpdate(X.adjoint()));
 const ArrayXd               D(eig.eigenvalues());
 const int                   r((D > D[p - 1] * threshold()).count());
-const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(), r, true));
+const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(),r,true));
 const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
 const VectorXd             se(s * VDp.rowwise().norm());
 \end{lstlisting}
@@ -927,8 +952,9 @@ all.equal(unname(residuals(fm1)), residuals(fmSVD))
 \subsection{Comparative speed}
 
 In the \pkg{RcppEigen} package the \proglang{R} function to fit linear
-models using the methods described above is called \code{fastLm}.  The
-natural question to ask is, ``Is it indeed fast to use these methods
+models using the methods described above is called \code{fastLm}. It follows
+an earlier example in the \pkg{Rcpp} package which was carried over to both
+\pkg{RcppArmadillo} and \pkg{RcppGSL}. The natural question to ask is, ``Is it indeed fast to use these methods
 based on \pkg{Eigen}?''.  We have provided benchmarking code for these
 methods, \proglang{R}'s \code{lm.fit} function and the \code{fastLm}
 implementations in the \pkg{RcppArmadillo} \citep{CRAN:RcppArmadillo}
@@ -946,7 +972,8 @@ source(system.file("examples", "lmBenchmark.R", package="RcppEigen"))
 Results will vary according to the speed of the processor, the
 number of cores and the implementation of the BLAS (Basic Linear
 Algebra Subroutines) used.  (\pkg{Eigen} methods do not use the BLAS
-but the other methods do.)
+but the other methods do.)  \marginpar{If Eigen uses multiple cores, should
+  we not use Goto or another multicore BLAS as well?}
 
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}
@@ -959,11 +986,11 @@ Table~\ref{tab:lmRes}
   \label{tab:lmRes}
   \centering
   \begin{tabular}{r r r r r}
-    \hline
+    \toprule
     \multicolumn{1}{c}{Method} & \multicolumn{1}{c}{Relative} &
     \multicolumn{1}{c}{Elapsed} & \multicolumn{1}{c}{User} &
     \multicolumn{1}{c}{Sys}\\
-    \hline
+    \cmidrule(r){2-5}   % middle rule from cols 2 to 5
      LLt &   1.000000 &   1.227 &     1.228 &    0.000 \\
     LDLt &   1.037490 &   1.273 &     1.272 &    0.000 \\
  SymmEig &   2.895681 &   3.553 &     2.972 &    0.572 \\
@@ -973,7 +1000,7 @@ Table~\ref{tab:lmRes}
   lm.fit &  13.782396 &  16.911 &    15.521 &    1.368 \\
      SVD &  54.829666 &  67.276 &    66.321 &    0.912 \\
      GSL & 157.531377 & 193.291 &   192.568 &    0.640 \\
-     \hline
+     \bottomrule
   \end{tabular}
 \end{table}
 
@@ -1083,7 +1110,21 @@ stopifnot(all.equal(rr$At, t(KNex$mm)),
 A sparse Cholesky decomposition is provided in \pkg{Eigen} as the
 \code{SimplicialCholesky} class. There are also linkages to the
 \pkg{CHOLMOD} code from the \pkg{Matrix} package.  At present, both of
-these are regarded as experimental.
+these are regarded as experimental.  \marginpar{Should there be a word about
+  lme4Eigen and the speedups?}
+
+\section{Summary}
+
+This paper introduced the \pkg{RcppEigen} package which provides high-level
+linear algebra computations as an extension to the \proglang{R} system.
+\pkg{RcppEigen} is based on the modern \proglang{C++} library \pkg{Eigen}
+which combines extended functionality with excellent performance, and
+utilizes \pkg{Rcpp} to interface \proglang{R} with \proglang{C++}.  We
+provided several illustration covering common matrix operations, including
+several approaches to solving a least squares problem---including an extended
+discussion of rank-revealing approaches.  A short example provived
+an empirical illustration  for the excellent run-time performance of the
+\pkg{RcppEigen} package.
 
 
 \bibliographystyle{plainnat}
