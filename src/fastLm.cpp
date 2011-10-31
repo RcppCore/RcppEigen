@@ -43,7 +43,6 @@ namespace lmsol {
 	  m_p(X.cols()),
 	  m_coef(VectorXd::Constant(m_p, ::NA_REAL)),
 	  m_r(::NA_INTEGER),
-	  m_df(m_n - m_p),
 	  m_fitted(m_n),
 	  m_se(VectorXd::Constant(m_p, ::NA_REAL)),
 	  m_usePrescribedThreshold(false) {
@@ -55,6 +54,18 @@ namespace lmsol {
 	return *this;
     }
 
+    ArrayXd lm::Dplus(const ArrayXd& D) {
+	ArrayXd   Di(m_p);
+	double  comp(D.maxCoeff() * threshold());
+	for (int j = 0; j < m_p; ++j) Di[j] = (D[j] < comp) ? 0. : 1./D[j];
+	m_r          = (Di != 0.).count();
+	return Di;
+    }
+
+    MatrixXd lm::I_p() const {
+	return MatrixXd::Identity(m_p, m_p);
+    }
+    
     MatrixXd lm::XtX() const {
 	return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().
 	    rankUpdate(m_X.adjoint());
@@ -85,7 +96,6 @@ namespace lmsol {
 		triangularView<Upper>().solve(I_p()).rowwise().norm();
 	    return;
 	} 
-	m_df                              = m_n - m_r;
 	MatrixXd                     Rinv(PQR.matrixQR().topLeftCorner(m_r, m_r).
 					  triangularView<Upper>().
 					  solve(MatrixXd::Identity(m_r, m_r)));
@@ -94,7 +104,7 @@ namespace lmsol {
 	m_coef                            = Pmat * m_coef;
 				// create fitted values from effects
 				// (can't use X*m_coef if X is rank-deficient)
-	effects.tail(m_df).setZero();
+	effects.tail(m_n - m_r).setZero();
 	m_fitted                          = PQR.householderQ() * effects;
 	m_se.head(m_r)                    = Rinv.rowwise().norm();
 	m_se                              = Pmat * m_se;
@@ -116,19 +126,13 @@ namespace lmsol {
 	m_se              = Ch.matrixL().solve(I_p()).colwise().norm();
     }
     
-    inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
-						 Index r, bool rev=false) {
-	VectorXd   Di(VectorXd::Constant(D.size(), 0.));
-	if (rev) Di.tail(r)  = D.tail(r).inverse();
-	else Di.head(r)      = D.head(r).inverse();
-	return DiagonalMatrix<double, Dynamic>(Di);
-    }
-
     Ldlt::Ldlt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	LDLT<MatrixXd> Ch(XtX().selfadjointView<Lower>());
-	ArrayXd         D(Ch.vectorD());
-	m_r               = (D > D.maxCoeff() * threshold()).count();
-	// FIXME: work out how to use Dplus with elements of D unsorted.
+	Dplus(Ch.vectorD());	// to set the rank
+//FIXME: Check on the permutation in the LDLT and incorporate it in
+//the coefficients and the standard error computation.
+//	m_coef            = Ch.matrixL().adjoint().
+//	    solve(Dplus(D) * Ch.matrixL().solve(X.adjoint() * y));
 	m_coef            = Ch.solve(X.adjoint() * y);
 	m_fitted          = X * m_coef;
 	m_se              = Ch.solve(I_p()).diagonal().array().sqrt();
@@ -136,10 +140,8 @@ namespace lmsol {
     
     SVD::SVD(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(ComputeThinU|ComputeThinV));
-	ArrayXd                D(UDV.singularValues());
-	m_r                      = (D > D[0] * threshold()).count();
-	m_df                     = m_n - m_r;
-	MatrixXd             VDi(UDV.matrixV() * Dplus(D, m_r));
+	MatrixXd             VDi(UDV.matrixV() *
+				 DiagonalMatrix(Dplus(UDV.singularValues().array()).matrix()));
 	m_coef                   = VDi * UDV.matrixU().adjoint() * y;
 	m_fitted                 = X * m_coef;
 	m_se                     = VDi.rowwise().norm();
@@ -148,14 +150,11 @@ namespace lmsol {
     SymmEigen::SymmEigen(const Map<MatrixXd> &X, const Map<VectorXd> &y)
 	: lm(X, y) {
 	SelfAdjointEigenSolver<MatrixXd> eig(XtX().selfadjointView<Lower>());
-	ArrayXd                      D(eig.eigenvalues());
-	m_r                            = (D > D[m_p - 1] * threshold()).count();
-	D                              = D.sqrt();
-	m_df                           = m_n - m_r;
-	MatrixXd                   VDi(eig.eigenvectors() * Dplus(D, m_r, true));
-	m_coef                         = VDi * VDi.adjoint() * X.adjoint() * y;
-	m_fitted                       = X * m_coef;
-	m_se                           = VDi.rowwise().norm();
+	MatrixXd   VDi(eig.eigenvectors() *
+		       DiagonalMatrix(Dplus(eig.eigenvalues().array()).sqrt().matrix());
+	m_coef         = VDi * VDi.adjoint() * X.adjoint() * y;
+	m_fitted       = X * m_coef;
+	m_se           = VDi.rowwise().norm();
     }
 
     enum {ColPivQR_t = 0, QR_t, LLT_t, LDLT_t, SVD_t, SymmEigen_t};
@@ -199,14 +198,16 @@ namespace lmsol {
 	    }
 	    
 	    VectorXd         resid = y - ans.fitted();
-	    double               s = resid.norm() / std::sqrt(double(ans.df()));
+	    int               rank = ans.rank();
+	    int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
+	    double               s = resid.norm() / std::sqrt(double(df));
 				// Create the standard errors
 	    VectorXd            se = s * ans.se();
 
 	    return List::create(_["coefficients"]  = coef,
 				_["se"]            = se,
-				_["rank"]          = ans.rank(),
-				_["df.residual"]   = ans.df(),
+				_["rank"]          = rank,
+				_["df.residual"]   = df,
 				_["residuals"]     = resid,
 				_["s"]             = s,
 				_["fitted.values"] = ans.fitted());

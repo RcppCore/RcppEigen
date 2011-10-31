@@ -58,7 +58,6 @@ namespace lmsol {
 	Index         m_p;	/**< number of columns of X */
 	VectorXd      m_coef;	/**< coefficient vector */
 	int           m_r;	/**< computed rank or NA_INTEGER */
-	int           m_df;	/**< residual degrees of freedom */
 	VectorXd      m_fitted;	/**< vector of fitted values */
 	VectorXd      m_se;	/**< standard errors  */
 	RealScalar    m_prescribedThreshold; /**< user specified tolerance */
@@ -66,18 +65,17 @@ namespace lmsol {
     public:
 	lm(const Map<MatrixXd>&, const Map<VectorXd>&);
 
-         // setThreshold and threshold are based on ColPivHouseholderQR methods
-	MatrixXd                        I_p() const {
-	    return MatrixXd::Identity(m_p, m_p);
-	}
-	RealScalar                threshold() const;
-	MatrixXd                        XtX() const;
-	const VectorXd&                  se() const {return m_se;}
-	const VectorXd&                coef() const {return m_coef;}
-	const VectorXd&              fitted() const {return m_fitted;}
-	int                              df() const {return m_df;}
-	int                            rank() const {return m_r;}
-	lm&                    setThreshold(const RealScalar&); 
+	ArrayXd                Dplus(const ArrayXd& D);
+	MatrixXd                 I_p() const;
+	MatrixXd                 XtX() const;
+
+        // setThreshold and threshold are based on ColPivHouseholderQR methods
+	RealScalar         threshold() const;
+	const VectorXd&           se() const {return m_se;}
+	const VectorXd&         coef() const {return m_coef;}
+	const VectorXd&       fitted() const {return m_fitted;}
+	int                     rank() const {return m_r;}
+	lm&             setThreshold(const RealScalar&); 
     };
 
     class ColPivQR : public lm {
