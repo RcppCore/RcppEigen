@@ -24,6 +24,7 @@
 % Highlighting theme definition:
 \newcommand{\hlstd}[1]{\textcolor[rgb]{0,0,0}{#1}}
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0,0,0}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
 \newcommand{\hlesc}[1]{\textcolor[rgb]{0.74,0.55,0.55}{#1}}
 %\newcommand{\hlstr}[1]{\textcolor[rgb]{0.74,0.55,0.55}{#1}}
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.90,0.15,0.15}{#1}}
@@ -125,7 +126,7 @@ Operations such as matrix decompositions, linear program solvers, and
 eigenvalue / eigenvector computations are used in many estimation and
 analysis routines. As such, libraries supporting linear algebra have long been
 provided by statistical programmers for different programming languages and
-environments. \proglang{C++}, one the central modern languages for numerical
+environments. \proglang{C++}, one of the central modern languages for numerical
 and statistical computing, can be extended particularly well due to its
 object-oriented nature, and numerous class libraries providing linear algebra
 routines have been written over the years.
@@ -231,17 +232,20 @@ names with a declaration like
 %
 %% Alternatively, use 'highlight --enclose-pre --no-doc --latex --style=emacs --syntax=C++'
 %% as the command invoked from C-u M-|
+%% For version 3.5 of highlight this should be
+%%  highlight --enclose-pre --no-doc --out-format=latex --syntax=C++
 %%
 %% keep one copy to redo later
 %%
 %% using Eigen::MatrixXd;
 %%
 \begin{quote}
-  \noindent
-  \ttfamily
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlsym{::}\hlstd{MatrixXd}\hlsym{;}\hlstd{}\hspace*{\fill}\\
-  \mbox{}
-  \normalfont
+\noindent
+\ttfamily
+\hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{;}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\normalsize
 \end{quote}
 then one can use these names without the namespace qualifier.
 
@@ -322,7 +326,7 @@ The \Sexpr{link("cxxfunction")} from the \pkg{inline}
 package \citep*{CRAN:inline} for \proglang{R} and its \pkg{RcppEigen}
 plugin provide a convenient way of developing and debugging the
 \proglang{C++} code.  For actual production code one generally
-incorporate the \proglang{C++} source code files in a package and
+incorporates the \proglang{C++} source code files in a package and
 include the line \code{LinkingTo: Rcpp, RcppEigen} in the package's
 \code{DESCRIPTION} file.  The
 \Sexpr{link("RcppEigen.package.skeleton")} function provides a quick
@@ -425,11 +429,28 @@ return List::create(_["B %*% C"]         = B * C,
                     _["crossprod(B, C)"] = B.adjoint() * C);
 '
 @
-\begin{lstlisting}[frame=tb,caption={prodCpp: Product and cross-product of two matrices},label=prod]
-<<prodCppLst,results=tex,echo=FALSE>>=
-cat(prodCpp, "\n")
-@
-\end{lstlisting}
+% \begin{lstlisting}[frame=tb,caption={prodCpp: Product and cross-product of two matrices},label=prod]
+% <<prodCppLst,results=tex,echo=FALSE>>=
+% cat(prodCpp, "\n")
+% @
+% \end{lstlisting}
+\begin{figure}[h]
+  \caption{prodCpp: Product and cross-product of two matrices}
+  \label{prod}
+  \begin{quote}
+\noindent
+\ttfamily
+\hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ \ }\hlopt{}\hlstd{}\hlkwd{B}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{BB}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ \ }\hlopt{}\hlstd{}\hlkwd{C}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{CC}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"B\ \%{*}\%\ C"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{B\ }\hlopt{{*}\ }\hlstd{C}\hlopt{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\normalsize
+  \end{quote}
+\end{figure}
 <<prod>>=
 fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), prodCpp, "RcppEigen")
 B <- matrix(1:4, ncol=2); C <- matrix(6:1, nrow=2)
@@ -492,11 +513,35 @@ return List::create(_["crossprod(A)"]  = AtA,
                     _["tcrossprod(A)"] = AAt);
 '
 @
-\begin{lstlisting}[frame=tb,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
-<<crossprodCppLst,results=tex,echo=FALSE>>=
-cat(crossprodCpp, "\n")
-@
-\end{lstlisting}
+% \begin{lstlisting}[frame=tb,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
+% <<crossprodCppLst,results=tex,echo=FALSE>>=
+% cat(crossprodCpp, "\n")
+% @
+% \end{lstlisting}
+\begin{figure}[h]
+  \caption{crossprodCpp: Cross-product and transposed cross-product of a single matrix}
+  \label{crossprod}
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{m}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{rows}\hlstd{}\hlopt{()),\ }\hlstd{}\hlkwd{n}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXi}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{,\ }\hlstd{n}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
+    \hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{AAt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXi}\hlstd{}\hlopt{(}\hlstd{m}\hlopt{,\ }\hlstd{m}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(A)"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{AtA}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}\\
+    \mbox{}
+    \normalfont
+    \normalsize
+  \end{quote}
+\end{figure}
 <<>>=
 fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
 str(crp <- fcprd(A))
@@ -558,11 +603,34 @@ return List::create(_["L"] = MatrixXd(llt.matrixL()),
                     _["R"] = MatrixXd(llt.matrixU()));
 '
 @
-\begin{lstlisting}[frame=tb,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
-<<cholCppLst,results=tex,echo=FALSE>>=
-cat(cholCpp, "\n")
-@
-\end{lstlisting}
+% \begin{lstlisting}[frame=tb,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
+% <<cholCppLst,results=tex,echo=FALSE>>=
+% cat(cholCpp, "\n")
+% @
+% \end{lstlisting}
+\begin{figure}[h]
+  \caption{cholCpp: Cholesky decomposition of a cross-product}
+  \label{chol}
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{LLT}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{n}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{LLT}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{,\ }\hlstd{n}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}\\
+    \mbox{}
+    \normalfont
+    \normalsize
+  \end{quote}
+\end{figure}
 <<fchol>>=
 fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen")
 (ll <- fchol(A))
@@ -635,7 +703,7 @@ squares solution, $\widehat{\bm\beta}$, defined as
   \widehat{\bm\beta}=\arg\min_{\beta}\|\bm y-\bm X\bm\beta\|^2
 \end{displaymath}
 where the model matrix, $\bm X$, is $n\times p$ ($n\ge p$) and $\bm y$
-is an $n$-dimensional response vector.  There are several ways based
+is an $n$-dimensional response vector.  There are several ways, based
 on matrix decompositions, to determine such a solution.  Earlier, two forms
 of the Cholesky decomposition were discussed: ``LLt'' and
 ``LDLt'', which can both be used to solve for $\widehat{\bm\beta}$.  Other
@@ -777,12 +845,12 @@ identical.
 One important consideration when determining least squares solutions
 is whether $\rank(\bm X)$ is $p$, a situation described by saying
 that $\bm X$ has ``full column rank''.   When $\bm X$ does not have
-full column rank it is called ``rank deficient''.
+full column rank it is said to be ``rank deficient''.
 
 Although the theoretical rank of a matrix is well-defined, its
 evaluation in practice is not.  At best one can compute an effective
-rank according to some tolerance.  Decompositions that
-allow to estimate the rank of the matrix in this way are referred to as
+rank according to some tolerance.  Decompositions that allow to
+estimation of the rank of the matrix in this way are said to be
 ``rank-revealing''.
 
 Because the \code{model.matrix} function in \proglang{R} does a
@@ -839,7 +907,7 @@ The tolerance for determining if an element of the diagonal of $\bm D$
 is considered to be (effectively) zero is a multiple of the largest
 singular value (i.e. the $(1,1)$ element of $\bm D$).
 
-In Listing~\ref{Dplus} utility function, \code{Dplus}, is defined to
+In Listing~\ref{Dplus} a utility function, \code{Dplus}, is defined to
 return the pseudo-inverse as a diagonal matrix, given the singular
 values (the diagonal of $\bm D$) and the apparent rank.  To be able to
 use this function with the eigendecomposition where the eigenvalues
@@ -887,8 +955,8 @@ happens that this solution is the minimum norm solution.
 The standard errors of the coefficient estimates in the rank-deficient
 case must be interpreted carefully.  The solution with one or more missing
 coefficients, as returned by the \code{lm.fit} function in
-\proglang{R} and the column-pivoted QR decomposition described in
-Section~\ref{sec:colPivQR} does not provide standard errors for the
+\proglang{R} and by the column-pivoted QR decomposition described in
+Section~\ref{sec:colPivQR}, does not provide standard errors for the
 missing coefficients.  That is, both the coefficient and its standard
 error are returned as \code{NA} because the least squares solution is
 performed on a reduced model matrix.  It is also true that the
@@ -908,7 +976,7 @@ where $\bm V$, the matrix of eigenvectors, is a $p\times p$ orthogonal
 matrix and $\bm\Lambda$ is a $p\times p$ diagonal matrix with
 non-increasing, non-negative diagonal elements, called the eigenvalues
 of $\bm X^\prime\bm X$.  When the eigenvalues are distinct this $\bm
-V$ is the same as that in the SVD.  Also the eigenvalues of $\bm
+V$ is the same as that in the SVD.  Also, the eigenvalues of $\bm
 X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 
 With these definitions one can adapt much of the code from the SVD
@@ -972,7 +1040,7 @@ typedef ColPivHouseholderQR<MatrixXd>::PermutationType  Permutation;
 const ColPivHouseholderQR<MatrixXd> PQR(X);
 const Permutation                   Pmat(PQR.colsPermutation());
 const int                              r(PQR.rank());
-VectorXd                       betahat, fitted, se;
+VectorXd                               betahat, fitted, se;
 if (r == X.cols()) {	// full rank case
     betahat  = PQR.solve(y);
     fitted   = X * betahat;
@@ -983,12 +1051,14 @@ if (r == X.cols()) {	// full rank case
 				       triangularView<Upper>().
 				       solve(MatrixXd::Identity(r, r)));
     VectorXd                   effects(PQR.householderQ().adjoint() * y);
+    betahat.fill(::NA_REAL);
     betahat.head(r)                    = Rinv * effects.head(r);
     betahat                            = Pmat * betahat;
 			// create fitted values from effects
 			// (cannot use X * betahat when X is rank-deficient)
     effects.tail(X.rows() - r).setZero();
     fitted                             = PQR.householderQ() * effects;
+    se.fill(::NA_REAL);
     se.head(r)                         = Rinv.rowwise().norm();
     se                                 = Pmat * se;
 }
@@ -1093,21 +1163,20 @@ out of contention.
 
 An SVD method using the Lapack SVD subroutine, \code{dgesv}, may be
 faster than the native \pkg{Eigen} implementation of the SVD, which is
-not a particularly fast method.
+not a particularly fast method of evaluating the SVD.
 
 \section{Delayed evaluation}
 \label{sec:delayed}
 
 A form of delayed evaluation is used in \pkg{Eigen}.  That is, many
-operators and methods do not force the evaluation of the object but
-instead return an ``expression object'' that is evaluated when
-needed.  As an example, even though one writes the $\bm X^\prime\bm X$
-evaluation using \code{.rankUpdate(X.adjoint())} the
-\code{X.adjoint()} part is not evaluated immediately.  The
-\code{rankUpdate} method detects that it has been passed a matrix
-that is to be used in its transposed form and evaluates the update
-by taking inner products of columns of $\bm X$ instead of rows of $\bm
-X^\prime$.
+operators and methods do not evaluate the result but instead return an
+``expression object'' that is evaluated when needed.  As an example,
+even though one writes the $\bm X^\prime\bm X$ evaluation using
+\code{.rankUpdate(X.adjoint())} the \code{X.adjoint()} part is not
+evaluated immediately.  The \code{rankUpdate} method detects that it
+has been passed a matrix that is to be used in its transposed form and
+evaluates the update by taking inner products of columns of $\bm X$
+instead of rows of $\bm X^\prime$.
 
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
@@ -1115,7 +1184,7 @@ an ``infelicity'' in the code, if not an outright bug.  In the code
 for the transpose of an integer matrix shown in Listing~\ref{trans} we
 assigned the transpose as a \code{MatrixXi} before returning it with
 \code{wrap}.  The assignment forces the evaluation.  If this
-step is skipped, as in Listing~\ref{badtrans} an answer with the correct
+step is skipped, as in Listing~\ref{badtrans}, an answer with the correct
 shape but incorrect contents is obtained.
 
 <<badtransCpp,echo=FALSE>>=
@@ -1189,7 +1258,7 @@ linear algebra computations as an extension to the \proglang{R} system.
 \pkg{RcppEigen} is based on the modern \proglang{C++} library \pkg{Eigen}
 which combines extended functionality with excellent performance, and
 utilizes \pkg{Rcpp} to interface \proglang{R} with \proglang{C++}.
-Several illustration covered common matrix operations which covered
+Several illustrations covered common matrix operations and
 several approaches to solving a least squares problem---including an extended
 discussion of rank-revealing approaches.  A short example provided
 an empirical illustration  for the excellent run-time performance of the
