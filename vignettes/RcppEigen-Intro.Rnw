@@ -1,8 +1,8 @@
 \documentclass[10pt]{article}
 %\VignetteIndexEntry{RcppEigen-intro}
 \usepackage[margin=1in]{geometry}
-\usepackage{color, alltt, bm, amsmath, listings}
-\lstset{language=C++,basicstyle=\small}
+\usepackage{color, alltt, bm, amsmath}%, listings}
+%\lstset{language=C++,basicstyle=\small}
 \usepackage[authoryear,round,longnamesfirst]{natbib}
 \usepackage{booktabs,flafter,thumbpdf} % booktabs for nice tables, flafter for float control, thumbpdf is a tip from Achim
 \usepackage[colorlinks]{hyperref}
@@ -78,9 +78,9 @@ require( RcppEigen )
 %% the grey background etc -- comment out and see if you like any of it
 %% Just like DB below, DE also uses  frame=tb  for top+bottom frame lines
 \definecolor{lightgray}{rgb}{0.975,0.975,0.975}
-\lstset{backgroundcolor=\color{lightgray}}
+%\lstset{backgroundcolor=\color{lightgray}}
 % \lstset{numbers=left, numberstyle=\tiny, stepnumber=2, numbersep=5pt}
-\lstset{keywordstyle=\color{black}\bfseries\tt}
+%\lstset{keywordstyle=\color{black}\bfseries\tt}
 % \lstset{ %
 %   %language=Octave,                % the language of the code
 %   %basicstyle=\footnotesize,       % the size of the fonts that are used for the code
@@ -226,10 +226,6 @@ The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \code{Eigen::MatrixXd}.  However, if one prefaces the use of these class
 names with a declaration like
 
-% \begin{lstlisting}[language=C++]
-%using Eigen::MatrixXd;
-%\end{lstlisting}
-%
 %% Alternatively, use 'highlight --enclose-pre --no-doc --latex --style=emacs --syntax=C++'
 %% as the command invoked from C-u M-|
 %% For version 3.5 of highlight this should be
@@ -263,7 +259,7 @@ sparse matrices one can deploy the Eigen templated class \code{MappedSparseMatri
 
 One must, of course, be careful not to modify the contents of the
 \proglang{R} object in the \proglang{C++} code.  A recommended
-practice is always to declare mapped objects as \lstinline!const!.
+practice is always to declare mapped objects as {\ttfamily\hlkwb{const}\normalfont}.
 
 \subsection{Arrays in Eigen}
 \label{sec:arrays}
@@ -352,7 +348,7 @@ The next \proglang{R} code snippet creates a simple matrix of integers
 (A <- matrix(1:6, ncol=2))
 str(A)
 @
-and, in Listing~\ref{trans}, the \code{transpose()} method for the
+and, in Figure~\ref{trans}, the \code{transpose()} method for the
 \code{Eigen::MatrixXi} class is used to return the transpose of the supplied matrix. The \proglang{R}
 matrix in the \code{SEXP} \code{AA} is mapped to an
 \code{Eigen::MatrixXi} object then the matrix \code{At} is constructed
@@ -369,15 +365,7 @@ const MatrixXi      At(A.transpose());
 return wrap(At);
 '
 @
-%\begin{lstlisting}[frame=tb,caption={transCpp: Transpose a matrix of integers},label=trans]
-%<<transCppLst,results=tex,echo=FALSE >>=
-%cat(transCpp, "\n")
-%@
-%\end{lstlisting}
-
-\begin{figure}[h]
-  \caption{\code{transCpp}: Transpose a matrix of integers}
-  \label{trans}
+\begin{figure}[htb]
   \begin{quote}
     \noindent
     \ttfamily
@@ -387,10 +375,11 @@ return wrap(At);
     \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlsym{$<$}\hlstd{MatrixXi}\hlsym{$>$}\hlstd{\ \ }\hlsym{}\hlstd{}\hlkwd{A}\hlstd{}\hlsym{(}\hlstd{as}\hlsym{$<$}\hlstd{Map}\hlsym{$<$}\hlstd{MatrixXi}\hlsym{$>$\ $>$(}\hlstd{AA}\hlsym{));}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ evaluate\ and\ return\ the\ transpose\ of\ A}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlsym{(}\hlstd{A}\hlsym{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlsym{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}\\
-    \mbox{}
+    \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}
     \normalfont
   \end{quote}
+  \caption{\textbf{transCpp}: Transpose a matrix of integers}
+  \label{trans}
 \end{figure}
 
 The next \proglang{R} snippet compiles and links the \proglang{C++} code
@@ -416,7 +405,7 @@ integer matrices.
 As mentioned in Sec.~\ref{sec:arrays}, the \code{`*'} operator
 performs matrix multiplication on \code{Eigen::Matrix} or
 \code{Eigen::Vector} objects. The \proglang{C++} code in
-Listing~\ref{prod} produces a list containing both the product and
+Figure~\ref{prod} produces a list containing both the product and
 cross-product of its two arguments.
 
 <<prodCpp,echo=FALSE>>=
@@ -429,14 +418,7 @@ return List::create(_["B %*% C"]         = B * C,
                     _["crossprod(B, C)"] = B.adjoint() * C);
 '
 @
-% \begin{lstlisting}[frame=tb,caption={prodCpp: Product and cross-product of two matrices},label=prod]
-% <<prodCppLst,results=tex,echo=FALSE>>=
-% cat(prodCpp, "\n")
-% @
-% \end{lstlisting}
-\begin{figure}[h]
-  \caption{prodCpp: Product and cross-product of two matrices}
-  \label{prod}
+\begin{figure}[htb]
   \begin{quote}
 \noindent
 \ttfamily
@@ -445,11 +427,12 @@ return List::create(_["B %*% C"]         = B * C,
 \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ \ }\hlopt{}\hlstd{}\hlkwd{B}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{BB}\hlopt{));}\hspace*{\fill}\\
 \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ \ }\hlopt{}\hlstd{}\hlkwd{C}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{CC}\hlopt{));}\hspace*{\fill}\\
 \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"B\ \%{*}\%\ C"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{B\ }\hlopt{{*}\ }\hlstd{C}\hlopt{,}\hspace*{\fill}\\
-\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}\\
-\mbox{}
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}
 \normalfont
 \normalsize
   \end{quote}
+  \caption{\textbf{prodCpp}: Product and cross-product of two matrices}
+  \label{prod}
 \end{figure}
 <<prod>>=
 fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), prodCpp, "RcppEigen")
@@ -494,7 +477,7 @@ method is \code{triangularView}.  The triangle can be specified as
 
 For self-adjoint views the \code{rankUpdate} method adds a scalar multiple
 of $\bm A\bm A^\prime$ to the current symmetric matrix.  The scalar
-multiple defaults to 1.  The code in Listing~\ref{crossprod} produces
+multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
 
 <<crossprod,echo=FALSE>>=
 crossprodCpp <- '
@@ -513,14 +496,7 @@ return List::create(_["crossprod(A)"]  = AtA,
                     _["tcrossprod(A)"] = AAt);
 '
 @
-% \begin{lstlisting}[frame=tb,caption={crossprodCpp: Cross-product and transposed cross-product of a single matrix},label=crossprod]
-% <<crossprodCppLst,results=tex,echo=FALSE>>=
-% cat(crossprodCpp, "\n")
-% @
-% \end{lstlisting}
-\begin{figure}[h]
-  \caption{crossprodCpp: Cross-product and transposed cross-product of a single matrix}
-  \label{crossprod}
+\begin{figure}[htb]
   \begin{quote}
     \noindent
     \ttfamily
@@ -536,11 +512,12 @@ return List::create(_["crossprod(A)"]  = AtA,
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{));}\hspace*{\fill}\\
     \hlstd{}\hspace*{\fill}\\
     \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(A)"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{AtA}\hlopt{,}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}\\
-    \mbox{}
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
   \end{quote}
+  \caption{\textbf{crossprodCpp}: Cross-product and transposed cross-product of a single matrix}
+  \label{crossprod}
 \end{figure}
 <<>>=
 fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
@@ -586,7 +563,7 @@ representation is switched to numeric matrices
 <<storage>>=
 storage.mode(A) <- "double"
 @
-before applying the code in Listing~\ref{chol}.
+before applying the code in Figure~\ref{chol}.
 <<cholCpp,echo=FALSE>>=
 cholCpp <- '
 using Eigen::Map;
@@ -603,14 +580,7 @@ return List::create(_["L"] = MatrixXd(llt.matrixL()),
                     _["R"] = MatrixXd(llt.matrixU()));
 '
 @
-% \begin{lstlisting}[frame=tb,caption={cholCpp: Cholesky decomposition of a cross-product},label=chol]
-% <<cholCppLst,results=tex,echo=FALSE>>=
-% cat(cholCpp, "\n")
-% @
-% \end{lstlisting}
-\begin{figure}[h]
-  \caption{cholCpp: Cholesky decomposition of a cross-product}
-  \label{chol}
+\begin{figure}[htb]
   \begin{quote}
     \noindent
     \ttfamily
@@ -625,11 +595,12 @@ return List::create(_["L"] = MatrixXd(llt.matrixL()),
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
     \hlstd{}\hspace*{\fill}\\
     \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}\\
-    \mbox{}
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
   \end{quote}
+  \caption{\textbf{cholCpp}: Cholesky decomposition of a cross-product}
+  \label{chol}
 \end{figure}
 <<fchol>>=
 fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen")
@@ -657,7 +628,7 @@ $\bm D$ is diagonal then $|\bm X^\prime\bm X|$ is the product of the
 diagonal elements of $\bm D$.  Because it is known that the diagonals of
 $\bm D$ must be non-negative, one often evaluates the logarithm of the
 determinant as the sum of the logarithms of the diagonal elements of
-$\bm D$.  Several options are shown in Listing~\ref{cholDet}.
+$\bm D$.  Several options are shown in Figure~\ref{cholDet}.
 
 <<echo=FALSE>>=
 cholDetCpp <- '
@@ -679,11 +650,32 @@ return List::create(_["d1"] = detL * detL,
                     _["ld"] = Dvec.array().log().sum());
 '
 @
-\begin{lstlisting}[frame=tb,caption={cholDetCpp: Determinant of a cross-product using the Cholesky decomposition},label=cholDet]
-<<cholDetCppLst,results=tex,echo=FALSE>>=
-cat(cholDetCpp, "\n")
-@
-\end{lstlisting}
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{n}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{,\ }\hlstd{n}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Lmat}\hlstd{}\hlopt{(}\hlstd{AtA}\hlopt{.}\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{detL}\hlstd{}\hlopt{(}\hlstd{Lmat}\hlopt{.}\hlstd{}\hlkwd{diagonal}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Dvec}\hlstd{}\hlopt{(}\hlstd{AtA}\hlopt{.}\hlstd{}\hlkwd{ldlt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{vectorD}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d1"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{detL\ }\hlopt{{*}\ }\hlstd{detL}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d2"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{(),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"ld"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{array}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{log}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{sum}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{cholDetCpp}: Determinant of a cross-product using the Cholesky decomposition}
+  \label{cholDet}
+\end{figure}
 <<fdet>>=
 fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen")
 unlist(ll <- fdet(A))
@@ -750,12 +742,42 @@ return     List::create(_["coefficients"]   = betahat,
                         _["Std. Error"]     = se);
 '
 @
-\begin{lstlisting}[frame=tb,caption={lltLSCpp: Least squares using the Cholesky decomposition},label=lltLS]
-<<lltLSCppLst,results=tex,echo=FALSE>>=
-cat(lltLSCpp, "\n")
-@
-\end{lstlisting}
-Listing~\ref{lltLS} shows a calculation of the least squares coefficient estimates
+\begin{figure}[tbh]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{LLT}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{}\hlkwd{X}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ $>$(}\hlstd{XX}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{}\hlkwd{y}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$\ $>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{n}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{rows}\hlstd{}\hlopt{()),\ }\hlstd{}\hlkwd{p}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{LLT}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,\ }\hlstd{p}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{y}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ }\hlstd{}\hlkwd{fitted}\hlstd{}\hlopt{(}\hlstd{X\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{resid}\hlstd{}\hlopt{(}\hlstd{y\ }\hlopt{{-}\ }\hlstd{fitted}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{p}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{resid}\hlopt{.}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{()\ /\ }\hlstd{std}\hlopt{::}\hlstd{}\hlkwd{sqrt}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{(}\hlstd{df}\hlopt{)));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,\ }\hlstd{p}\hlopt{)).}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{colwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return}\hlstd{\ \ \ \ \ }\hlkwa{}\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"coefficients"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ }\hlopt{=\ }\hlstd{betahat}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"fitted.values"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{fitted}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"residuals"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ }\hlopt{=\ }\hlstd{resid}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"s"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{s}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"df.residual"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ }\hlopt{=\ }\hlstd{df}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"rank"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{p}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Std.\ Error"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{se}\hlopt{);}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{lltLSCpp}: Least squares using the Cholesky decomposition}
+  \label{lltLS}
+\end{figure}
+Figure~\ref{lltLS} shows a calculation of the least squares coefficient estimates
 (\code{betahat}) and the standard errors (\code{se}) through an
 ``LLt'' Cholesky decomposition of the crossproduct of the model
 matrix, $\bm X$.  Next, the results from this calculation are compared
@@ -774,7 +796,7 @@ stopifnot(all.equal(lltFit[["Std. Error"]],
 @
 
 There are several aspects of the \proglang{C++} code in
-Listing~\ref{lltLS} worth mentioning.  The \code{solve} method for the
+Figure~\ref{lltLS} worth mentioning.  The \code{solve} method for the
 \code{LLT} object evaluates, in this case, $\left(\bm X^\prime\bm
   X\right)^{-1}\bm X^\prime\bm y$ but without actually evaluating the
 inverse.  The calculation of the residuals, $\bm y-\widehat{\bm y}$,
@@ -792,7 +814,7 @@ are similar in effect to the \code{apply} function in \proglang{R}.
 
 In the descriptions of other methods for solving least squares
 problems, much of the code parallels that shown in
-Listing~\ref{lltLS}.  The redundant parts are omitted, and only
+Figure~\ref{lltLS}.  The redundant parts are omitted, and only
 the evaluation of the coefficients, the rank and the standard errors is shown.
 Actually, the standard errors are calculated only up to the scalar
 multiple of $s$, the residual standard error, in these code fragments.
@@ -819,24 +841,40 @@ Householder transformations, \code{ColPivHouseholderQR} incorporates
 column pivots and \code{FullPivHouseholderQR} incorporates both row
 and column pivots.
 
-Listing~\ref{QRLS} shows a least squares solution using the unpivoted
+Figure~\ref{QRLS} shows a least squares solution using the unpivoted
 QR decomposition.
-\begin{lstlisting}[frame=tb,caption={QRLSCpp: Least squares using the unpivoted QR decomposition},label=QRLS]
-using Eigen::HouseholderQR;
+% using Eigen::HouseholderQR;
 
-const HouseholderQR<MatrixXd> QR(X);
-const VectorXd           betahat(QR.solve(y));
-const VectorXd            fitted(X * betahat);
-const int                     df(n - p);
-const VectorXd                se(QR.matrixQR().topRows(p).
-                                 triangularView<Upper>().
-                                 solve(MatrixXd::Identity(p,p)).
-                                 rowwise().norm());
-\end{lstlisting}
-The calculations in Listing~\ref{QRLS} are quite similar to those in
-Listing~\ref{lltLS}.  In fact, if one had extracted the upper
+% const HouseholderQR<MatrixXd> QR(X);
+% const VectorXd           betahat(QR.solve(y));
+% const VectorXd            fitted(X * betahat);
+% const int                     df(n - p);
+% const VectorXd                se(QR.matrixQR().topRows(p).
+%                                  triangularView<Upper>().
+%                                  solve(MatrixXd::Identity(p,p)).
+%                                  rowwise().norm());
+\begin{figure}[htb]
+  \noindent
+  \ttfamily
+  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{HouseholderQR}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hspace*{\fill}\\
+  \hlkwb{const\ }\hlstd{HouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{QR}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{);}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{y}\hlopt{));}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{fitted}\hlstd{}\hlopt{(}\hlstd{X\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{);}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{p}\hlopt{);}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{matrixQR}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{topRows}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{).}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{triangularView}\hlopt{$<$}\hlstd{Upper}\hlopt{$>$().}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,}\hlstd{p}\hlopt{)).}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+  \normalfont
+  \normalsize
+  \caption{\textbf{QRLSCpp}: Least squares using the unpivoted QR decomposition}
+  \label{QRLS}
+\end{figure}
+The calculations in Figure~\ref{QRLS} are quite similar to those in
+Figure~\ref{lltLS}.  In fact, if one had extracted the upper
 triangular factor (the \code{matrixU()} method) from the \code{LLT}
-object in Listing~\ref{lltLS}, the rest of the code would be nearly
+object in Figure~\ref{lltLS}, the rest of the code would be nearly
 identical.
 
 \subsection{Handling the rank-deficient case}
@@ -907,44 +945,79 @@ The tolerance for determining if an element of the diagonal of $\bm D$
 is considered to be (effectively) zero is a multiple of the largest
 singular value (i.e. the $(1,1)$ element of $\bm D$).
 
-In Listing~\ref{Dplus} a utility function, \code{Dplus}, is defined to
+In Figure~\ref{Dplus} a utility function, \code{Dplus}, is defined to
 return the pseudo-inverse as a diagonal matrix, given the singular
 values (the diagonal of $\bm D$) and the apparent rank.  To be able to
 use this function with the eigendecomposition where the eigenvalues
 are in increasing order, a Boolean argument \code{rev} is included
 indicating whether the order is reversed.
 
-\begin{lstlisting}[frame=tb,caption={DplusCpp: Create the
-    diagonal matrix $\bm D^+$ from the array of singular values $\bm d$},label=Dplus]
-using Eigen::DiagonalMatrix;
-using Eigen::Dynamic;
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{DiagonalMatrix}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Dynamic}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwc{inline\ }\hlstd{DiagonalMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{,\ }\hlstd{Dynamic}\hlopt{$>$\ }\hlstd{}\hlkwd{Dplus}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{ArrayXd}\hlopt{\&\ }\hlstd{D}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{int\ }\hlstd{r}\hlopt{,\ }\hlstd{}\hlkwb{bool\ }\hlstd{rev}\hlopt{=}\hlstd{}\hlkwa{false}\hlstd{}\hlopt{)\ \{}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{VectorXd}\hlstd{\ \ \ }\hlstd{}\hlkwd{Di}\hlstd{}\hlopt{(}\hlstd{VectorXd}\hlopt{::}\hlstd{}\hlkwd{Constant}\hlstd{}\hlopt{(}\hlstd{D}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{(),\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.));}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rev}\hlopt{)\ }\hlstd{Di}\hlopt{.}\hlstd{}\hlkwd{tail}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ }\hlopt{=\ }\hlstd{D}\hlopt{.}\hlstd{}\hlkwd{tail}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{).}\hlstd{}\hlkwd{inverse}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{Di}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ \ \ \ \ }\hlopt{=\ }\hlstd{D}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{).}\hlstd{}\hlkwd{inverse}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{DiagonalMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{,\ }\hlstd{Dynamic}\hlopt{$>$(}\hlstd{Di}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{DplusCpp}: Create the diagonal matrix $\bm D^+$ from the array of singular values $\bm d$}
+  \label{Dplus}
+\end{figure}
+% using Eigen::DiagonalMatrix;
+% using Eigen::Dynamic;
 
-inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
-                                             int r, bool rev=false) {
-    VectorXd   Di(VectorXd::Constant(D.size(), 0.));
-    if (rev) Di.tail(r)  = D.tail(r).inverse();
-    else Di.head(r)      = D.head(r).inverse();
-    return DiagonalMatrix<double, Dynamic>(Di);
-}
-\end{lstlisting}
+% inline DiagonalMatrix<double, Dynamic> Dplus(const ArrayXd& D,
+%                                              int r, bool rev=false) {
+%     VectorXd   Di(VectorXd::Constant(D.size(), 0.));
+%     if (rev) Di.tail(r)  = D.tail(r).inverse();
+%     else Di.head(r)      = D.head(r).inverse();
+%     return DiagonalMatrix<double, Dynamic>(Di);
+% }
 
 \subsection{Least squares using the SVD}
 \label{sec:SVDls}
 
 With these definitions the code for least squares using the singular
-value decomposition can be written as in Listing~\ref{SVDLS}.
-\begin{lstlisting}[frame=tb,caption={SVDLSCpp: Least squares using the SVD},label=SVDLS]
-using Eigen::JacobiSVD;
+value decomposition can be written as in Figure~\ref{SVDLS}.
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{JacobiSVD}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{JacobiSVD}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{UDV}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{jacobiSvd}\hlstd{}\hlopt{(}\hlstd{Eigen}\hlopt{::}\hlstd{ComputeThinU}\hlopt{\textbar }\hlstd{Eigen}\hlopt{::}\hlstd{ComputeThinV}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{ArrayXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{D}\hlstd{}\hlopt{(}\hlstd{UDV}\hlopt{.}\hlstd{}\hlkwd{singularValues}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{r}\hlstd{}\hlopt{((}\hlstd{D\ }\hlopt{$>$\ }\hlstd{D}\hlopt{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlopt{{]}\ {*}\ }\hlstd{}\hlkwd{threshold}\hlstd{}\hlopt{()).}\hlstd{}\hlkwd{count}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VDp}\hlstd{}\hlopt{(}\hlstd{UDV}\hlopt{.}\hlstd{}\hlkwd{matrixV}\hlstd{}\hlopt{()\ {*}\ }\hlstd{}\hlkwd{Dplus}\hlstd{}\hlopt{(}\hlstd{D}\hlopt{,\ }\hlstd{r}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{VDp\ }\hlopt{{*}\ }\hlstd{UDV}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{y}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{r}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{SVDLSCpp}: Least squares using the SVD}
+  \label{SVDLS}
+\end{figure}
+% using Eigen::JacobiSVD;
 
-const JacobiSVD<MatrixXd>
-                UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
-const ArrayXd               D(UDV.singularValues());
-const int                   r((D > D[0] * threshold()).count());
-const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
-const VectorXd        betahat(VDp * UDV.matrixU().adjoint() * y);
-const int                  df(n - r);
-const VectorXd             se(s * VDp.rowwise().norm());
-\end{lstlisting}
+% const JacobiSVD<MatrixXd>
+%                 UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
+% const ArrayXd               D(UDV.singularValues());
+% const int                   r((D > D[0] * threshold()).count());
+% const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
+% const VectorXd        betahat(VDp * UDV.matrixU().adjoint() * y);
+% const int                  df(n - r);
+% const VectorXd             se(s * VDp.rowwise().norm());
 In the rank-deficient case this code will produce a complete set of
 coefficients and their standard errors.  It is up to the user to note
 that the rank is less than $p$, the number of columns in $\bm X$, and
@@ -980,20 +1053,39 @@ V$ is the same as that in the SVD.  Also, the eigenvalues of $\bm
 X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 
 With these definitions one can adapt much of the code from the SVD
-method for the eigendecomposition, as shown in Listing~\ref{SymmEigLS}.
-\begin{lstlisting}[frame=tb,caption={SymmEigLSCpp: Least squares using the eigendecomposition},label=SymmEigLS]
-using Eigen::SelfAdjointEigenSolver;
+method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{SelfAdjointEigenSolver}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{SelfAdjointEigenSolver}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VLV}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,\ }\hlstd{p}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{()}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{.}\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{.}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{ArrayXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{D}\hlstd{}\hlopt{(}\hlstd{eig}\hlopt{.}\hlstd{}\hlkwd{eigenvalues}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{r}\hlstd{}\hlopt{((}\hlstd{D\ }\hlopt{$>$\ }\hlstd{D}\hlopt{{[}}\hlstd{p\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{{]}\ {*}\ }\hlstd{}\hlkwd{threshold}\hlstd{}\hlopt{()).}\hlstd{}\hlkwd{count}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VDp}\hlstd{}\hlopt{(}\hlstd{VLV}\hlopt{.}\hlstd{}\hlkwd{eigenvectors}\hlstd{}\hlopt{()\ {*}\ }\hlstd{}\hlkwd{Dplus}\hlstd{}\hlopt{(}\hlstd{D}\hlopt{.}\hlstd{}\hlkwd{sqrt}\hlstd{}\hlopt{(),}\hlstd{r}\hlopt{,}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{VDp\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{y}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{SymmEigLSCpp}: Least squares using the eigendecomposition}
+  \label{SymmEigLS}
+\end{figure}
+% using Eigen::SelfAdjointEigenSolver;
 
-const SelfAdjointEigenSolver<MatrixXd>
-                          VLV(MatrixXd(p, p).setZero()
-                                            .selfadjointView<Lower>
-                                            .rankUpdate(X.adjoint()));
-const ArrayXd               D(eig.eigenvalues());
-const int                   r((D > D[p - 1] * threshold()).count());
-const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(),r,true));
-const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
-const VectorXd             se(s * VDp.rowwise().norm());
-\end{lstlisting}
+% const SelfAdjointEigenSolver<MatrixXd>
+%                           VLV(MatrixXd(p, p).setZero()
+%                                             .selfadjointView<Lower>
+%                                             .rankUpdate(X.adjoint()));
+% const ArrayXd               D(eig.eigenvalues());
+% const int                   r((D > D[p - 1] * threshold()).count());
+% const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(),r,true));
+% const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
+% const VectorXd             se(s * VDp.rowwise().norm());
 
 \subsection{Least squares using the column-pivoted QR decomposition}
 \label{sec:colPivQR}
@@ -1032,39 +1124,74 @@ easier to employ the relationship
   \bm Q^\prime\bm y
 \end{displaymath}
 The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{ColPivHouseholderQR}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{ColPivHouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$::}\hlstd{PermutationType}\hlstd{\ \ }\hlstd{Permutation}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{ColPivHouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{PQR}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{Permutation}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{Pmat}\hlstd{}\hlopt{(}\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{colsPermutation}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{r}\hlstd{}\hlopt{(}\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{rank}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{betahat}\hlopt{,\ }\hlstd{fitted}\hlopt{,\ }\hlstd{se}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{r\ }\hlopt{==\ }\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{())\ \{\ }\hlstd{}\hlslc{//\ full\ rank\ case}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{y}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{fitted}\hlstd{\ \ \ }\hlstd{}\hlopt{=\ }\hlstd{X\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{Pmat\ }\hlopt{{*}\ }\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{matrixQR}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{topRows}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{).}\hlstd{triangularView}\hlopt{$<$}\hlstd{Upper}\hlopt{$>$().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,\ }\hlstd{p}\hlopt{)).}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{Rinv}\hlstd{}\hlopt{(}\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{matrixQR}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{topLeftCorner}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{,\ }\hlstd{r}\hlopt{).}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{triangularView}\hlopt{$<$}\hlstd{Upper}\hlopt{$>$().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{,\ }\hlstd{r}\hlopt{)));}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{effects}\hlstd{}\hlopt{(}\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{householderQ}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{y}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlopt{.}\hlstd{}\hlkwd{fill}\hlstd{}\hlopt{(::}\hlstd{NA\textunderscore REAL}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{Rinv\ }\hlopt{{*}\ }\hlstd{effects}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{Pmat\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ }\hlstd{}\hlslc{//\ create\ fitted\ values\ from\ effects}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ }\hlstd{}\hlslc{//\ (cannot\ use\ X\ {*}\ betahat\ when\ X\ is\ rank{-}deficient)}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{effects}\hlopt{.}\hlstd{}\hlkwd{tail}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{rows}\hlstd{}\hlopt{()\ {-}\ }\hlstd{r}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{fitted}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{householderQ}\hlstd{}\hlopt{()\ {*}\ }\hlstd{effects}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlopt{.}\hlstd{}\hlkwd{fill}\hlstd{}\hlopt{(::}\hlstd{NA\textunderscore REAL}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{Rinv}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{Pmat\ }\hlopt{{*}\ }\hlstd{se}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition}
+  \label{ColPivQRLS}
+\end{figure}
+% using Eigen::ColPivHouseholderQR;
+% typedef ColPivHouseholderQR<MatrixXd>::PermutationType  Permutation;
 
-\begin{lstlisting}[frame=tb,caption={ColPivQRLSCpp: Least squares using the pivoted QR decomposition},label=ColPivQRLS]
-using Eigen::ColPivHouseholderQR;
-typedef ColPivHouseholderQR<MatrixXd>::PermutationType  Permutation;
+% const ColPivHouseholderQR<MatrixXd> PQR(X);
+% const Permutation                   Pmat(PQR.colsPermutation());
+% const int                              r(PQR.rank());
+% VectorXd                               betahat, fitted, se;
+% if (r == X.cols()) {	// full rank case
+%     betahat  = PQR.solve(y);
+%     fitted   = X * betahat;
+%     se       = Pmat * PQR.matrixQR().topRows(p).triangularView<Upper>().
+% 	       solve(MatrixXd::Identity(p, p)).rowwise().norm();
+% } else {
+%     MatrixXd                      Rinv(PQR.matrixQR().topLeftCorner(r, r).
+% 				       triangularView<Upper>().
+% 				       solve(MatrixXd::Identity(r, r)));
+%     VectorXd                   effects(PQR.householderQ().adjoint() * y);
+%     betahat.fill(::NA_REAL);
+%     betahat.head(r)                    = Rinv * effects.head(r);
+%     betahat                            = Pmat * betahat;
+% 			// create fitted values from effects
+% 			// (cannot use X * betahat when X is rank-deficient)
+%     effects.tail(X.rows() - r).setZero();
+%     fitted                             = PQR.householderQ() * effects;
+%     se.fill(::NA_REAL);
+%     se.head(r)                         = Rinv.rowwise().norm();
+%     se                                 = Pmat * se;
+% }
 
-const ColPivHouseholderQR<MatrixXd> PQR(X);
-const Permutation                   Pmat(PQR.colsPermutation());
-const int                              r(PQR.rank());
-VectorXd                               betahat, fitted, se;
-if (r == X.cols()) {	// full rank case
-    betahat  = PQR.solve(y);
-    fitted   = X * betahat;
-    se       = Pmat * PQR.matrixQR().topRows(p).triangularView<Upper>().
-	       solve(MatrixXd::Identity(p, p)).rowwise().norm();
-} else {
-    MatrixXd                      Rinv(PQR.matrixQR().topLeftCorner(r, r).
-				       triangularView<Upper>().
-				       solve(MatrixXd::Identity(r, r)));
-    VectorXd                   effects(PQR.householderQ().adjoint() * y);
-    betahat.fill(::NA_REAL);
-    betahat.head(r)                    = Rinv * effects.head(r);
-    betahat                            = Pmat * betahat;
-			// create fitted values from effects
-			// (cannot use X * betahat when X is rank-deficient)
-    effects.tail(X.rows() - r).setZero();
-    fitted                             = PQR.householderQ() * effects;
-    se.fill(::NA_REAL);
-    se.head(r)                         = Rinv.rowwise().norm();
-    se                                 = Pmat * se;
-}
-\end{lstlisting}
-
-Just to check that the code in Listing~\ref{ColPivQRLS} does indeed provide the desired answer
+Just to check that the code in Figure~\ref{ColPivQRLS} does indeed provide the desired answer
 <<rankdeficientPQR>>=
 print(summary(fmPQR <- fastLm(y ~ f1 * f2, dd)), signif.stars=FALSE)
 all.equal(coef(fm1), coef(fmPQR))
@@ -1181,10 +1308,10 @@ instead of rows of $\bm X^\prime$.
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
 an ``infelicity'' in the code, if not an outright bug.  In the code
-for the transpose of an integer matrix shown in Listing~\ref{trans} we
+for the transpose of an integer matrix shown in Figure~\ref{trans} we
 assigned the transpose as a \code{MatrixXi} before returning it with
 \code{wrap}.  The assignment forces the evaluation.  If this
-step is skipped, as in Listing~\ref{badtrans}, an answer with the correct
+step is skipped, as in Figure~\ref{badtrans}, an answer with the correct
 shape but incorrect contents is obtained.
 
 <<badtransCpp,echo=FALSE>>=
@@ -1195,11 +1322,20 @@ const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
 return wrap(A.transpose());
 '
 @
-\begin{lstlisting}[frame=tb,caption={badtransCpp: Transpose producing incorrect results},label=badtrans]
-<<badtransCppLst,results=tex,echo=FALSE>>=
-cat(badtransCpp, "\n")
-@
-\end{lstlisting}
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{\textbf{badtransCpp}: Transpose producing incorrect results}
+  \label{badtrans}
+\end{figure}
 <<ftrans2>>=
 Ai <- matrix(1:6, ncol=2L)
 ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp, "RcppEigen")
@@ -1215,7 +1351,7 @@ for return to \proglang{R}.
 
 \pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
 class \Sexpr{linkS4class("dgCMatrix")} (from the \pkg{Matrix}
-\citep{CRAN:Matrix} package) can be mapped as in Listing~\ref{sparseProd}.
+\citep{CRAN:Matrix} package) can be mapped as in Figure~\ref{sparseProd}.
 <<echo=FALSE>>=
 sparseProdCpp <- '
 using Eigen::Map;
@@ -1230,12 +1366,24 @@ return List::create(_["At"]  = At,
                     _["Aty"] = At * y);
 '
 @
-\begin{lstlisting}[frame=tb,
-  caption={sparseProdCpp: Transpose and product with sparse matrices},label=sparseProd]
-<<sparseProdCppLst,results=tex,echo=FALSE>>=
-cat(sparseProdCpp, "\n")
-@
-\end{lstlisting}
+\begin{figure}[htb]
+  \noindent
+  \ttfamily
+  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hspace*{\fill}\\
+  \hlkwb{const\ }\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{y}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$\ $>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"At"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{At}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Aty"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{At\ }\hlopt{{*}\ }\hlstd{y}\hlopt{);}\hlstd{}\hspace*{\fill}
+  \normalfont
+  \normalsize
+  \caption{sparseProdCpp: Transpose and product with sparse matrices}
+  \label{sparseProd}
+\end{figure}
 <<>>=
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
                        sparseProdCpp, "RcppEigen")
