@@ -141,7 +141,7 @@ namespace lmsol {
     SVD::SVD(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(ComputeThinU|ComputeThinV));
 	MatrixXd             VDi(UDV.matrixV() *
-				 DiagonalMatrix(Dplus(UDV.singularValues().array()).matrix()));
+				 Dplus(UDV.singularValues().array()).matrix().asDiagonal());
 	m_coef                   = VDi * UDV.matrixU().adjoint() * y;
 	m_fitted                 = X * m_coef;
 	m_se                     = VDi.rowwise().norm();
@@ -151,7 +151,7 @@ namespace lmsol {
 	: lm(X, y) {
 	SelfAdjointEigenSolver<MatrixXd> eig(XtX().selfadjointView<Lower>());
 	MatrixXd   VDi(eig.eigenvectors() *
-		       DiagonalMatrix(Dplus(eig.eigenvalues().array()).sqrt().matrix());
+		       Dplus(eig.eigenvalues().array()).sqrt().matrix().asDiagonal());
 	m_coef         = VDi * VDi.adjoint() * X.adjoint() * y;
 	m_fitted       = X * m_coef;
 	m_se           = VDi.rowwise().norm();
