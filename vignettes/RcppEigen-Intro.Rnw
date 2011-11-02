@@ -52,22 +52,22 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 
 <<preliminaries,echo=FALSE>>=
 link <- function( f, package, text = f, root = "http://finzi.psych.upenn.edu/R/library/" ){
-	h <- if( missing(package) ) {
-		as.character( help( f ) )
-	} else {
-		as.character( help( f, package = paste( package, sep = "" ) ) )
-	}
-	if( ! length(h) ){
-		sprintf( "\\\\textbf{%s}", f )
-	} else {
-		rx <- "^.*/([^/]*?)/help/(.*?)$"
-		package <- sub( rx, "\\1", h, perl = TRUE )
-		page <- sub( rx, "\\2", h, perl = TRUE )
-		sprintf( "\\\\href{%s%s/html/%s.html}{\\\\texttt{%s}}", root, package, page, text )
-	}
+    h <- if( missing(package) ) {
+        as.character( help( f ) )
+    } else {
+        as.character( help( f, package = paste( package, sep = "" ) ) )
+    }
+    if( ! length(h) ){
+        sprintf( "\\\\textbf{%s}", f )
+    } else {
+        rx <- "^.*/([^/]*?)/help/(.*?)$"
+        package <- sub( rx, "\\1", h, perl = TRUE )
+        page <- sub( rx, "\\2", h, perl = TRUE )
+        sprintf( "\\\\href{%s%s/html/%s.html}{\\\\texttt{%s}}", root, package, page, text )
+    }
 }
 linkS4class <- function( cl, package, text = cl, root = "http://finzi.psych.upenn.edu/R/library/" ){
-	link( sprintf("%s-class", cl), package, text, root )
+    link( sprintf("%s-class", cl), package, text, root )
 }
 require( inline )
 require( RcppEigen )
@@ -854,22 +854,24 @@ QR decomposition.
 %                                  solve(MatrixXd::Identity(p,p)).
 %                                  rowwise().norm());
 \begin{figure}[htb]
-  \noindent
-  \ttfamily
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{HouseholderQR}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hspace*{\fill}\\
-  \hlkwb{const\ }\hlstd{HouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{QR}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{);}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{y}\hlopt{));}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{fitted}\hlstd{}\hlopt{(}\hlstd{X\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{);}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{p}\hlopt{);}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{matrixQR}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{topRows}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{).}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{triangularView}\hlopt{$<$}\hlstd{Upper}\hlopt{$>$().}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,}\hlstd{p}\hlopt{)).}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
-  \normalfont
-  \normalsize
-  \caption{\textbf{QRLSCpp}: Least squares using the unpivoted QR decomposition}
-  \label{QRLS}
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{HouseholderQR}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{HouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{QR}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{y}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{fitted}\hlstd{}\hlopt{(}\hlstd{X\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{p}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{QR}\hlopt{.}\hlstd{}\hlkwd{matrixQR}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{topRows}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{).}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{triangularView}\hlopt{$<$}\hlstd{Upper}\hlopt{$>$().}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,}\hlstd{p}\hlopt{)).}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+    \caption{\textbf{QRLSCpp}: Least squares using the unpivoted QR decomposition}
+    \label{QRLS}
+  \end{quote}
 \end{figure}
 The calculations in Figure~\ref{QRLS} are quite similar to those in
 Figure~\ref{lltLS}.  In fact, if one had extracted the upper
@@ -1367,22 +1369,24 @@ return List::create(_["At"]  = At,
 '
 @
 \begin{figure}[htb]
-  \noindent
-  \ttfamily
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hspace*{\fill}\\
-  \hlkwb{const\ }\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{y}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$\ $>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"At"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{At}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Aty"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{At\ }\hlopt{{*}\ }\hlstd{y}\hlopt{);}\hlstd{}\hspace*{\fill}
-  \normalfont
-  \normalsize
-  \caption{sparseProdCpp: Transpose and product with sparse matrices}
-  \label{sparseProd}
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{y}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$\ $>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"At"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{At}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Aty"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{At\ }\hlopt{{*}\ }\hlstd{y}\hlopt{);}\hlstd{}\hspace*{\fill}
+    \normalfont
+    \normalsize
+    \caption{sparseProdCpp: Transpose and product with sparse matrices}
+    \label{sparseProd}
+  \end{quote}
 \end{figure}
 <<>>=
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
