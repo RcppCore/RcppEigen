@@ -45,6 +45,7 @@
 <<version,echo=FALSE,print=FALSE>>=
 prettyVersion <- packageDescription("RcppEigen")$Version
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
+options(prompt="> ")  # to overcome DE's default of "R> "
 @
 \author{Douglas Bates \and Dirk Eddelbuettel \and Romain Fran\c{c}ois}
 \title{An Introduction to \pkg{RcppEigen}}
@@ -111,8 +112,8 @@ require( RcppEigen )
 \abstract{
   \noindent
   The \pkg{RcppEigen} package provides access from \proglang{R}
-  \citep{R:Main} to the \pkg{Eigen} \proglang{C++} template library for
-  numerical linear algebra. \pkg{Rcpp} \citep{JSS:Rcpp} classes and
+  \citep{R:Main} to the \pkg{Eigen} \citep*{Eigen:Web} \proglang{C++} template library for
+  numerical linear algebra. \pkg{Rcpp} \citep{JSS:Rcpp,CRAN:Rcpp} classes and
   specializations of the \proglang{C++} templated functions \code{as} and
   \code{wrap} from \pkg{Rcpp} provide the ``glue'' for passing objects from
   \proglang{R} to \proglang{C++} and back.
@@ -162,7 +163,7 @@ which can interface with \proglang{C}-based systems rather easily. The manual
 ``Writing R Extensions'' \citep{R:Extensions} is the basic reference for
 extending \proglang{R} with either \proglang{C} or \proglang{C++}.
 
-The \pkg{Rcpp} package by \citet{CRAN:Rcpp} facilitates extending
+The \pkg{Rcpp} package by \citet{JSS:Rcpp,CRAN:Rcpp} facilitates extending
 \proglang{R} with \proglang{C++} code by providing seamless object mapping
 between both languages.
 %
