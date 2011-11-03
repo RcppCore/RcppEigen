@@ -24,6 +24,39 @@
 
 namespace Rcpp{
 
+#if 0							// Have to implement this in some other way
+    template<>
+    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<double> >& obj) {
+		const cholmod_factor* f = obj.factor();
+		if (f->minor < f->n)
+			throw std::runtime_error("CHOLMOD factorization was unsuccessful");
+
+		S4 ans(std::string(f->is_super ? "dCHMsuper" : "dCHMsimpl"));
+		ans.slot("Dim") = Dimension(f->n, f->n);
+		ans.slot("perm") = IntegerVector((int*)f->Perm, (int*)f->Perm + f->n);
+		ans.slot("colcount") = IntegerVector((int*)f->ColCount, (int*)f->ColCount + f->n);
+		IntegerVector tt(f->is_super ? 6 : 4);
+		tt[0] = f->ordering; tt[1] = f->is_ll;
+		tt[2] = f->is_super; tt[3] = f->is_monotonic;
+		ans.slot("type") = tt;
+		if (f->is_super) {
+			tt[4] = f->maxcsize; tt[5] = f->maxesize;
+			ans.slot("super") = IntegerVector((int*)f->super, ((int*)f->super) + f->nsuper + 1);
+			ans.slot("pi")    = IntegerVector((int*)f->pi, ((int*)f->pi) + f->nsuper + 1);
+			ans.slot("px")    = IntegerVector((int*)f->px, ((int*)f->px) + f->nsuper + 1);
+			ans.slot("s")     = IntegerVector((int*)f->s, ((int*)f->s) + f->ssize);
+			ans.slot("x")     = NumericVector((double*)f->x, ((double*)f->x) + f->xsize);
+		} else {
+			ans.slot("i")     = IntegerVector((int*)f->i, ((int*)f->i) + f->nzmax);
+			ans.slot("p")     = IntegerVector((int*)f->p, ((int*)f->p) + f->n + 1);
+			ans.slot("x")     = NumericVector((double*)f->x, ((double*)f->x) + f->nzmax);
+			ans.slot("nz")    = IntegerVector((int*)f->nz, ((int*)f->nz) + f->n);
+			ans.slot("nxt")   = IntegerVector((int*)f->next, ((int*)f->next) + f->n + 2);
+			ans.slot("prv")   = IntegerVector((int*)f->prev, ((int*)f->prev) + f->n + 2);
+		}
+		return wrap(ans);
+    }
+#endif
     namespace RcppEigen{
         
         // helper trait to identify if T is a plain object type
@@ -90,21 +123,21 @@ namespace Rcpp{
                 ) ;
         }
         
-        
+#if 0        					// I don't think this is used now
 		template <typename T>
 		SEXP Eigen_wrap( const T& object, const ::Rcpp::Dimension& dim){
 			::Rcpp::RObject x = ::Rcpp::wrap(object.data(), object.data() + object.size());
 			x.attr( "dim" ) = dim ;
 			return x; 
 		}
-
+#endif
     } /* namespace RcppEigen */
 
 
-    /* support for Rcpp::as */
-	
     namespace traits {
 
+		/* support for Rcpp::as */
+	
 		template<typename T>
 		class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > {
 		public:
