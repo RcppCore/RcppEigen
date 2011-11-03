@@ -194,12 +194,12 @@ class SimplicialCholesky
     
     /** \returns the permutation P
       * \sa permutationPinv() */
-    const PermutationMatrix<Dynamic,Dynamic,Index>& permutationP() const
+    const PermutationMatrix<Dynamic>& permutationP() const
     { return m_P; }
     
     /** \returns the inverse P^-1 of the permutation P
       * \sa permutationP() */
-    const PermutationMatrix<Dynamic,Dynamic,Index>& permutationPinv() const
+    const PermutationMatrix<Dynamic>& permutationPinv() const
     { return m_Pinv; }
     
     /** \returns true if the factorization is initialized */
@@ -258,7 +258,10 @@ class SimplicialCholesky
       }
       else
       {
+        if(m_matrix.nonZeros()>0) // otherwise L==I
           m_matrix.template triangularView<Lower>().solveInPlace(dest);
+      
+        if (m_matrix.nonZeros()>0) // otherwise L==I
           m_matrix.adjoint().template triangularView<Upper>().solveInPlace(dest);
       }
       
@@ -307,8 +310,8 @@ class SimplicialCholesky
     CholMatrixType m_matrix;
     VectorXi m_parent;		// elimination tree
     VectorXi m_nonZerosPerCol;
-    PermutationMatrix<Dynamic,Dynamic,Index> m_P;     // the permutation
-    PermutationMatrix<Dynamic,Dynamic,Index> m_Pinv;  // the inverse permutation
+    PermutationMatrix<Dynamic> m_P;     // the permutation
+    PermutationMatrix<Dynamic> m_Pinv;  // the inverse permutation
     VectorType m_diag;		// the diagonal coefficients
 };
 
