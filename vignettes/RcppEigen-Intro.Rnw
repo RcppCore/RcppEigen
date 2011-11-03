@@ -1398,11 +1398,81 @@ stopifnot(all.equal(rr$At, t(KNex$mm)),
           all.equal(rr$Aty, as.vector(crossprod(KNex$mm, KNex$y))))
 @
 
-A sparse Cholesky decomposition is provided in \pkg{Eigen} as the
-\code{SimplicialCholesky} class. There are also linkages to the
-\pkg{CHOLMOD} code from the \pkg{Matrix} package.  At present, both of
-these are regarded as experimental.  \marginpar{Should there be a word about
-  lme4Eigen and the speedups?}
+Sparse Cholesky decompositions are provided by the
+\code{SimplicialLLT} and \code{SimplicialLDLT} classes in the
+\pkg{RcppEigen} package for \proglang{R}.  These templated classes are
+modifications to the \code{SimplicialCholesky} templated class in the
+\code{unsupported} section of the \pkg{Eigen} library.  A sample usage
+is shown in Figure~\ref{fig:spLS}.  The \pkg{RcppEigen} package also
+provides the \code{CholmodDecomposition} class which uses the
+\pkg{CHOLMOD} sparse matrix decompositions provided in the compiled
+code for the \pkg{Matrix} package.  Its use is also shown in
+Figure~\ref{fig:spLS}.
+
+\marginpar{Should there be a word about lme4Eigen and the speedups?}
+
+<<echo=FALSE>>=
+sparseLSCpp <- '
+using   Eigen::Lower;
+using   Eigen::VectorXd;
+typedef Eigen::Map<VectorXd>               MapVec;
+typedef Eigen::MappedSparseMatrix<double>  MSpMat;
+typedef Eigen::SparseMatrix<double>         SpMat;
+typedef Eigen::SimplicialLDLt<SpMat>       SpChol;
+typedef Eigen::CholmodDecomposition<SpMat> CholMD;
+
+const SpMat      At(as<MSpMat>(AA).adjoint());
+const VectorXd  Aty(At * as<MapVec>(yy));
+const SpChol     Ch(At * At.adjoint());
+if (Ch.info() != Eigen::Success)
+   return R_NilValue;
+const CholMD     Cm(At);
+if (Cm.info() != Eigen::Success)
+   return R_NilValue;
+return List::create(_["betahatS"] = Ch.solve(Aty),
+                    _["betahatC"] = Cm.solve(Aty),
+                    _["perm"]    = Ch.permutationP().indices());
+'
+@
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{MapVec}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MSpMat}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{SpMat}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SimplicialLDLt}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{SpChol}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{CholmodDecomposition}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$\ }\hlstd{CholMD}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hspace*{\fill}\\
+    \hlkwb{const\ }\hlstd{SpMat}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MSpMat}\hlopt{$>$(}\hlstd{AA}\hlopt{).}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ }\hlstd{}\hlkwd{Aty}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{as}\hlopt{$<$}\hlstd{MapVec}\hlopt{$>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{SpChol}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Ch}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{At}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{CholMD}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Cm}\hlstd{}\hlopt{(}\hlstd{At}\hlopt{);}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Cm}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"betahatS"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"betahatC"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Cm}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
+    \mbox{}
+    \normalfont
+    \normalsize
+  \end{quote}
+  \caption{sparseLSCpp: Solving a sparse least squares problem}
+  \label{fig:spLS}
+\end{figure}
+<<>>=
+sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
+                       sparseLSCpp, "RcppEigen")
+str(rr <-  sparse2(KNex$mm, KNex$y))
+res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
+                       crossprod(KNex$mm, KNex$y)))
+stopifnot(all.equal(rr$betahatS, res), all.equal(rr$betahatC, res))
+all(rr$perm == Ch@perm) # fill-reducing permutations are different
+@
 
 \section{Summary}
 
