@@ -241,7 +241,7 @@ for Matrix or Vector objects to create the array.  On those occasions
 when one wishes to convert an array to a matrix or vector object
 the \code{matrix()} method is used.
 
-\subsection{Structured matrices in \pkg{Eigen}}
+\subsection{Structured matrices in Eigen}
 \label{sec:structured}
 
 There are \pkg{Eigen} classes for matrices with special structure such
@@ -304,6 +304,67 @@ The first few examples are simply for illustration as the operations
 shown could be more effectively performed directly in \proglang{R}.
 Finally, the results from \pkg{Eigen} are compared to those from the direct
 \proglang{R} results.
+
+\subsection{Transpose of an integer matrix}
+\label{sec:transpose}
+
+The next \proglang{R} code snippet creates a simple matrix of integers
+\begin{verbatim}
+> (A <- matrix(1:6, ncol=2))
+     [,1] [,2]
+[1,]    1    4
+[2,]    2    5
+[3,]    3    6
+> str(A)
+ int [1:3, 1:2] 1 2 3 4 5 6
+> 
+\end{verbatim}
+and, in Figure~\ref{trans}, the \code{transpose()} method for the
+\code{Eigen::MatrixXi} class is used to return the transpose of the supplied matrix. The \proglang{R}
+matrix in the \code{SEXP} \code{AA} is mapped to an
+\code{Eigen::MatrixXi} object then the matrix \code{At} is constructed
+from its transpose and returned to \proglang{R}.
+
+\begin{figure}[htb]
+  \begin{quote}
+    \noindent
+    \ttfamily
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlsym{::}\hlstd{Map}\hlsym{;}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlsym{::}\hlstd{MatrixXi}\hlsym{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ Map\ the\ integer\ matrix\ AA\ from\ R}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{Map}\hlsym{$<$}\hlstd{MatrixXi}\hlsym{$>$}\hlstd{\ \ }\hlsym{}\hlstd{}\hlkwd{A}\hlstd{}\hlsym{(}\hlstd{as}\hlsym{$<$}\hlstd{Map}\hlsym{$<$}\hlstd{MatrixXi}\hlsym{$>$\ $>$(}\hlstd{AA}\hlsym{));}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ evaluate\ and\ return\ the\ transpose\ of\ A}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlsym{(}\hlstd{A}\hlsym{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlsym{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}
+    \normalfont
+  \end{quote}
+  \caption{\textbf{transCpp}: Transpose a matrix of integers}
+  \label{trans}
+\end{figure}
+
+The next \proglang{R} snippet compiles and links the \proglang{C++} code
+segment (stored as text in a variable named \code{transCpp}) into an
+executable function \code{ftrans} and then checks that it works as intended
+by compariing the output to an explicit transpose of the matrix argument.
+\begin{verbatim}
+> ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
+> (At <- ftrans(A))
+     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6
+> stopifnot(all.equal(At, t(A)))
+\end{verbatim}
+
+
+For numeric or integer matrices the \code{adjoint()} method is
+equivalent to the \code{transpose()} method.  For complex matrices, the
+adjoint is the conjugate of the transpose.  In keeping with the
+conventions in the \pkg{Eigen} documentation, in what follows,
+the \code{adjoint()} method is used to create the transpose of numeric or
+integer matrices.
+
+
+
 
 \bibliography{Rcpp}
 
