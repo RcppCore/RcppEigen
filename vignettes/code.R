@@ -67,6 +67,8 @@ stopifnot(all.equal(crp[[1]], crossprod(A)),
 
 ## section 3.4
 
+storage.mode(A) <- "double"
+
 cholCpp <- '
 using Eigen::Map;
 using Eigen::MatrixXd;
