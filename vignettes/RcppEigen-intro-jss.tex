@@ -4,7 +4,8 @@
 %\VignetteKeywords{linear algebra, template programming, C++, R, Rcpp}
 %\VignettePackage{RcppEigen}
 
-\usepackage{booktabs,flafter,bm,amsmath}
+%\usepackage{booktabs,flafter,bm,amsmath}
+\usepackage{booktabs,bm,amsmath}
 
 \newcommand{\R}{\proglang{R}\ } % NB forces a space so not good before % fullstop etc.
 \newcommand{\Cpp}{\proglang{C++}\ }
@@ -252,6 +253,7 @@ matrix is used in operations.  For a symmetric matrix one needs to
 specify whether the lower triangle or the upper triangle is to be used as
 the contents, with the other triangle defined by the implicit symmetry.
 
+\pagebreak
 \section{Some simple examples}
 \label{sec:simple}
 
@@ -613,7 +615,7 @@ log-determinant.  Because the \code{log()} method applies to arrays,
 not to vectors or matrices, an array from \code{Dvec} has to be created
 before applying the \code{log()} method.
 
-
+\pagebreak
 \section{Least squares solutions}
 \label{sec:leastSquares}
 
@@ -684,7 +686,8 @@ to those from the \code{lm.fit} function in \proglang{R}
 (\code{lm.fit} is the workhorse function called by \code{lm} once the
 model matrix and response have been evaluated).
 \begin{verbatim}
-> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), lltLSCpp, "RcppEigen")
+> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), 
++                      lltLSCpp, "RcppEigen")
 > data(trees, package="datasets")
 > str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
 List of 7
@@ -1220,7 +1223,6 @@ Multiple R-squared: 0.9999,	Adjusted R-squared: 0.9999
 [1] TRUE
 > 
 \end{verbatim}
-
 
 \subsection{Comparative speed}
 
