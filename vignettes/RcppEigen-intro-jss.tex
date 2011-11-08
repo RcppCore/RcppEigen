@@ -266,11 +266,10 @@ vectors can follow a pattern of:
 \end{enumerate}
 
 An idiom for the first step is
-%\begin{lstlisting}[language=C++]
 % using Eigen::Map;
 % using Eigen::MatrixXd;
 % using Rcpp::as;
-
+%
 % const Map<MatrixXd>  A(as<Map<MatrixXd> >(AA));
 %\end{lstlisting}
 \begin{quote}
@@ -286,6 +285,19 @@ An idiom for the first step is
 \end{quote}
 where \code{AA} is the name of the R object (called an \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
+
+An alternative to the \code{using} declarations is to declare a \code{typedef} as in
+% typedef Eigen::Map<Eigen::MatrixXi>   MapMati;
+% const MapMati          A(Rcpp::as<MapMati>(AA));
+\begin{quote}
+  \noindent
+  \ttfamily
+  \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{MapMati}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{MapMati}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{Rcpp}\hlopt{::}\hlstd{as}\hlopt{$<$}\hlstd{MapMati}\hlopt{$>$(}\hlstd{AA}\hlopt{));}\hlstd{}\hspace*{\fill}\\
+  \mbox{}
+  \normalfont
+  \normalsize
+\end{quote}
 
 The \code{cxxfunction} from the \pkg{inline} package \citep*{CRAN:inline} for
 \proglang{R} and its \pkg{RcppEigen} plugin provide a convenient method of
@@ -499,6 +511,34 @@ For these products one could define the symmetric matrix from either
 the lower triangle or the upper triangle as the result will be
 symmetrized before it is returned.
 
+To cut down on repetition of \code{using} statements we gather them in
+a character string that will be given as the \code{includes} argument
+in the calls to \code{cxxfunction}.  We also define a utility
+function, \code{AtA}, that returns the crossproduct matrix.
+
+
+\begin{quote}
+  \noindent
+  \ttfamily
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{LLT}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{Upper}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{VectorXd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwc{typedef\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MapMatd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwc{typedef\ }\hlstd{Map}\hlopt{$<$}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MapMati}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwc{typedef\ }\hlstd{Map}\hlopt{$<$}\hlstd{VectorXd}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MapVecd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwc{inline\ }\hlstd{MatrixXd\ }\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{MapMatd}\hlopt{\&\ }\hlstd{A}\hlopt{)\ \{}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{int}\hlstd{\ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{n}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{cols}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{\ \ \ }\hlkwa{}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{,}\hlstd{n}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$()}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{.}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+  \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}\\
+  \mbox{}
+  \normalfont
+  \normalsize
+\end{quote}
 
 
 \subsection{Cholesky decomposition of the crossprod}
@@ -1253,8 +1293,7 @@ source(system.file("examples", "lmBenchmark.R", package="RcppEigen"))
 Results will vary according to the speed of the processor, the
 number of cores and the implementation of the BLAS (Basic Linear
 Algebra Subroutines) used.  (\pkg{Eigen} methods do not use the BLAS
-but the other methods do.)  \marginpar{If Eigen uses multiple cores, should
-  we not use Goto or another multicore BLAS as well?}
+but the other methods do.)  
 
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}
@@ -1406,8 +1445,6 @@ provides the \code{CholmodDecomposition} class which uses the
 code for the \pkg{Matrix} package.  Its use is also shown in
 Figure~\ref{fig:spLS}.
 
-\marginpar{Should there be a word about lme4Eigen and the speedups?}
-
 \begin{figure}[htb]
   %\begin{quote}
     \noindent
@@ -1472,6 +1509,16 @@ List of 4
 [1] FALSE
 > 
 \end{verbatim}
+
+The last two comparisons show that the fill-reducing permutation
+computed for the \code{Eigen::CholmodDecomposition} object is
+better (in the sense of producing a factor with fewer non-zero
+elements) than the one calculated by the \code{Matrix::Cholesky}
+function.  This is because the \code{Matrix::CholmodDecomposition} calculation is
+performed on $\bm X$ using the COLAMD algorithm whereas the
+\code{Matrix::Cholesky} function requires $\bm X^\prime\bm X$ and uses
+the AMD algorithm.
+
 
 \section{Summary}
 

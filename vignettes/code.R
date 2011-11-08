@@ -3,6 +3,25 @@ library(inline)
 library(RcppEigen)
 
 
+incl <- '
+using   Eigen::LLT;
+using   Eigen::Lower;
+using   Eigen::Map;
+using   Eigen::MatrixXd;
+using   Eigen::MatrixXi;
+using   Eigen::Upper;
+using   Eigen::VectorXd;
+typedef Map<MatrixXd>  MapMatd;
+typedef Map<MatrixXi>  MapMati;
+typedef Map<VectorXd>  MapVecd;
+inline MatrixXd AtA(const MapMatd& A) {
+    int    n(A.cols());
+    return   MatrixXd(n,n).setZero().selfadjointView<Lower>()
+             .rankUpdate(A.adjoint());
+}
+'
+
+
 ## section 3.1
 (A <- matrix(1:6, ncol=2))
 str(A)
