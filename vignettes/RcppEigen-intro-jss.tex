@@ -113,8 +113,8 @@ computational burden from the run-time to the compile-time (though a more
 detailed discussions of template programming is however beyond this
 paper). \cite{Veldhuizen:1998:Blitz} provided an early and influential
 implementation that already demonstrated key features of this approach.  Its
-usage however was held back at the time by the somewhat limited availability
-of compilers implementing all necessary features of the \proglang{C++}
+usage was held back at the time by the limited availability of
+compilers implementing all necessary features of the \proglang{C++}
 language.
 
 This situation has greatly improved over the last decade, and many more such
@@ -254,7 +254,6 @@ matrix is used in operations.  For a symmetric matrix one needs to
 specify whether the lower triangle or the upper triangle is to be used as
 the contents, with the other triangle defined by the implicit symmetry.
 
-\pagebreak
 \section{Some simple examples}
 \label{sec:simple}
 
@@ -329,7 +328,7 @@ matrix in the \code{SEXP} \code{AA} is mapped to an
 from its transpose and returned to \proglang{R}.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlsym{::}\hlstd{Map}\hlsym{;}\hspace*{\fill}\\
@@ -340,7 +339,7 @@ from its transpose and returned to \proglang{R}.
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlsym{(}\hlstd{A}\hlsym{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlsym{());}\hspace*{\fill}\\
     \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}
     \normalfont
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{transCpp}: Transpose a matrix of integers}
   \label{trans}
 \end{figure}
@@ -382,7 +381,7 @@ Figure~\ref{prod} produces a list containing both the product and
 cross-product of its two arguments.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -393,7 +392,7 @@ cross-product of its two arguments.
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{prodCpp}: Product and cross-product of two matrices}
   \label{prod}
 \end{figure}
@@ -452,7 +451,7 @@ of $\bm A\bm A^\prime$ to the current symmetric matrix.  The scalar
 multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -470,7 +469,7 @@ multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{crossprodCpp}: Cross-product and transposed cross-product of a single matrix}
   \label{crossprod}
 \end{figure}
@@ -529,7 +528,7 @@ storage.mode(A) <- "double"
 before applying the code in Figure~\ref{chol}.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -546,7 +545,7 @@ before applying the code in Figure~\ref{chol}.
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{cholCpp}: Cholesky decomposition of a cross-product}
   \label{chol}
 \end{figure}
@@ -584,7 +583,7 @@ $\bm D$.  Several options are shown in Figure~\ref{cholDet}.
 
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
@@ -605,7 +604,7 @@ $\bm D$.  Several options are shown in Figure~\ref{cholDet}.
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"ld"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{array}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{log}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{sum}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{cholDetCpp}: Determinant of a cross-product using the Cholesky decomposition}
   \label{cholDet}
 \end{figure}
@@ -617,7 +616,6 @@ log-determinant.  Because the \code{log()} method applies to arrays,
 not to vectors or matrices, an array from \code{Dvec} has to be created
 before applying the \code{log()} method.
 
-\pagebreak
 \section{Least squares solutions}
 \label{sec:leastSquares}
 
@@ -646,7 +644,7 @@ y-\bm X\widehat{\bm\beta}\|^2$.
 \label{sec:LLtLeastSquares}
 
 \begin{figure}[tbh]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{LLT}\hlopt{;}\hspace*{\fill}\\
@@ -676,7 +674,7 @@ y-\bm X\widehat{\bm\beta}\|^2$.
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Std.\ Error"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{se}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{lltLSCpp}: Least squares using the Cholesky decomposition}
   \label{lltLS}
 \end{figure}
@@ -786,7 +784,7 @@ QR decomposition.
 %                                  solve(MatrixXd::Identity(p,p)).
 %                                  rowwise().norm());
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{HouseholderQR}\hlopt{;}\hspace*{\fill}\\
@@ -803,7 +801,7 @@ QR decomposition.
     \normalsize
     \caption{\textbf{QRLSCpp}: Least squares using the unpivoted QR decomposition}
     \label{QRLS}
-  \end{quote}
+  %\end{quote}
 \end{figure}
 The calculations in Figure~\ref{QRLS} are quite similar to those in
 Figure~\ref{lltLS}.  In fact, if one had extracted the upper
@@ -885,7 +883,7 @@ return the diagonal of the pseudo-inverse, $\bm D_1^+$, as an array,
 given the singular values (the diagonal of $\bm D$) as an array.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{DiagonalMatrix}\hlopt{;}\hspace*{\fill}\\
@@ -900,7 +898,7 @@ given the singular values (the diagonal of $\bm D$) as an array.
     \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{DplusCpp}: Create the diagonal $\bm D^+$ of the
     pseudo-inverse, $\bm D_1^+$, from the array of singular values $\bm d$}
   \label{Dplus}
@@ -930,7 +928,7 @@ values.
 With these definitions the code for least squares using the singular
 value decomposition can be written as in Figure~\ref{SVDLS}.
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{JacobiSVD}\hlopt{;}\hspace*{\fill}\\
@@ -945,7 +943,7 @@ value decomposition can be written as in Figure~\ref{SVDLS}.
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{SVDLSCpp}: Least squares using the SVD}
   \label{SVDLS}
 \end{figure}
@@ -996,7 +994,7 @@ X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 With these definitions one can adapt much of the code from the SVD
 method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{SelfAdjointEigenSolver}\hlopt{;}\hspace*{\fill}\\
@@ -1012,7 +1010,7 @@ method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{SymmEigLSCpp}: Least squares using the eigendecomposition}
   \label{SymmEigLS}
 \end{figure}
@@ -1066,7 +1064,7 @@ easier to employ the relationship
 \end{displaymath}
 The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{ColPivHouseholderQR}\hlopt{;}\hspace*{\fill}\\
@@ -1099,7 +1097,7 @@ The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
     \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition}
   \label{ColPivQRLS}
 \end{figure}
@@ -1332,7 +1330,7 @@ step is skipped, as in Figure~\ref{badtrans}, an answer with the correct
 shape but incorrect contents is obtained.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -1341,7 +1339,7 @@ shape but incorrect contents is obtained.
     \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{\textbf{badtransCpp}: Transpose producing incorrect results}
   \label{badtrans}
 \end{figure}
@@ -1367,7 +1365,7 @@ for return to \proglang{R}.
 class \code{dgCMatrix} (from the \pkg{Matrix} package, \citep{CRAN:Matrix}) can be mapped as in Figure~\ref{sparseProd}.
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -1384,7 +1382,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package, \citep{CRAN:Matrix}) can 
     \normalsize
     \caption{sparseProdCpp: Transpose and product with sparse matrices}
     \label{sparseProd}
-  \end{quote}
+  %\end{quote}
 \end{figure}
 
 \begin{verbatim}
@@ -1411,7 +1409,7 @@ Figure~\ref{fig:spLS}.
 \marginpar{Should there be a word about lme4Eigen and the speedups?}
 
 \begin{figure}[htb]
-  \begin{quote}
+  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{Lower}\hlopt{;}\hspace*{\fill}\\
@@ -1437,7 +1435,7 @@ Figure~\ref{fig:spLS}.
     \mbox{}
     \normalfont
     \normalsize
-  \end{quote}
+  %\end{quote}
   \caption{sparseLSCpp: Solving a sparse least squares problem}
   \label{fig:spLS}
 \end{figure}
