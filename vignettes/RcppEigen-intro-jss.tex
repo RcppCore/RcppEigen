@@ -90,21 +90,23 @@
 \section{Introduction}
 \label{sec:intro}
 
-Linear algebra is an essential building block of statistical computing.
-Operations such as matrix decompositions, linear program solvers, and
-eigenvalue / eigenvector computations are used in many estimation and
-analysis routines. As such, libraries supporting linear algebra have long been
-provided by statistical programmers for different programming languages and
-environments. \proglang{C++}, one of the central modern languages for numerical
-and statistical computing, can be extended particularly well due to its
-object-oriented nature, and numerous class libraries providing linear algebra
-routines have been written over the years.
+Linear algebra is an essential building block of statistical
+computing.  Operations such as matrix decompositions, linear program
+solvers, and eigenvalue / eigenvector computations are used in many
+estimation and analysis routines. As such, libraries supporting linear
+algebra have long been provided by statistical programmers for
+different programming languages and environments.  Because it is
+object-oriented, \proglang{C++}, one of the central modern languages
+for numerical and statistical computing, is particularly effective at
+representing matrices, vectors and decompositions, and numerous class
+libraries providing linear algebra routines have been written over the
+years.
 % Could cite Eddelbuettel (1996) here, but a real survey would be better.
 
 As both the \proglang{C++} language and standards have evolved
 \citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++}, so have the
 compilers implementing the language.  Relatively modern language constructs
-such as template meta-programming are particularly useful. It provides both
+such as template meta-programming are particularly useful because they provide
 overloading of operations (allowing expressive code in the compiled language
 similar to what can be done in scripting languages) and can shift some of the
 computational burden from the run-time to the compile-time (though a more
@@ -119,7 +121,7 @@ This situation has greatly improved over the last decade, and many more such
 libraries have been contributed. One such \proglang{C++} library is
 \pkg{Eigen} by \citet*{Eigen:Web}. \pkg{Eigen} started as a sub-project to
 KDE (a popular Linux desktop environment), initially focussing on fixed-size
-matrices which are projections in a visualization application. \pkg{Eigen}
+matrices to represent projections in a visualization application. \pkg{Eigen}
 grew from there and has over the course of about a decade produced three
 major releases with ``Eigen3'' being the current version.
 
@@ -162,7 +164,7 @@ and decompositions.  These classes are flexible and comprehensive
 allowing for both high performance and well structured code
 representing high-level operations. \proglang{C++} code based on Eigen
 is often more like \proglang{R} code, working on the ``whole object'',
-rather than compiled code in other languages where operations often must be
+than compiled code in other languages where operations often must be
 coded in loops.
 
 As in many \proglang{C++} template libraries using template meta-programming
@@ -170,7 +172,7 @@ As in many \proglang{C++} template libraries using template meta-programming
 themselves can be very complicated.  However, \pkg{Eigen} provides
 \code{typedef}s for common classes that correspond to \proglang{R} matrices and
 vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
-\code{typedef}s throughout this document.
+\code{typedef}s.
 \begin{table}[tb]
   \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
   \label{tab:REigen}
@@ -234,13 +236,12 @@ practice is always to declare mapped objects as {\ttfamily\hlkwb{const}\normalfo
 \label{sec:arrays}
 
 For matrix and vector classes \pkg{Eigen} overloads the \texttt{`*'}
-operator to indicate matrix multiplication.  Occasionally
-component-wise operations instead of matrix operations are preferred.  The
-\code{Array} templated classes are used in \pkg{Eigen} for
-component-wise operations.  Most often the \code{array()} method is used
-for Matrix or Vector objects to create the array.  On those occasions
-when one wishes to convert an array to a matrix or vector object
-the \code{matrix()} method is used.
+operator as matrix multiplication.  Occasionally component-wise
+operations instead of matrix operations are desired, for which the
+\code{Array} templated classes are used in \pkg{Eigen}.  Switching
+back and forth between matrices or vectors and arrays is usually done
+via the \code{array()} method for matrix or vector objects and the
+\code{matrix()} method for arrays.
 
 \subsection{Structured matrices in Eigen}
 \label{sec:structured}
@@ -288,10 +289,10 @@ where \code{AA} is the name of the R object (called an \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
 The \code{cxxfunction} from the \pkg{inline} package \citep*{CRAN:inline} for
-\proglang{R} and its \pkg{RcppEigen} plugin provide a convenient way of
+\proglang{R} and its \pkg{RcppEigen} plugin provide a convenient method of
 developing and debugging the \proglang{C++} code.  For actual production code
 one generally incorporates the \proglang{C++} source code files in a package
-and include the line \code{LinkingTo: Rcpp, RcppEigen} in the package's
+and includes the line \code{LinkingTo: Rcpp, RcppEigen} in the package's
 \code{DESCRIPTION} file.  The \code{RcppEigen.package.skeleton} function
 provides a quick way of generating the skeleton of a package using
 \pkg{RcppEigen} facilities.
@@ -353,7 +354,7 @@ programming'' much easier.  Here the program piece to be compiled is stored
 as text in a variable named \code{transCpp}), and \code{cxxfunction} createan
 an executable function which is assigned to \code{ftrans}.  This new function
 is used on the matrix $A$ used above, and one can check that it works as intended
-by compariing the output to an explicit transpose of the matrix argument.
+by comparing the output to an explicit transpose of the matrix argument.
 \begin{verbatim}
 > ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
 > (At <- ftrans(A))
@@ -484,19 +485,20 @@ List of 2
 > 
 \end{verbatim}
 
-To some, the expressions to construct \code{AtA} and \code{AAt} in
-that code fragment are compact and elegant.  To others they are
+To some, the expressions in Figure~\ref{crossprod} to construct
+\code{AtA} and \code{AAt} are compact and elegant.  To others they are
 hopelessly confusing.  If you find yourself in the latter group, you
 just need to read the expression left to right.  So, for example, we
 construct \code{AAt} by creating a general integer matrix of size
 $m\times m$ (where $\bm A$ is $m\times n$), ensure that all its
 elements are zero, regard it as a self-adjoint (i.e. symmetric) matrix
 using the elements in the lower triangle, then add $\bm A\bm A^\prime$
-to it and convert back to a general matrix form (i.e. the strict
-lower triangle is copied into the strict upper triangle).
+to it and convert back to a general matrix form (i.e. the strict lower
+triangle is copied into the strict upper triangle).
 
-For these products one could use either the lower triangle or the upper
-triangle as the result will be symmetrized before it is returned.
+For these products one could define the symmetric matrix from either
+the lower triangle or the upper triangle as the result will be
+symmetrized before it is returned.
 
 
 
@@ -879,11 +881,8 @@ is considered to be (effectively) zero is a multiple of the largest
 singular value (i.e. the $(1,1)$ element of $\bm D$).
 
 In Figure~\ref{Dplus} a utility function, \code{Dplus}, is defined to
-return the pseudo-inverse as a diagonal matrix, given the singular
-values (the diagonal of $\bm D$) and the apparent rank.  To be able to
-use this function with the eigendecomposition where the eigenvalues
-are in increasing order, a Boolean argument \code{rev} is included
-indicating whether the order is reversed.
+return the diagonal of the pseudo-inverse, $\bm D_1^+$, as an array,
+given the singular values (the diagonal of $\bm D$) as an array.
 
 \begin{figure}[htb]
   \begin{quote}
@@ -902,7 +901,8 @@ indicating whether the order is reversed.
     \normalfont
     \normalsize
   \end{quote}
-  \caption{\textbf{DplusCpp}: Create the diagonal matrix $\bm D^+$ from the array of singular values $\bm d$}
+  \caption{\textbf{DplusCpp}: Create the diagonal $\bm D^+$ of the
+    pseudo-inverse, $\bm D_1^+$, from the array of singular values $\bm d$}
   \label{Dplus}
 \end{figure}
 % using Eigen::DiagonalMatrix;
@@ -915,6 +915,14 @@ indicating whether the order is reversed.
 %     else Di.head(r)      = D.head(r).inverse();
 %     return DiagonalMatrix<double, Dynamic>(Di);
 % }
+
+Calculation of the maximum element of $\bm d$ (the method is called
+\code{.maxCoeff()}) and the use of a \code{threshold()} function
+provides greater generality of the function.  It can be used on the
+eigenvalues of $\bm X^\prime\bm X$, as shown in
+Sec.~\ref{sec:eigendecomp}, even though these are returned in
+increasing order, as opposed to the decreasing order of the singular
+values.
 
 \subsection{Least squares using the SVD}
 \label{sec:SVDls}
@@ -981,8 +989,8 @@ The eigendecomposition of $\bm X^\prime\bm X$ is defined as
 where $\bm V$, the matrix of eigenvectors, is a $p\times p$ orthogonal
 matrix and $\bm\Lambda$ is a $p\times p$ diagonal matrix with
 non-increasing, non-negative diagonal elements, called the eigenvalues
-of $\bm X^\prime\bm X$.  When the eigenvalues are distinct this $\bm
-V$ is the same as that in the SVD.  Also, the eigenvalues of $\bm
+of $\bm X^\prime\bm X$.  When the eigenvalues are distinct, this $\bm
+V$ is the same as that in the SVD and the eigenvalues of $\bm
 X^\prime\bm X$ are the squares of the singular values of $\bm X$.
 
 With these definitions one can adapt much of the code from the SVD
@@ -1307,7 +1315,7 @@ not a particularly fast method of evaluating the SVD.
 A form of delayed evaluation is used in \pkg{Eigen}.  That is, many
 operators and methods do not evaluate the result but instead return an
 ``expression object'' that is evaluated when needed.  As an example,
-even though one writes the $\bm X^\prime\bm X$ evaluation using
+even though one writes the $\bm X^\prime\bm X$ evaluation as
 \code{.rankUpdate(X.adjoint())} the \code{X.adjoint()} part is not
 evaluated immediately.  The \code{rankUpdate} method detects that it
 has been passed a matrix that is to be used in its transposed form and
@@ -1356,8 +1364,7 @@ for return to \proglang{R}.
 \label{sec:sparse}
 
 \pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
-class \code{dgCMatrix} (from the \pkg{Matrix}
-\citep{CRAN:Matrix} package) can be mapped as in Figure~\ref{sparseProd}.
+class \code{dgCMatrix} (from the \pkg{Matrix} package, \citep{CRAN:Matrix}) can be mapped as in Figure~\ref{sparseProd}.
 
 \begin{figure}[htb]
   \begin{quote}
@@ -1393,7 +1400,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix}
 Sparse Cholesky decompositions are provided by the
 \code{SimplicialLLT} and \code{SimplicialLDLT} classes in the
 \pkg{RcppEigen} package for \proglang{R}.  These templated classes are
-modifications to the \code{SimplicialCholesky} templated class in the
+subclasses of the \code{SimplicialCholesky} templated class in the
 \code{unsupported} section of the \pkg{Eigen} library.  A sample usage
 is shown in Figure~\ref{fig:spLS}.  The \pkg{RcppEigen} package also
 provides the \code{CholmodDecomposition} class which uses the
