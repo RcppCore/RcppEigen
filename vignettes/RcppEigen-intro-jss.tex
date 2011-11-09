@@ -1405,7 +1405,8 @@ shape but incorrect contents is obtained.
 \end{figure}
 \begin{verbatim}
 > Ai <- matrix(1:6, ncol=2L)
-> ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp, "RcppEigen")
+> ftrans2 <- cxxfunction(signature(AA = "matrix"), 
++                        badtransCpp, "RcppEigen", incl)
 > (At <- ftrans2(Ai))
      [,1] [,2] [,3]
 [1,]    1    3    5
@@ -1494,7 +1495,7 @@ Figure~\ref{fig:spLS}.
 
 \begin{verbatim}
 > sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-+                        sparseLSCpp, "RcppEigen")
++                        sparseLSCpp, "RcppEigen", incl)
 > str(rr <-  sparse2(KNex$mm, KNex$y))
 List of 4
  $ L       :Formal class 'dCHMsimpl' [package "Matrix"] with 10 slots
