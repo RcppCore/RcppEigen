@@ -44,10 +44,9 @@ stopifnot(all.equal(At, t(A)))
 
 ## section 3.2
 prodCpp <- '
-using Eigen::Map;
-using Eigen::MatrixXi;
-const Map<MatrixXi>    B(as<Map<MatrixXi> >(BB));
-const Map<MatrixXi>    C(as<Map<MatrixXi> >(CC));
+typedef Eigen::Map<Eigen::MatrixXi>   MapMati;
+const MapMati    B(as<MapMati>(BB));
+const MapMati    C(as<MapMati>(CC));
 return List::create(_["B %*% C"]         = B * C,
                     _["crossprod(B, C)"] = B.adjoint() * C);
 '
@@ -89,21 +88,12 @@ stopifnot(all.equal(crp[[1]], crossprod(A)),
 storage.mode(A) <- "double"
 
 cholCpp <- '
-using Eigen::Map;
-using Eigen::MatrixXd;
-using Eigen::LLT;
-using Eigen::Lower;
-
-const Map<MatrixXd>   A(as<Map<MatrixXd> >(AA));
-const int             n(A.cols());
-const LLT<MatrixXd> llt(MatrixXd(n, n).setZero().
-                        selfadjointView<Lower>().rankUpdate(A.adjoint()));
-
+const  LLT<MatrixXd> llt(AtA(as<MapMatd>(AA)));
 return List::create(_["L"] = MatrixXd(llt.matrixL()),
                     _["R"] = MatrixXd(llt.matrixU()));
 '
 
-fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen")
+fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen", incl)
 (ll <- fchol(A))
 stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
 
@@ -111,48 +101,32 @@ stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
 # section 3.5
 
 cholDetCpp <- '
-using Eigen::Lower;
-using Eigen::Map;
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
-const Map<MatrixXd>   A(as<Map<MatrixXd> >(AA));
-const int             n(A.cols());
-const MatrixXd      AtA(MatrixXd(n, n).setZero().
-                        selfadjointView<Lower>().rankUpdate(A.adjoint()));
-const MatrixXd     Lmat(AtA.llt().matrixL());
+const MatrixXd      ata(AtA(as<MapMatd>(AA)));
+const MatrixXd     Lmat(ata.llt().matrixL());
 const double       detL(Lmat.diagonal().prod());
-const VectorXd     Dvec(AtA.ldlt().vectorD());
-
+const VectorXd     Dvec(ata.ldlt().vectorD());
 return List::create(_["d1"] = detL * detL,
                     _["d2"] = Dvec.prod(),
                     _["ld"] = Dvec.array().log().sum());
 '
 
-fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen")
+fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen", incl)
 unlist(ll <- fdet(A))
 
 
 ## section 4.1
 lltLSCpp <- '
-using Eigen::LLT;
-using Eigen::Lower;
-using Eigen::Map;
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
-const Map<MatrixXd>   X(as<Map<MatrixXd> >(XX));
-const Map<VectorXd>   y(as<Map<VectorXd> >(yy));
+const MapMatd         X(as<MapMatd>(XX));
+const MapVecd         y(as<MapVecd>(yy));
 const int             n(X.rows()), p(X.cols());
-const LLT<MatrixXd> llt(MatrixXd(p, p).setZero().
-                        selfadjointView<Lower>().rankUpdate(X.adjoint()));
+const LLT<MatrixXd> llt(AtA(X));
 const VectorXd  betahat(llt.solve(X.adjoint() * y));
 const VectorXd   fitted(X * betahat);
 const VectorXd    resid(y - fitted);
 const int            df(n - p);
 const double          s(resid.norm() / std::sqrt(double(df)));
-const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p)).
-                        colwise().norm());
+const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p))
+                        .colwise().norm());
 return     List::create(_["coefficients"]   = betahat,
                         _["fitted.values"]  = fitted,
                         _["residuals"]      = resid,
@@ -162,7 +136,8 @@ return     List::create(_["coefficients"]   = betahat,
                         _["Std. Error"]     = se);
 '
 
-lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), lltLSCpp, "RcppEigen")
+lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
+                     lltLSCpp, "RcppEigen", incl)
 data(trees, package="datasets")
 str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
 str(lmFit <- with(trees, lm.fit(cbind(1, log(Girth)), log(Volume))))
@@ -208,12 +183,10 @@ all.equal(unname(residuals(fm1)), residuals(fmSVD))
 
 
 
-## section 5.1
+## section 5
 
 badtransCpp <- '
-using Eigen::Map;
-using Eigen::MatrixXi;
-const Map<MatrixXi>  A(as<Map<MatrixXi> >(AA));
+const MapMati  A(as<MapMati>(AA));
 return wrap(A.transpose());
 '
 
