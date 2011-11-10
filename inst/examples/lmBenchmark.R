@@ -21,7 +21,9 @@ exprs$lm.fit <- expression(stats::lm.fit(mm, y))
 exprs$PivQR <- expression(.Call("fastLm", mm, y, 0L, PACKAGE="RcppEigen"))
 ## LDLt Cholesky decomposition with rank detection
 exprs$LDLt <- expression(.Call("fastLm", mm, y, 2L, PACKAGE="RcppEigen"))
-## SVD
+## SVD using the Lapack subroutine dgesdd and Eigen support
+exprs$GESDD <- expression(.Call("fastLm", mm, y, 6L, PACKAGE="RcppEigen"))
+## SVD (the JacobiSVD class from Eigen)
 exprs$SVD <- expression(.Call("fastLm", mm, y, 4L, PACKAGE="RcppEigen"))
 ## eigenvalues and eigenvectors of X'X
 exprs$SymmEig <- expression(.Call("fastLm", mm, y, 5L, PACKAGE="RcppEigen"))

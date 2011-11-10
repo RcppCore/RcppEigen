@@ -7,5 +7,4 @@ PKG_CXXFLAGS=-I../inst/include -DNDEBUG
 ## to enable error checking.  However, checking for errors is flagged
 ## in R CMD check as an undesirable practice.
 
-PKG_LIBS=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
-
+PKG_LIBS=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
