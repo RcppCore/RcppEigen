@@ -250,7 +250,7 @@ There are \pkg{Eigen} classes for matrices with special structure such
 as symmetric matrices, triangular matrices and banded matrices.  For
 dense matrices, these special structures are described as ``views'',
 meaning that the full dense matrix is stored but only part of the
-matrix is used in operations.  For a symmetric matrix one needs to
+matrix is used in operations.  For a symmetric matrix one must
 specify whether the lower triangle or the upper triangle is to be used as
 the contents, with the other triangle defined by the implicit symmetry.
 
@@ -496,10 +496,10 @@ To some, the expressions in Figure~\ref{crossprod} to construct
 hopelessly confusing.  If you find yourself in the latter group, you
 just need to read the expression left to right.  So, for example, we
 construct \code{AAt} by creating a general integer matrix of size
-$m\times m$ (where $\bm A$ is $m\times n$), ensure that all its
-elements are zero, regard it as a self-adjoint (i.e. symmetric) matrix
-using the elements in the lower triangle, then add $\bm A\bm A^\prime$
-to it and convert back to a general matrix form (i.e. the strict lower
+$m\times m$ (where $\bm A$ is $m\times n$), ensuring that all its
+elements are zero, regarding it as a self-adjoint (i.e. symmetric) matrix
+using the elements in the lower triangle, then adding $\bm A\bm A^\prime$
+to it and converting back to a general matrix form (i.e. the strict lower
 triangle is copied into the strict upper triangle).
 
 For these products one could define the symmetric matrix from either
@@ -618,10 +618,9 @@ Figure~\ref{cholDet}.
   %\begin{quote}
     \noindent
     \ttfamily
-    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{ata}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Lmat}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{detL}\hlstd{}\hlopt{(}\hlstd{Lmat}\hlopt{.}\hlstd{}\hlkwd{diagonal}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Dvec}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{ldlt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{vectorD}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ }\hlstd{}\hlkwd{ata}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ }\hlkwb{}\hlstd{}\hlkwd{detL}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()).}\hlstd{}\hlkwd{diagonal}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd\ }\hlkwd{Dvec}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{ldlt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{vectorD}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d1"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{detL\ }\hlopt{{*}\ }\hlstd{detL}\hlopt{,}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d2"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{(),}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"ld"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{array}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{log}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{sum}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
@@ -629,7 +628,8 @@ Figure~\ref{cholDet}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{cholDetCpp}: Determinant of a cross-product using the Cholesky decomposition}
+  \caption{\textbf{cholDetCpp}: Determinant of a cross-product using
+    the ``LLt'' and ``LDLt'' forms of the Cholesky decomposition}
   \label{cholDet}
 \end{figure}
 
@@ -915,20 +915,13 @@ p$ orthogonal matrix.  The pseudo-inverse of $\bm D_1$, written $\bm
 D_1^+$ is a $p\times p$ diagonal matrix whose first $r=\rank(\bm X)$
 diagonal elements are the inverses of the corresponding diagonal
 elements of $\bm D_1$ and whose last $p-r$ diagonal elements are zero.
-
 The tolerance for determining if an element of the diagonal of $\bm D_1$
 is considered to be (effectively) zero is a multiple of the largest
 singular value (i.e. the $(1,1)$ element of $\bm D$).
-
 The pseudo-inverse, $\bm X^+$, of $\bm X$ is defined as
 \begin{displaymath}
   \bm X^+=\bm V\bm D_1^+\bm U_1^\prime .
 \end{displaymath}
-
-In Figure~\ref{Dplus} a utility function, \code{Dplus}, is defined to
-return the diagonal of the pseudo-inverse, $\bm D_1^+$, as an array,
-given the singular values (the diagonal of $\bm D_1$) as an array.
-
 \begin{figure}[htb]
   %\begin{quote}
   \noindent
@@ -953,6 +946,9 @@ given the singular values (the diagonal of $\bm D_1$) as an array.
 %     return di;
 % }
 
+In Figure~\ref{Dplus} a utility function, \code{Dplus}, is defined to
+return the diagonal of the pseudo-inverse, $\bm D_1^+$, as an array,
+given the singular values (the diagonal of $\bm D_1$) as an array.
 Calculation of the maximum element of $\bm d$ (the method is called
 \code{.maxCoeff()}) and the use of a \code{threshold()} function
 provides greater generality for the function.  It can be used on the
@@ -1416,7 +1412,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
   \mbox{}
   \normalfont
   \normalsize
-  \caption{sparseProdCpp: Transpose and product with sparse matrices}
+  \caption{\textbf{sparseProdCpp}: Transpose and product with sparse matrices}
   \label{sparseProd}
   %\end{quote}
 \end{figure}
