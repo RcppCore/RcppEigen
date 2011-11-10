@@ -21,6 +21,7 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "fastLm.h"
+#include <R_ext/Lapack.h>
 
 namespace lmsol {
     using Rcpp::_;
@@ -54,18 +55,14 @@ namespace lmsol {
 	return *this;
     }
 
-    ArrayXd lm::Dplus(const ArrayXd& D) {
-	ArrayXd   Di(m_p);
-	double  comp(D.maxCoeff() * threshold());
-	for (int j = 0; j < m_p; ++j) Di[j] = (D[j] < comp) ? 0. : 1./D[j];
-	m_r          = (Di != 0.).count();
-	return Di;
+    inline ArrayXd lm::Dplus(const ArrayXd& d) {
+	ArrayXd   di(d.size());
+	double  comp(d.maxCoeff() * threshold());
+	for (int j = 0; j < d.size(); ++j) di[j] = (d[j] < comp) ? 0. : 1./d[j];
+	m_r          = (di != 0.).count();
+	return di;
     }
 
-    MatrixXd lm::I_p() const {
-	return MatrixXd::Identity(m_p, m_p);
-    }
-    
     MatrixXd lm::XtX() const {
 	return MatrixXd(m_p, m_p).setZero().selfadjointView<Lower>().
 	    rankUpdate(m_X.adjoint());
@@ -138,6 +135,31 @@ namespace lmsol {
 	m_se              = Ch.solve(I_p()).diagonal().array().sqrt();
     }
     
+    int gesdd(MatrixXd& A, ArrayXd& S, MatrixXd& Vt) {
+	int info, mone = -1, m = A.rows(), n = A.cols();
+	std::vector<int> iwork(8 * n);
+	double wrk;
+	if (m < n || S.size() != n || Vt.rows() != n || Vt.cols() != n)
+	    throw std::invalid_argument("dimension mismatch in gesvd");
+	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
+			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info);
+	int lwork(wrk);
+	std::vector<double> work(lwork);
+	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
+			 &m, Vt.data(), &n, &work[0], &lwork, &iwork[0], &info);
+	return info;
+    }
+
+    GESDD::GESDD(const Map<MatrixXd>& X, const Map<VectorXd> &y) : lm(X, y) {
+	MatrixXd   U(X), Vt(m_p, m_p);
+	ArrayXd   S(m_p);
+	if (gesdd(U, S, Vt)) throw std::runtime_error("error in gesdd");
+	MatrixXd VDi(Vt.adjoint() * Dplus(S).matrix().asDiagonal());
+	m_coef      = VDi * U.adjoint() * y;
+	m_fitted    = X * m_coef;
+	m_se        = VDi.rowwise().norm();
+    }
+
     SVD::SVD(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(ComputeThinU|ComputeThinV));
 	MatrixXd             VDi(UDV.matrixV() *
@@ -157,7 +179,7 @@ namespace lmsol {
 	m_se           = VDi.rowwise().norm();
     }
 
-    enum {ColPivQR_t = 0, QR_t, LLT_t, LDLT_t, SVD_t, SymmEigen_t};
+    enum {ColPivQR_t = 0, QR_t, LLT_t, LDLT_t, SVD_t, SymmEigen_t, GESDD_t};
 
     static inline lm do_lm(const Map<MatrixXd> &X, const Map<VectorXd> &y, int type) {
 	switch(type) {
@@ -173,6 +195,8 @@ namespace lmsol {
 	    return SVD(X, y);
 	case SymmEigen_t:
 	    return SymmEigen(X, y);
+	case GESDD_t:
+	    return GESDD(X, y);
 	}
 	throw invalid_argument("invalid type");
 	return ColPivQR(X, y);	// -Wall

@@ -29,8 +29,6 @@ namespace lmsol {
     using Eigen::ColPivHouseholderQR;
     using Eigen::ComputeThinU;
     using Eigen::ComputeThinV;
-    using Eigen::DiagonalMatrix;
-    using Eigen::Dynamic;
     using Eigen::HouseholderQR;
     using Eigen::JacobiSVD;
     using Eigen::LDLT;
@@ -66,7 +64,7 @@ namespace lmsol {
 	lm(const Map<MatrixXd>&, const Map<VectorXd>&);
 
 	ArrayXd                Dplus(const ArrayXd& D);
-	MatrixXd                 I_p() const;
+	MatrixXd                 I_p() const {return MatrixXd::Identity(m_p, m_p);}
 	MatrixXd                 XtX() const;
 
         // setThreshold and threshold are based on ColPivHouseholderQR methods
@@ -96,6 +94,11 @@ namespace lmsol {
     class QR : public lm {
     public:
 	QR(const Map<MatrixXd>&, const Map<VectorXd>&);
+    };
+
+    class GESDD : public lm {
+    public:
+	GESDD(const Map<MatrixXd>&, const Map<VectorXd>&);
     };
 
     class SVD : public lm {
