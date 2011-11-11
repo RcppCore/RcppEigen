@@ -192,6 +192,13 @@ vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
   \end{tabular}
 \end{table}
 
+Here, \code{Vector} and \code{Matrix} describe the dimension of the
+object. The \code{X} signals that these dynamically-sized objects (as opposed
+to fixed-size matrices such as $3 \times 3$ matrices also available in
+\code{Eigen}). Lastly, the trailing characters \code{i}, \code{d} and
+\code{cd} denote storage types \code{integer}, \code{double} and
+\code{complex double}, respectively.
+
 The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \code{Eigen} namespace, which means that they must be written as
 \code{Eigen::MatrixXd}.  However, if one prefaces the use of these class
@@ -398,8 +405,8 @@ cross-product of its two arguments.
   \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{MapMati}\hlopt{;}\hspace*{\fill}\\
   \hlstd{}\hlkwb{const\ }\hlstd{MapMati}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{B}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMati}\hlopt{$>$(}\hlstd{BB}\hlopt{));}\hspace*{\fill}\\
   \hlstd{}\hlkwb{const\ }\hlstd{MapMati}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{C}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMati}\hlopt{$>$(}\hlstd{CC}\hlopt{));}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"B\ \%{*}\%\ C"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{B\ }\hlopt{{*}\ }\hlstd{C}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"B\ \%{*}\%\ C"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{B\ }\hlopt{{*}\ }\hlstd{C}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"crossprod(B,\ C)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{B}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{C}\hlopt{);}\hlstd{}\hspace*{\fill}\\
   \mbox{}
   \normalfont
   \normalsize
@@ -473,8 +480,8 @@ multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
     \hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{AAt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXi}\hlstd{}\hlopt{(}\hlstd{m}\hlopt{,\ }\hlstd{m}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{().}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{selfadjointView}\hlopt{$<$}\hlstd{Lower}\hlopt{$>$().}\hlstd{}\hlkwd{rankUpdate}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{));}\hspace*{\fill}\\
     \hlstd{}\hspace*{\fill}\\
-    \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"crossprod(A)"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{AtA}\hlopt{,}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}
+    \hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"crossprod(A)"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{AtA}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
   %\end{quote}
@@ -556,14 +563,14 @@ called \code{LLT} and \code{LDLT} and the corresponding methods are
 \code{.llt()} and \code{.ldlt()}.
 Because the Cholesky decomposition involves taking square roots, we
 pass a numeric matrix, $\bm A$, not an integer matrix.
-storage.mode(A) <- "double"
+
 \begin{figure}[htb]
   %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwb{const}\hlstd{\ \ }\hlkwb{}\hlstd{LLT}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()),}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()),}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"R"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{()));}\hlstd{}\hspace*{\fill}\\
   \mbox{}
   \normalfont
   \normalsize
@@ -621,9 +628,9 @@ Figure~\ref{cholDet}.
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ }\hlstd{}\hlkwd{ata}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ }\hlkwb{}\hlstd{}\hlkwd{detL}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MatrixXd}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{()).}\hlstd{}\hlkwd{diagonal}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd\ }\hlkwd{Dvec}\hlstd{}\hlopt{(}\hlstd{ata}\hlopt{.}\hlstd{}\hlkwd{ldlt}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{vectorD}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d1"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{detL\ }\hlopt{{*}\ }\hlstd{detL}\hlopt{,}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"d2"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{(),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"ld"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{array}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{log}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{sum}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"d1"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{detL\ }\hlopt{{*}\ }\hlstd{detL}\hlopt{,}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"d2"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{prod}\hlstd{}\hlopt{(),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"ld"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Dvec}\hlopt{.}\hlstd{}\hlkwd{array}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{log}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{sum}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
     \mbox{}
     \normalfont
     \normalsize
@@ -688,13 +695,13 @@ y-\bm X\widehat{\bm\beta}\|^2$.
   \hlstd{}\hlkwb{const\ double}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{s}\hlstd{}\hlopt{(}\hlstd{resid}\hlopt{.}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{()\ /\ }\hlstd{std}\hlopt{::}\hlstd{}\hlkwd{sqrt}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{(}\hlstd{df}\hlopt{)));}\hspace*{\fill}\\
   \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{llt}\hlopt{.}\hlstd{}\hlkwd{matrixL}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{MatrixXd}\hlopt{::}\hlstd{}\hlkwd{Identity}\hlstd{}\hlopt{(}\hlstd{p}\hlopt{,\ }\hlstd{p}\hlopt{))}\hspace*{\fill}\\
   \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{.}\hlstd{}\hlkwd{colwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{return}\hlstd{\ \ \ \ \ }\hlkwa{}\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"coefficients"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ }\hlopt{=\ }\hlstd{betahat}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"fitted.values"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{fitted}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"residuals"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ }\hlopt{=\ }\hlstd{resid}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"s"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{s}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"df.residual"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ }\hlopt{=\ }\hlstd{df}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"rank"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{p}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Std.\ Error"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{se}\hlopt{);}\hlstd{}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{return}\hlstd{\ \ \ \ \ }\hlkwa{}\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"coefficients"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ }\hlopt{=\ }\hlstd{betahat}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"fitted.values"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{fitted}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"residuals"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ }\hlopt{=\ }\hlstd{resid}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"s"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{s}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"df.residual"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ }\hlopt{=\ }\hlstd{df}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"rank"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{p}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"Std.\ Error"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{se}\hlopt{);}\hlstd{}\hspace*{\fill}\\
   \mbox{}
   \normalfont
   \normalsize
@@ -1407,8 +1414,8 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
   \hlkwb{const\ }\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$\ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$\ $>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
   \hlstd{}\hlkwb{const\ }\hlstd{MapVecd}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{y}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapVecd}\hlopt{$>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
   \hlstd{}\hlkwb{const\ }\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ }\hlopt{}\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{A}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"At"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{At}\hlopt{,}\hspace*{\fill}\\
-  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"Aty"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{At\ }\hlopt{{*}\ }\hlstd{y}\hlopt{);}\hlstd{}\hspace*{\fill}\\
+  \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"At"}\hlstd{}\hlopt{{]}}\hlstd{\ \ }\hlopt{=\ }\hlstd{At}\hlopt{,}\hspace*{\fill}\\
+  \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"Aty"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{At\ }\hlopt{{*}\ }\hlstd{y}\hlopt{);}\hlstd{}\hspace*{\fill}\\
   \mbox{}
   \normalfont
   \normalsize
@@ -1452,15 +1459,15 @@ Figure~\ref{fig:spLS}.
     \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{CholMD}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{L}\hlstd{}\hlopt{(}\hlstd{At}\hlopt{);}\hspace*{\fill}\\
     \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{L}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlopt{(}\hlstd{L}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"betahatS"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"betahatC"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{L}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{\textunderscore }\hlopt{{[}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlopt{(}\hlstd{L}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"betahatS"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}{{[}}\hlstd{}\hlstr{"betahatC"}\hlstd{}\hlopt{{]}\ =\ }\hlstd{L}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{[}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{]}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
     \mbox{}
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{sparseLSCpp: Solving a sparse least squares problem}
+  \caption{\textbf{sparseLSCpp}: Solving a sparse least squares problem}
   \label{fig:spLS}
 \end{figure}
 

@@ -47,8 +47,8 @@ prodCpp <- '
 typedef Eigen::Map<Eigen::MatrixXi>   MapMati;
 const MapMati    B(as<MapMati>(BB));
 const MapMati    C(as<MapMati>(CC));
-return List::create(_["B %*% C"]         = B * C,
-                    _["crossprod(B, C)"] = B.adjoint() * C);
+return List::create(Named["B %*% C"]         = B * C,
+                    Named["crossprod(B, C)"] = B.adjoint() * C);
 '
 
 fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), prodCpp, "RcppEigen")
@@ -73,8 +73,8 @@ MatrixXi          AtA(MatrixXi(n, n).setZero().
 MatrixXi          AAt(MatrixXi(m, m).setZero().
                       selfadjointView<Lower>().rankUpdate(A));
 
-return List::create(_["crossprod(A)"]  = AtA,
-                    _["tcrossprod(A)"] = AAt);
+return List::create(Named["crossprod(A)"]  = AtA,
+                    Named["tcrossprod(A)"] = AAt);
 '
 fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
 str(crp <- fcprd(A))
@@ -89,8 +89,8 @@ storage.mode(A) <- "double"
 
 cholCpp <- '
 const  LLT<MatrixXd> llt(AtA(as<MapMatd>(AA)));
-return List::create(_["L"] = MatrixXd(llt.matrixL()),
-                    _["R"] = MatrixXd(llt.matrixU()));
+return List::create(Named["L"] = MatrixXd(llt.matrixL()),
+                    Named["R"] = MatrixXd(llt.matrixU()));
 '
 
 fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen", incl)
@@ -105,9 +105,9 @@ const MatrixXd      ata(AtA(as<MapMatd>(AA)));
 const MatrixXd     Lmat(ata.llt().matrixL());
 const double       detL(Lmat.diagonal().prod());
 const VectorXd     Dvec(ata.ldlt().vectorD());
-return List::create(_["d1"] = detL * detL,
-                    _["d2"] = Dvec.prod(),
-                    _["ld"] = Dvec.array().log().sum());
+return List::create(Named["d1"] = detL * detL,
+                    Named["d2"] = Dvec.prod(),
+                    Named["ld"] = Dvec.array().log().sum());
 '
 
 fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen", incl)
@@ -127,13 +127,13 @@ const int            df(n - p);
 const double          s(resid.norm() / std::sqrt(double(df)));
 const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p))
                         .colwise().norm());
-return     List::create(_["coefficients"]   = betahat,
-                        _["fitted.values"]  = fitted,
-                        _["residuals"]      = resid,
-                        _["s"]              = s,
-                        _["df.residual"]    = df,
-                        _["rank"]           = p,
-                        _["Std. Error"]     = se);
+return     List::create(Named["coefficients"]   = betahat,
+                        Named["fitted.values"]  = fitted,
+                        Named["residuals"]      = resid,
+                        Named["s"]              = s,
+                        Named["df.residual"]    = df,
+                        Named["rank"]           = p,
+                        Named["Std. Error"]     = se);
 '
 
 lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
@@ -207,8 +207,8 @@ using Eigen::VectorXd;
 const MappedSparseMatrix<double>  A(as<MappedSparseMatrix<double> >(AA));
 const Map<VectorXd>               y(as<Map<VectorXd> >(yy));
 const SparseMatrix<double>       At(A.adjoint());
-return List::create(_["At"]  = At,
-                    _["Aty"] = At * y);
+return List::create(Named["At"]  = At,
+                    Named["Aty"] = At * y);
 '
 
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
@@ -236,10 +236,10 @@ if (Ch.info() != Eigen::Success)
 const CholMD      L(At);
 if (L.info() != Eigen::Success)
    return R_NilValue;
-return List::create(_["L"]        = wrap(L),
-                    _["betahatS"] = Ch.solve(Aty),
-                    _["betahatC"] = L.solve(Aty),
-                    _["perm"]     = Ch.permutationP().indices());
+return List::create(Named["L"]        = wrap(L),
+                    Named["betahatS"] = Ch.solve(Aty),
+                    Named["betahatC"] = L.solve(Aty),
+                    Named["perm"]     = Ch.permutationP().indices());
 '
 
 
