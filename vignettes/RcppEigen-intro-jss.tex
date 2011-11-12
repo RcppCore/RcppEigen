@@ -174,7 +174,7 @@ themselves can be very complicated.  However, \pkg{Eigen} provides
 vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
 \code{typedef}s.
 \begin{table}[tb]
-  \caption{Correspondence between R matrix and vector types and classes in the \code{Eigen} namespace.}
+  \caption{Correspondence between R matrix and vector types and classes in the \pkg{Eigen} namespace.}
   \label{tab:REigen}
   \centering
   \begin{tabular}{l l}
@@ -195,12 +195,12 @@ vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
 Here, \code{Vector} and \code{Matrix} describe the dimension of the
 object. The \code{X} signals that these dynamically-sized objects (as opposed
 to fixed-size matrices such as $3 \times 3$ matrices also available in
-\code{Eigen}). Lastly, the trailing characters \code{i}, \code{d} and
+\pkg{Eigen}). Lastly, the trailing characters \code{i}, \code{d} and
 \code{cd} denote storage types \code{integer}, \code{double} and
 \code{complex double}, respectively.
 
 The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
-\code{Eigen} namespace, which means that they must be written as
+\pkg{Eigen} namespace, which means that they must be written as
 \code{Eigen::MatrixXd}.  However, if one prefaces the use of these class
 names with a declaration like
 
@@ -1298,8 +1298,8 @@ Table~\ref{tab:lmRes}.
   \caption{\code{lmBenchmark} results on a desktop computer for the
     default size, $100,000\times 40$, full-rank model matrix running
     20 repetitions for each method.  Times (Elapsed, User and Sys) are
-    in seconds.  The BLAS in use is a single-threaded version of Atlas
-    (Automatically Tuned Linear Algebra System).}
+    in seconds.  The BLAS in use is a locally-rebuilt version of the 
+    OpenBLAS library included with Ubuntu 11.10).}
   \label{tab:lmRes}
   \centering
   \begin{tabular}{r r r r r}
@@ -1308,22 +1308,49 @@ Table~\ref{tab:lmRes}.
     \multicolumn{1}{c}{Elapsed} & \multicolumn{1}{c}{User} &
     \multicolumn{1}{c}{Sys}\\
     \cmidrule(r){2-5}   % middle rule from cols 2 to 5
-     LLt &   1.000000 &   1.227 &     1.228 &    0.000 \\
-    LDLt &   1.037490 &   1.273 &     1.272 &    0.000 \\
- SymmEig &   2.895681 &   3.553 &     2.972 &    0.572 \\
-      QR &   7.828036 &   9.605 &     8.968 &    0.620 \\
-   PivQR &   7.953545 &   9.759 &     9.120 &    0.624 \\
-    arma &   8.383048 &  10.286 &    10.277 &    0.000 \\
-  lm.fit &  13.782396 &  16.911 &    15.521 &    1.368 \\
-     SVD &  54.829666 &  67.276 &    66.321 &    0.912 \\
-     GSL & 157.531377 & 193.291 &   192.568 &    0.640 \\
+ %     LLt &   1.000000 &   1.227 &     1.228 &    0.000 \\
+ %    LDLt &   1.037490 &   1.273 &     1.272 &    0.000 \\
+ % SymmEig &   2.895681 &   3.553 &     2.972 &    0.572 \\
+ %      QR &   7.828036 &   9.605 &     8.968 &    0.620 \\
+ %   PivQR &   7.953545 &   9.759 &     9.120 &    0.624 \\
+ %    arma &   8.383048 &  10.286 &    10.277 &    0.000 \\
+ %  lm.fit &  13.782396 &  16.911 &    15.521 &    1.368 \\
+ %     SVD &  54.829666 &  67.276 &    66.321 &    0.912 \\
+ %     GSL & 157.531377 & 193.291 &   192.568 &    0.640 \\
+ %
+ % updated numbers below
+ % lm benchmark for n = 100000 and p = 40: nrep = 20
+ %       test   relative elapsed user.self sys.self
+ % 3     LDLt   1.000000   1.176     1.172    0.000
+ % 8      LLt   1.010204   1.188     1.172    0.000
+ % 6  SymmEig   2.762755   3.249     2.704    0.516
+ % 7       QR   6.350340   7.468     6.932    0.528
+ % 9     arma   6.601190   7.763    25.686    4.473
+ % 2    PivQR   7.154762   8.414     7.777    0.608
+ % 1   lm.fit  11.683673  13.740    21.561   16.789
+ % 4    GESDD  12.576531  14.790    44.011   10.960
+ % 5      SVD  44.475340  52.303    51.379    0.804
+ % 10     GSL 150.456633 176.937   210.517  149.857
+     LDLt &    1.00 &    1.18 &      1.17 &     0.00 \\
+      LLt &    1.01 &    1.19 &      1.17 &     0.00 \\
+  SymmEig &    2.76 &    3.25 &      2.70 &     0.52 \\
+       QR &    6.35 &    7.47 &      6.93 &     0.53 \\
+     arma &    6.60 &    7.76 &     25.69 &     4.47 \\
+    PivQR &    7.15 &    8.41 &      7.78 &     0.62 \\
+   lm.fit &   11.68 &   13.74 &     21.56 &    16.79 \\
+    GESDD &   12.58 &   14.79 &     44.01 &    10.96 \\
+      SVD &   44.48 &   52.30 &     51.38 &     0.80 \\
+      GSL &  150.46 &  176.95 &    210.52 &   149.86 \\
      \bottomrule
   \end{tabular}
 \end{table}
-The processor used for these timings is a 4-core processor but all the
+The processor used for these timings is a 4-core processor but almost all the
 methods are single-threaded and not affected by the number of cores.
-If a multi-threaded BLAS implementation were used the \code{arma} and
-\code{lm.fit} methods would be faster.
+Only the \code{arma} and \code{lm.fit} methods benefit from 
+the multi-threaded BLAS implementation provided by OpenBLAS, and the relative
+speed increase in modest for this problem size and number of cores (at 7.76
+seconds relative to 10.29 seconds for \code{arma}, and 13.74 seconds relative
+to 16.91 seconds for \code{lm.fit}. 
 
 These results indicate that methods based on forming and decomposing
 $\bm X^\prime\bm X$ (LDLt, LLt and SymmEig) are considerably
@@ -1343,9 +1370,14 @@ having many more rows than columns.  The GSL method from the GNU
 Scientific Library uses an older algorithm for the SVD and is clearly
 out of contention.
 
-An SVD method using the Lapack SVD subroutine, \code{dgesv}, may be
-faster than the native \pkg{Eigen} implementation of the SVD, which is
-not a particularly fast method of evaluating the SVD.
+%An SVD method using the Lapack SVD subroutine, \code{dgesv}, may be
+%faster than the native \pkg{Eigen} implementation of the SVD, which is
+%not a particularly fast method of evaluating the SVD. 
+The \code{GESDD} method provides an interesting hybrid: It uses the
+\pkg{Eigen} classes, but then deploys the LAPACK routine \code{dgesdd} for
+the actual SVD calculation. The resulting time is much faster than using the
+SVD implementation of \pkg{Eigen} which is not a particularly fast method.
+
 
 \section{Delayed evaluation}
 \label{sec:delayed}
