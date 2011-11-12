@@ -1396,6 +1396,7 @@ shape but incorrect contents is obtained.
 
 Another recommended practice is to assign objects before wrapping them
 for return to \proglang{R}.
+\marginpar{DE: Don't you say that already when comparing Fig 1 and Fig 13?}
 
 \section{Sparse matrices}
 \label{sec:sparse}
@@ -1512,16 +1513,17 @@ function requires $\bm X^\prime\bm X$ and uses the AMD algorithm.
 
 \section{Summary}
 
-This paper introduced the \pkg{RcppEigen} package which provides high-level
-linear algebra computations as an extension to the \proglang{R} system.
-\pkg{RcppEigen} is based on the modern \proglang{C++} library \pkg{Eigen}
-which combines extended functionality with excellent performance, and
-utilizes \pkg{Rcpp} to interface \proglang{R} with \proglang{C++}.
-Several illustrations covered common matrix operations and
-several approaches to solving a least squares problem---including an extended
-discussion of rank-revealing approaches.  A short example provided
-an empirical illustration  for the excellent run-time performance of the
-\pkg{RcppEigen} package.
+This paper introduced the \pkg{RcppEigen} package which provides
+high-level linear algebra computations as an extension to the
+\proglang{R} system.  \pkg{RcppEigen} is based on the modern
+\proglang{C++} library \pkg{Eigen} which combines extended
+functionality with excellent performance, and utilizes \pkg{Rcpp} to
+interface \proglang{R} with \proglang{C++}.  Several illustrations
+covered common matrix operations and several approaches to solving a
+least squares problem---including an extended discussion of
+rank-revealing approaches. Sparse matrix computations were also
+discussed, and a short example provided an empirical demonstration of
+the excellent run-time performance of the \pkg{RcppEigen} package.
 
 \bibliography{Rcpp}
 
