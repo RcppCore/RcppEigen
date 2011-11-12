@@ -504,9 +504,9 @@ hopelessly confusing.  If you find yourself in the latter group, you
 just need to read the expression left to right.  So, for example, we
 construct \code{AAt} by creating a general integer matrix of size
 $m\times m$ (where $\bm A$ is $m\times n$), ensuring that all its
-elements are zero, regarding it as a self-adjoint (i.e. symmetric) matrix
+elements are zero, regarding it as a self-adjoint (\textit{i.e.} symmetric) matrix
 using the elements in the lower triangle, then adding $\bm A\bm A^\prime$
-to it and converting back to a general matrix form (i.e. the strict lower
+to it and converting back to a general matrix form (\textit{i.e.} the strict lower
 triangle is copied into the strict upper triangle).
 
 For these products one could define the symmetric matrix from either
@@ -924,7 +924,7 @@ diagonal elements are the inverses of the corresponding diagonal
 elements of $\bm D_1$ and whose last $p-r$ diagonal elements are zero.
 The tolerance for determining if an element of the diagonal of $\bm D_1$
 is considered to be (effectively) zero is a multiple of the largest
-singular value (i.e. the $(1,1)$ element of $\bm D$).
+singular value (\textit{i.e.} the $(1,1)$ element of $\bm D$).
 The pseudo-inverse, $\bm X^+$, of $\bm X$ is defined as
 \begin{displaymath}
   \bm X^+=\bm V\bm D_1^+\bm U_1^\prime .
