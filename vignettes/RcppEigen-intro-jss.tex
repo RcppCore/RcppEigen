@@ -15,7 +15,7 @@
 
 \Plainauthor{Douglas Bates, Dirk Eddelbuettel} %, Romain Fran\c{c}ois} 
 \Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}   
-\Shorttitle{Fast + Elegant Numerical Linear Algebra with RcppEigen}   %% too short ?
+\Shorttitle{Fast and Elegant Numerical Linear Algebra with RcppEigen} 
 
 \Abstract{
   \noindent
@@ -104,7 +104,7 @@ years.
 % Could cite Eddelbuettel (1996) here, but a real survey would be better.
 
 As both the \proglang{C++} language and standards have evolved
-\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++}, so have the
+\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++,cpp11}, so have the
 compilers implementing the language.  Relatively modern language constructs
 such as template meta-programming are particularly useful because they provide
 overloading of operations (allowing expressive code in the compiled language
@@ -1345,18 +1345,24 @@ Table~\ref{tab:lmRes}.
   \label{tab:lmRes}
 \end{table}
 The processor used for these timings is a 4-core processor but almost all the
-methods are single-threaded and not affected by the number of cores.
-Only the \code{arma} and \code{lm.fit} methods benefit from 
-the multi-threaded BLAS implementation provided by OpenBLAS, and the relative
-speed increase in modest for this problem size and number of cores (at 7.76
-seconds relative to 10.29 seconds for \code{arma}, and 13.74 seconds relative
-to 16.91 seconds for \code{lm.fit}. 
+methods are single-threaded and not affected by the number of cores.  Only
+the \code{arma}, \code{lm.fit} and \code{GSL} methods benefit from the
+multi-threaded BLAS implementation provided by OpenBLAS, and the relative
+speed increase is modest for this problem size and number of cores (at 7.76
+seconds relative to 10.29 seconds for \code{arma}, 13.74 seconds relative to
+16.91 seconds for \code{lm.fit}, and 176.95 seconds relative to 193.29
+seconds for the \code{GSL}). Parallel computing approaches will always have
+to trade-off increased communication and overhead costs against the potential
+gains from running multiple execution threads. % Nonetheless, with the ongoing
+%shift to multi-core architectures and an ever increasing number of cores in
+%modern processing units, it is conceivable that \pkg{Eigen} may also switch
+%to a multi-threaded approach to further improve its performance.
 
 These results indicate that methods based on forming and decomposing
 $\bm X^\prime\bm X$ (LDLt, LLt and SymmEig) are considerably
 faster than the others.  The SymmEig method, using a rank-revealing
 decomposition, would be preferred, although the LDLt method could
-probably be modified to be rank-revealing.  Do bear in mind that the
+probably be modified to be rank-revealing.  However, the
 dimensions of the problem will influence the comparative results.
 Because there are 100,000 rows in $\bm X$, methods that decompose the
 whole $\bm X$ matrix (all the methods except those named above) will
@@ -1394,11 +1400,11 @@ instead of rows of $\bm X^\prime$.
 
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
-an ``infelicity'' in the code, if not an outright bug.  In the code
-for the transpose of an integer matrix shown in Figure~\ref{trans} the
-transpose is assigned to a \code{MatrixXi} object before applying
-\code{wrap} to it.  The assignment forces the evaluation.  If this
-step is skipped, as in Figure~\ref{badtrans}, an answer with the correct
+an ``infelicity'' in the code.%, if not an outright bug.  
+In the code for the transpose of an integer matrix shown in
+Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi} object
+before applying \code{wrap} to it.  The assignment forces the evaluation.  If
+this step is skipped, as in Figure~\ref{badtrans}, an answer with the correct
 shape but incorrect contents is obtained.
 
 \begin{figure}[htb]
@@ -1426,9 +1432,8 @@ shape but incorrect contents is obtained.
 [1] "Mean relative difference: 0.4285714"
 \end{verbatim}
 
-Another recommended practice is to assign objects before wrapping them
+So the recommended practice is to first assign objects before wrapping them
 for return to \proglang{R}.
-\marginpar{DE: Don't you say that already when comparing Fig 1 and Fig 13?}
 
 \section{Sparse matrices}
 \label{sec:sparse}
@@ -1565,6 +1570,7 @@ the excellent run-time performance of the \pkg{RcppEigen} package.
 %%% mode: latex
 %%% TeX-master: t
 %%% End: 
+
 
 
 
