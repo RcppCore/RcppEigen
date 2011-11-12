@@ -174,8 +174,6 @@ themselves can be very complicated.  However, \pkg{Eigen} provides
 vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
 \code{typedef}s.
 \begin{table}[tb]
-  \caption{Correspondence between R matrix and vector types and classes in the \pkg{Eigen} namespace.}
-  \label{tab:REigen}
   \centering
   \begin{tabular}{l l}
     \toprule
@@ -190,6 +188,8 @@ vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
     \code{Matrix::dgCMatrix} \phantom{XXX}  & \code{SparseMatrix<double>}\\
     \bottomrule
   \end{tabular}
+  \caption{Correspondence between R matrix and vector types and classes in the \pkg{Eigen} namespace.}
+  \label{tab:REigen}
 \end{table}
 
 Here, \code{Vector} and \code{Matrix} describe the dimension of the
@@ -358,7 +358,7 @@ from its transpose and returned to \proglang{R}.
     \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}
     \normalfont
   %\end{quote}
-  \caption{\textbf{transCpp}: Transpose a matrix of integers}
+  \caption{\code{transCpp}: Transpose a matrix of integers.}
   \label{trans}
 \end{figure}
 
@@ -411,7 +411,7 @@ cross-product of its two arguments.
   \normalfont
   \normalsize
   %\end{quote}
-  \caption{\textbf{prodCpp}: Product and cross-product of two matrices}
+  \caption{\code{prodCpp}: Product and cross-product of two matrices.}
   \label{prod}
 \end{figure}
 
@@ -485,7 +485,7 @@ multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{crossprodCpp}: Cross-product and transposed cross-product of a single matrix}
+  \caption{\code{crossprodCpp}: Cross-product and transposed cross-product of a single matrix.}
   \label{crossprod}
 \end{figure}
 \begin{verbatim}
@@ -575,7 +575,7 @@ pass a numeric matrix, $\bm A$, not an integer matrix.
   \normalfont
   \normalsize
   %\end{quote}
-  \caption{\textbf{cholCpp}: Cholesky decomposition of a cross-product}
+  \caption{\code{cholCpp}: Cholesky decomposition of a cross-product.}
   \label{chol}
 \end{figure}
 
@@ -635,8 +635,8 @@ Figure~\ref{cholDet}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{cholDetCpp}: Determinant of a cross-product using
-    the ``LLt'' and ``LDLt'' forms of the Cholesky decomposition}
+  \caption{\code{cholDetCpp}: Determinant of a cross-product using
+    the ``LLt'' and ``LDLt'' forms of the Cholesky decomposition.}
   \label{cholDet}
 \end{figure}
 
@@ -706,7 +706,7 @@ y-\bm X\widehat{\bm\beta}\|^2$.
   \normalfont
   \normalsize
   %\end{quote}
-  \caption{\textbf{lltLSCpp}: Least squares using the Cholesky decomposition}
+  \caption{\code{lltLSCpp}: Least squares using the Cholesky decomposition.}
   \label{lltLS}
 \end{figure}
 Figure~\ref{lltLS} shows a calculation of the least squares coefficient estimates
@@ -826,7 +826,7 @@ QR decomposition.
     \mbox{}
     \normalfont
     \normalsize
-    \caption{\textbf{QRLSCpp}: Least squares using the unpivoted QR decomposition}
+    \caption{\code{QRLSCpp}: Least squares using the unpivoted QR decomposition.}
     \label{QRLS}
   %\end{quote}
 \end{figure}
@@ -943,7 +943,7 @@ The pseudo-inverse, $\bm X^+$, of $\bm X$ is defined as
   \normalfont
   \normalsize
   %\end{quote}
-  \caption{\textbf{DplusCpp}: Create the diagonal $\bm d^+$ of the pseudo-inverse, $\bm D_1^+$, from the array of singular values, $\bm d$}
+  \caption{\code{DplusCpp}: Create the diagonal $\bm d^+$ of the pseudo-inverse, $\bm D_1^+$, from the array of singular values, $\bm d$.}
   \label{Dplus}
 \end{figure}
 % inline ArrayXd Dplus(const ArrayXd& d) {
@@ -985,7 +985,7 @@ value decomposition can be written as in Figure~\ref{SVDLS}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{SVDLSCpp}: Least squares using the SVD}
+  \caption{\code{SVDLSCpp}: Least squares using the SVD.}
   \label{SVDLS}
 \end{figure}
 % using Eigen::JacobiSVD;
@@ -1050,7 +1050,7 @@ method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{SymmEigLSCpp}: Least squares using the eigendecomposition}
+  \caption{\code{SymmEigLSCpp}: Least squares using the eigendecomposition.}
   \label{SymmEigLS}
 \end{figure}
 % using Eigen::SelfAdjointEigenSolver;
@@ -1138,7 +1138,7 @@ The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition}
+  \caption{\code{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition.}
   \label{ColPivQRLS}
 \end{figure}
 % typedef Eigen::ColPivHouseholderQR<MatrixXd>  CPivQR;
@@ -1295,12 +1295,6 @@ and SSE2, in this case) in some calculations.
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}.
 \begin{table}[tb]
-  \caption{\code{lmBenchmark} results on a desktop computer for the
-    default size, $100,000\times 40$, full-rank model matrix running
-    20 repetitions for each method.  Times (Elapsed, User and Sys) are
-    in seconds.  The BLAS in use is a locally-rebuilt version of the 
-    OpenBLAS library included with Ubuntu 11.10).}
-  \label{tab:lmRes}
   \centering
   \begin{tabular}{r r r r r}
     \toprule
@@ -1343,6 +1337,12 @@ Table~\ref{tab:lmRes}.
       GSL &  150.46 &  176.95 &    210.52 &   149.86 \\
      \bottomrule
   \end{tabular}
+  \caption{\code{lmBenchmark} results on a desktop computer for the
+    default size, $100,000\times 40$, full-rank model matrix running
+    20 repetitions for each method.  Times (Elapsed, User and Sys) are
+    in seconds.  The BLAS in use is a locally-rebuilt version of the 
+    OpenBLAS library included with Ubuntu 11.10.}
+  \label{tab:lmRes}
 \end{table}
 The processor used for these timings is a 4-core processor but almost all the
 methods are single-threaded and not affected by the number of cores.
@@ -1411,7 +1411,7 @@ shape but incorrect contents is obtained.
   \normalfont
   \normalsize
   %\end{quote}
-  \caption{\textbf{badtransCpp}: Transpose producing incorrect results}
+  \caption{\code{badtransCpp}: Transpose producing incorrect results.}
   \label{badtrans}
 \end{figure}
 \begin{verbatim}
@@ -1452,7 +1452,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
   \mbox{}
   \normalfont
   \normalsize
-  \caption{\textbf{sparseProdCpp}: Transpose and product with sparse matrices}
+  \caption{\code{sparseProdCpp}: Transpose and product with sparse matrices.}
   \label{sparseProd}
   %\end{quote}
 \end{figure}
@@ -1500,7 +1500,7 @@ Figure~\ref{fig:spLS}.
     \normalfont
     \normalsize
   %\end{quote}
-  \caption{\textbf{sparseLSCpp}: Solving a sparse least squares problem}
+  \caption{\code{sparseLSCpp}: Solving a sparse least squares problem.}
   \label{fig:spLS}
 \end{figure}
 
