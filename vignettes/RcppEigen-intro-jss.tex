@@ -19,14 +19,17 @@
 
 \Abstract{
   \noindent
-  \noindent
   The \pkg{RcppEigen} package provides access from \proglang{R}
   \citep{R:Main} to the \pkg{Eigen} \citep*{Eigen:Web} \proglang{C++}
   template library for numerical linear algebra. \pkg{Rcpp}
   \citep{JSS:Rcpp,CRAN:Rcpp} classes and specializations of the
   \proglang{C++} templated functions \code{as} and \code{wrap} from
-  \pkg{Rcpp} provide the ``glue'' for passing objects from \proglang{R} to
-  \proglang{C++} and back.  
+  \pkg{Rcpp} provide the ``glue'' for passing objects from
+  \proglang{R} to \proglang{C++} and back.  Several introductory
+  examples are presented. This is followed by an in-depth discussion of various
+  available approaches for solving least-squares problems, including
+  rank-revealing methods, concluding with an empirical run-time
+  comparison. Last but not least, sparse matrix methods are discussed.
 }
 
 \Keywords{Linear algebra, template programming, \proglang{R}, \proglang{C++}, \pkg{Rcpp}} %% at least one keyword must be supplied
@@ -117,9 +120,9 @@ usage was held back at the time by the limited availability of
 compilers implementing all necessary features of the \proglang{C++}
 language.
 
-This situation has greatly improved over the last decade, and many more such
+This situation has greatly improved over the last decade, and many more
 libraries have been contributed. One such \proglang{C++} library is
-\pkg{Eigen} by \citet*{Eigen:Web}. \pkg{Eigen} started as a sub-project to
+\pkg{Eigen} by \citet*{Eigen:Web} which started as a sub-project to
 KDE (a popular Linux desktop environment), initially focussing on fixed-size
 matrices to represent projections in a visualization application. \pkg{Eigen}
 grew from there and has over the course of about a decade produced three
@@ -145,7 +148,7 @@ As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending \pkg{Rcpp}''
   \texttt{Rcpp::wrap} (for conversion from \proglang{C++} to \proglang{R}).
 \end{quote}
 The \pkg{RcppEigen} package provides the header files composing the
-\pkg{Eigen} \proglang{C++} template library and implementations of
+\pkg{Eigen} \proglang{C++} template library, along with implementations of
 \texttt{Rcpp::as} and \texttt{Rcpp::wrap} for the \proglang{C++}
 classes defined in \pkg{Eigen}.
 
@@ -155,17 +158,16 @@ matrices and vectors, as well as decompositions and other functions
 to be applied to these objects.  The next section introduces some
 of these classes and shows how to interface to them from \proglang{R}.
 
-\section{Eigen classes}
+\section[Eigen classes]{\pkg{Eigen} classes}
 \label{sec:eclasses}
 
-\pkg{Eigen} \citep*{Eigen:Web} is a \proglang{C++} template
-library providing classes for many forms of matrices, vectors, arrays
-and decompositions.  These classes are flexible and comprehensive
-allowing for both high performance and well structured code
-representing high-level operations. \proglang{C++} code based on Eigen
-is often more like \proglang{R} code, working on the ``whole object'',
-than like compiled code in other languages where operations often must be
-coded in loops.
+\pkg{Eigen} is a \proglang{C++} template library providing classes for
+many forms of matrices, vectors, arrays and decompositions.  These
+classes are flexible and comprehensive allowing for both high
+performance and well structured code representing high-level
+operations. \proglang{C++} code based on \pkg{Eigen} is often more like
+\proglang{R} code, working on the ``whole object'', than like compiled
+code in other languages where operations often must be coded in loops.
 
 As in many \proglang{C++} template libraries using template meta-programming
 \citep{Abrahams+Gurtovoy:2004:TemplateMetaprogramming}, the templates
@@ -193,11 +195,11 @@ vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
 \end{table}
 
 Here, \code{Vector} and \code{Matrix} describe the dimension of the
-object. The \code{X} signals that these dynamically-sized objects (as opposed
+object. The \code{X} signals that these are dynamically-sized objects (as opposed
 to fixed-size matrices such as $3 \times 3$ matrices also available in
 \pkg{Eigen}). Lastly, the trailing characters \code{i}, \code{d} and
-\code{cd} denote storage types \code{integer}, \code{double} and
-\code{complex double}, respectively.
+\code{cd} denote, respectively, storage types \code{integer}, \code{double} and
+\code{complex double}.
 
 The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \pkg{Eigen} namespace, which means that they must be written as
@@ -223,7 +225,7 @@ names with a declaration like
 \end{quote}
 then one can use these names without the namespace qualifier.
 
-\subsection{Mapped matrices in Eigen}
+\subsection[Mapped matrices in Eigen]{Mapped matrices in \pkg{Eigen}}
 \label{sec:mapped}
 
 Storage for the contents of matrices from the classes shown in
@@ -231,15 +233,15 @@ Table~\ref{tab:REigen} is allocated and controlled by the class
 constructors and destructors.  Creating an instance of such a class
 from an \proglang{R} object involves copying its contents.  An
 alternative is to have the contents of the \proglang{R} matrix or
-vector mapped to the contents of the object from the Eigen class.  For
-dense matrices one can use the Eigen templated class \code{Map}, and for
-sparse matrices one can deploy the Eigen templated class \code{MappedSparseMatrix}.
+vector mapped to the contents of the object from the \pkg{Eigen} class.  For
+dense matrices one can use the \pkg{Eigen} templated class \code{Map}, and for
+sparse matrices one can deploy the \pkg{Eigen} templated class \code{MappedSparseMatrix}.
 
 One must, of course, be careful not to modify the contents of the
 \proglang{R} object in the \proglang{C++} code.  A recommended
 practice is always to declare mapped objects as {\ttfamily\hlkwb{const}\normalfont}.
 
-\subsection{Arrays in Eigen}
+\subsection[Arrays in Eigen]{Arrays in \pkg{Eigen}}
 \label{sec:arrays}
 
 For matrix and vector classes \pkg{Eigen} overloads the \texttt{`*'}
@@ -250,10 +252,10 @@ back and forth between matrices or vectors and arrays is usually done
 via the \code{array()} method for matrix or vector objects and the
 \code{matrix()} method for arrays.
 
-\subsection{Structured matrices in Eigen}
+\subsection[Structured matrices in Eigen]{Structured matrices in \pkg{Eigen}}
 \label{sec:structured}
 
-There are \pkg{Eigen} classes for matrices with special structure such
+\pkg{Eigen} provides classes for matrices with special structure such
 as symmetric matrices, triangular matrices and banded matrices.  For
 dense matrices, these special structures are described as ``views'',
 meaning that the full dense matrix is stored but only part of the
@@ -267,7 +269,7 @@ the contents, with the other triangle defined by the implicit symmetry.
 \proglang{C++} functions to perform simple operations on matrices or
 vectors can follow a pattern of:
 \begin{enumerate}
-\item Map the \proglang{R} objects passed as arguments into Eigen objects.
+\item Map the \proglang{R} objects passed as arguments into \pkg{Eigen} objects.
 \item Create the result.
 \item Return \code{Rcpp::wrap} applied to the result.
 \end{enumerate}
@@ -290,7 +292,7 @@ An idiom for the first step is
   \mbox{}
   \normalfont
 \end{quote}
-where \code{AA} is the name of the R object (called an \code{SEXP} in
+where \code{AA} is the name of the \proglang{R} object (of type \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
 An alternative to the \code{using} declarations is to declare a \code{typedef} as in
@@ -306,7 +308,7 @@ An alternative to the \code{using} declarations is to declare a \code{typedef} a
   \normalsize
 \end{quote}
 
-The \code{cxxfunction} from the \pkg{inline} package \citep*{CRAN:inline} for
+The \code{cxxfunction} function from the \pkg{inline} package \citep*{CRAN:inline} for
 \proglang{R} and its \pkg{RcppEigen} plugin provide a convenient method of
 developing and debugging the \proglang{C++} code.  For actual production code
 one generally incorporates the \proglang{C++} source code files in a package
@@ -341,8 +343,8 @@ The next \proglang{R} code snippet creates a simple matrix of integers
 \end{verbatim}
 and, in Figure~\ref{trans}, the \code{transpose()} method for the
 \code{Eigen::MatrixXi} class is used to return the transpose of the supplied matrix. The \proglang{R}
-matrix in the \code{SEXP} \code{AA} is mapped to an
-\code{Eigen::MatrixXi} object then the matrix \code{At} is constructed
+matrix in the \code{SEXP} \code{AA} is first mapped to an
+\code{Eigen::MatrixXi} object, and then the matrix \code{At} is constructed
 from its transpose and returned to \proglang{R}.
 
 \begin{figure}[htb]
@@ -445,11 +447,11 @@ known to be symmetric and only one triangle needs to be calculated.
 The function \code{tcrossprod} evaluates \code{crossprod(t(X))}
 without actually forming the transpose.
 
-To express these calculations in Eigen, a \code{SelfAdjointView},
-which is a dense matrix of which only one triangle is used, the other
-triangle being inferred from the symmetry, is created.  (The
-characterization ``self-adjoint'' is equivalent to symmetric for
-non-complex matrices.)
+To express these calculations in \pkg{Eigen}, a
+\code{SelfAdjointView}---which is a dense matrix of which only one
+triangle is used, the other triangle being inferred from the
+symmetry---is created.  (The characterization ``self-adjoint'' is
+equivalent to symmetric for non-complex matrices.)
 
 The \pkg{Eigen} class name is \code{SelfAdjointView}.  The method for
 general matrices that produces such a view is called
@@ -1400,7 +1402,7 @@ instead of rows of $\bm X^\prime$.
 
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
-an ``infelicity'' in the code.%, if not an outright bug.  
+an ``infelicity'' in the code. %, if not an outright bug.  
 In the code for the transpose of an integer matrix shown in
 Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi} object
 before applying \code{wrap} to it.  The assignment forces the evaluation.  If
