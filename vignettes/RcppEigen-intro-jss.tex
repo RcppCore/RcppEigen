@@ -107,21 +107,22 @@ years.
 % Could cite Eddelbuettel (1996) here, but a real survey would be better.
 
 As both the \proglang{C++} language and standards have evolved
-\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++,cpp11}, so have the
-compilers implementing the language.  Relatively modern language constructs
-such as template meta-programming are particularly useful because they provide
-overloading of operations (allowing expressive code in the compiled language
-similar to what can be done in scripting languages) and can shift some of the
-computational burden from the run-time to the compile-time (though a more
-detailed discussions of template programming is however beyond this
+\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++,cpp11},
+so have the compilers implementing the language.  Relatively modern
+language constructs such as template meta-programming are particularly
+useful because they provide overloading of operations (allowing
+expressive code in the compiled language similar to what can be done
+in scripting languages) and can shift some of the computational burden
+from the run-time to the compile-time. (A more detailed discussion of
+template meta-programming is, however, beyond the scope of this
 paper). \cite{Veldhuizen:1998:Blitz} provided an early and influential
-implementation that already demonstrated key features of this approach.  Its
-usage was held back at the time by the limited availability of
-compilers implementing all necessary features of the \proglang{C++}
-language.
+implementation of numerical linear algebra classes that already
+demonstrated key features of this approach.  Its usage was held back
+at the time by the limited availability of compilers implementing all the
+necessary features of the \proglang{C++} language.
 
 This situation has greatly improved over the last decade, and many more
-libraries have been contributed. One such \proglang{C++} library is
+libraries have been made available. One such \proglang{C++} library is
 \pkg{Eigen} by \citet*{Eigen:Web} which started as a sub-project to
 KDE (a popular Linux desktop environment), initially focussing on fixed-size
 matrices to represent projections in a visualization application. \pkg{Eigen}
@@ -296,13 +297,13 @@ where \code{AA} is the name of the \proglang{R} object (of type \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
 An alternative to the \code{using} declarations is to declare a \code{typedef} as in
-% typedef Eigen::Map<Eigen::MatrixXi>   MapMati;
-% const MapMati          A(Rcpp::as<MapMati>(AA));
+% typedef Eigen::Map<Eigen::MatrixXd>   MapMatd;
+% const MapMatd          A(Rcpp::as<MapMatd>(AA));
 \begin{quote}
   \noindent
   \ttfamily
-  \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{MapMati}\hlopt{;}\hspace*{\fill}\\
-  \hlstd{}\hlkwb{const\ }\hlstd{MapMati}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{Rcpp}\hlopt{::}\hlstd{as}\hlopt{$<$}\hlstd{MapMati}\hlopt{$>$(}\hlstd{AA}\hlopt{));}\hlstd{}\hspace*{\fill}\\
+  \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{MapMatd}\hlopt{;}\hspace*{\fill}\\
+  \hlstd{}\hlkwb{const\ }\hlstd{MapMatd}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{Rcpp}\hlopt{::}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{));}\hlstd{}\hspace*{\fill}\\
   \mbox{}
   \normalfont
   \normalsize
@@ -981,7 +982,6 @@ value decomposition can be written as in Figure~\ref{SVDLS}.
     \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{r}\hlstd{}\hlopt{((}\hlstd{Dp\ }\hlopt{$>$\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{).}\hlstd{}\hlkwd{count}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{VDp}\hlstd{}\hlopt{(}\hlstd{UDV}\hlopt{.}\hlstd{}\hlkwd{matrixV}\hlstd{}\hlopt{()\ {*}\ }\hlstd{Dp}\hlopt{.}\hlstd{}\hlkwd{matrix}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{asDiagonal}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd\ }\hlkwd{betahat}\hlstd{}\hlopt{(}\hlstd{VDp\ }\hlopt{{*}\ }\hlstd{UDV}\hlopt{.}\hlstd{}\hlkwd{matrixU}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{()\ {*}\ }\hlstd{y}\hlopt{);}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ int}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlkwb{}\hlstd{}\hlkwd{df}\hlstd{}\hlopt{(}\hlstd{n\ }\hlopt{{-}\ }\hlstd{r}\hlopt{);}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{se}\hlstd{}\hlopt{(}\hlstd{s\ }\hlopt{{*}\ }\hlstd{VDp}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
     \mbox{}
     \normalfont
@@ -1092,7 +1092,7 @@ X\bm P$ only.
 
 In the rank-deficient case the straightforward calculation of the
 fitted values, as $\bm X\widehat{\bm\beta}$, cannot be used because
-some of the estimated coefficient, $\widehat{\bm\beta}$, are \code{NA}
+some of the estimated coefficients, $\widehat{\bm\beta}$, are \code{NA}
 so the product will be a vector of \code{NA}'s.  One could do some
 complicated rearrangement of the columns of X and the coefficient
 estimates but it is conceptually (and computationally) easier to
@@ -1129,12 +1129,12 @@ The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlopt{.}\hlstd{}\hlkwd{fill}\hlstd{}\hlopt{(::}\hlstd{NA\textunderscore REAL}\hlopt{);}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ }\hlopt{=\ }\hlstd{Rinv\ }\hlopt{{*}\ }\hlstd{effects}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{);}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{betahat}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{Pmat\ }\hlopt{{*}\ }\hlstd{betahat}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ create\ fitted\ values\ from\ effects}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ }\hlstd{effects}\hlopt{.}\hlstd{}\hlkwd{tail}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{rows}\hlstd{}\hlopt{()\ {-}\ }\hlstd{r}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{();}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ }\hlstd{fitted}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{householderQ}\hlstd{}\hlopt{()\ {*}\ }\hlstd{effects}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlopt{.}\hlstd{}\hlkwd{fill}\hlstd{}\hlopt{(::}\hlstd{NA\textunderscore REAL}\hlopt{);}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlopt{.}\hlstd{}\hlkwd{head}\hlstd{}\hlopt{(}\hlstd{r}\hlopt{)}\hlstd{\ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{Rinv}\hlopt{.}\hlstd{}\hlkwd{rowwise}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{norm}\hlstd{}\hlopt{();}\hspace*{\fill}\\
     \hlstd{}\hlstd{\ \ \ \ }\hlstd{se}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{Pmat\ }\hlopt{{*}\ }\hlstd{se}\hlopt{;}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ create\ fitted\ values\ from\ effects}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{effects}\hlopt{.}\hlstd{}\hlkwd{tail}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{.}\hlstd{}\hlkwd{rows}\hlstd{}\hlopt{()\ {-}\ }\hlstd{r}\hlopt{).}\hlstd{}\hlkwd{setZero}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ }\hlstd{fitted}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{PQR}\hlopt{.}\hlstd{}\hlkwd{householderQ}\hlstd{}\hlopt{()\ {*}\ }\hlstd{effects}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}\\
     \mbox{}
     \normalfont
@@ -1162,12 +1162,12 @@ The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
 %     betahat.fill(::NA_REAL);
 %     betahat.head(r)  = Rinv * effects.head(r);
 %     betahat          = Pmat * betahat;
-%                       // create fitted values from effects
-%     effects.tail(X.rows() - r).setZero();
-%     fitted           = PQR.householderQ() * effects;
 %     se.fill(::NA_REAL);
 %     se.head(r)       = Rinv.rowwise().norm();
 %     se               = Pmat * se;
+%                       // create fitted values from effects
+%     effects.tail(X.rows() - r).setZero();
+%     fitted           = PQR.householderQ() * effects;
 % }
 
 Just to check that the code in Figure~\ref{ColPivQRLS} does indeed provide the desired answer
@@ -1235,35 +1235,13 @@ Multiple R-squared: 0.9999,	Adjusted R-squared: 0.9999
 [1] TRUE
 \end{verbatim}
 
-The coefficients from the symmetric eigendecomposition method are the same as those from the SVD
+The coefficients from the symmetric eigendecomposition method are the
+same as those from the SVD, hence the fitted values and residuals must
+be the same for these two methods.
 
 \begin{verbatim}
-> print(summary(fmVLV <- fastLm(y ~ f1*f2, dd, method=5)), signif.st=FALSE)
-
-Call:
-fastLm.formula(formula = y ~ f1 * f2, data = dd, method = 5)
-
-             Estimate Std. Error t value  Pr(>|t|)
-(Intercept)  0.977859   0.058165  16.812 3.413e-09
-f1B          7.020458   0.038777 181.049 < 2.2e-16
-f1C          3.117222   0.082258  37.896 5.221e-13
-f1D          4.068523   0.082258  49.461 2.833e-14
-f2b          5.060123   0.082258  61.516 2.593e-15
-f2c          5.997592   0.082258  72.912 4.015e-16
-f1B:f2b      2.002847   0.061311  32.667 2.638e-12
-f1C:f2b      7.702999   0.116330  66.217 1.156e-15
-f1D:f2b      8.964251   0.116330  77.059 < 2.2e-16
-f1B:f2c      5.017610   0.061311  81.838 < 2.2e-16
-f1C:f2c     10.961326   0.116330  94.226 < 2.2e-16
-f1D:f2c     12.041081   0.116330 103.508 < 2.2e-16
-
-Residual standard error: 0.2868 on 11 degrees of freedom
-Multiple R-squared: 0.9999,	Adjusted R-squared: 0.9999
+> summary(fmVLV <- fastLm(y ~ f1*f2, dd, method=5))
 > all.equal(coef(fmSVD), coef(fmVLV))
-[1] TRUE
-> all.equal(unname(fitted(fm1)), fitted(fmSVD))
-[1] TRUE
-> all.equal(unname(residuals(fm1)), residuals(fmSVD))
 [1] TRUE
 \end{verbatim}
 
@@ -1273,7 +1251,7 @@ In the \pkg{RcppEigen} package the \proglang{R} function to fit linear
 models using the methods described above is called \code{fastLm}. It follows
 an earlier example in the \pkg{Rcpp} package which was carried over to both
 \pkg{RcppArmadillo} and \pkg{RcppGSL}. The natural question to ask is, ``Is it indeed fast to use these methods
-based on \pkg{Eigen}?''.  To this end, the example provides benchmarking code for these
+based on \pkg{Eigen}?''.  To this end, the package provides benchmarking code for these
 methods, \proglang{R}'s \code{lm.fit} function and the \code{fastLm}
 implementations in the \pkg{RcppArmadillo} \citep{CRAN:RcppArmadillo}
 and \pkg{RcppGSL} \citep{CRAN:RcppGSL} packages, if they are
@@ -1348,7 +1326,7 @@ Table~\ref{tab:lmRes}.
 \end{table}
 The processor used for these timings is a 4-core processor but almost all the
 methods are single-threaded and not affected by the number of cores.  Only
-the \code{arma}, \code{lm.fit} and \code{GSL} methods benefit from the
+the \code{arma}, \code{lm.fit}, \code{GESDD} and \code{GSL} methods benefit from the
 multi-threaded BLAS implementation provided by OpenBLAS, and the relative
 speed increase is modest for this problem size and number of cores (at 7.76
 seconds relative to 10.29 seconds for \code{arma}, 13.74 seconds relative to
@@ -1384,7 +1362,8 @@ out of contention.
 The \code{GESDD} method provides an interesting hybrid: It uses the
 \pkg{Eigen} classes, but then deploys the LAPACK routine \code{dgesdd} for
 the actual SVD calculation. The resulting time is much faster than using the
-SVD implementation of \pkg{Eigen} which is not a particularly fast method.
+SVD implementation of \pkg{Eigen} which is not a particularly fast SVD
+method.
 
 
 \section{Delayed evaluation}
