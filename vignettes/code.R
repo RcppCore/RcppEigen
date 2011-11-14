@@ -102,8 +102,7 @@ stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
 
 cholDetCpp <- '
 const MatrixXd      ata(AtA(as<MapMatd>(AA)));
-const MatrixXd     Lmat(ata.llt().matrixL());
-const double       detL(Lmat.diagonal().prod());
+const double       detL(MatrixXd(ata.llt().matrixL()).diagonal().prod());
 const VectorXd     Dvec(ata.ldlt().vectorD());
 return List::create(Named("d1") = detL * detL,
                     Named("d2") = Dvec.prod(),
@@ -176,11 +175,8 @@ all.equal(unname(fitted(fm1)), fitted(fmSVD))
 all.equal(unname(residuals(fm1)), residuals(fmSVD))
 
 
-print(summary(fmVLV <- fastLm(y ~ f1 * f2, dd, method=5L)), signif.stars=FALSE)
+fmVLV <- fastLm(y ~ f1 * f2, dd, method=5L)
 all.equal(coef(fmSVD), coef(fmVLV))
-all.equal(unname(fitted(fm1)), fitted(fmSVD))
-all.equal(unname(residuals(fm1)), residuals(fmSVD))
-
 
 
 ## section 5
@@ -199,20 +195,18 @@ all.equal(At, t(Ai))
 
 ## section 6
 sparseProdCpp <- '
-using Eigen::Map;
 using Eigen::MappedSparseMatrix;
 using Eigen::SparseMatrix;
-using Eigen::VectorXd;
 
 const MappedSparseMatrix<double>  A(as<MappedSparseMatrix<double> >(AA));
-const Map<VectorXd>               y(as<Map<VectorXd> >(yy));
+const MapVecd                     y(as<MapVecd>(yy));
 const SparseMatrix<double>       At(A.adjoint());
 return List::create(Named("At")  = At,
                     Named("Aty") = At * y);
 '
 
 sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-                       sparseProdCpp, "RcppEigen")
+                       sparseProdCpp, "RcppEigen", incl)
 data(KNex, package="Matrix")
 rr <- sparse1(KNex$mm, KNex$y)
 stopifnot(all.equal(rr$At, t(KNex$mm)),
@@ -220,35 +214,29 @@ stopifnot(all.equal(rr$At, t(KNex$mm)),
 
 
 sparseLSCpp <- '
-using   Eigen::Lower;
-using   Eigen::VectorXd;
-typedef Eigen::Map<VectorXd>               MapVec;
 typedef Eigen::MappedSparseMatrix<double>  MSpMat;
 typedef Eigen::SparseMatrix<double>         SpMat;
 typedef Eigen::SimplicialLDLt<SpMat>       SpChol;
 typedef Eigen::CholmodDecomposition<SpMat> CholMD;
 
 const SpMat      At(as<MSpMat>(AA).adjoint());
-const VectorXd  Aty(At * as<MapVec>(yy));
+const VectorXd  Aty(At * as<MapVecd>(yy));
 const SpChol     Ch(At * At.adjoint());
-if (Ch.info() != Eigen::Success)
-   return R_NilValue;
+if (Ch.info() != Eigen::Success) return R_NilValue;
 const CholMD      L(At);
-if (L.info() != Eigen::Success)
-   return R_NilValue;
+if (L.info() != Eigen::Success) return R_NilValue;
 return List::create(Named("L")        = wrap(L),
                     Named("betahatS") = Ch.solve(Aty),
                     Named("betahatC") = L.solve(Aty),
                     Named("perm")     = Ch.permutationP().indices());
 '
 
-
 sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-                       sparseLSCpp, "RcppEigen")
+                       sparseLSCpp, "RcppEigen", incl)
 str(rr <-  sparse2(KNex$mm, KNex$y))
 res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
                        crossprod(KNex$mm, KNex$y)))
 stopifnot(all.equal(rr$betahatS, res), all.equal(rr$betahatC, res))
-all.equal(rr$L, Ch)   # not sure yet why these are different.  The one from Eigen is smaller
-## It's because the Ch was created from mm'mm and L was created directly from mm'
+                                        # factors are different sizes
+c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
 all(rr$perm == Ch@perm) # fill-reducing permutations are different
