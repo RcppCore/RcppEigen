@@ -10,8 +10,15 @@
 \newcommand{\R}{\proglang{R}\ } % NB forces a space so not good before % fullstop etc.
 \newcommand{\Cpp}{\proglang{C++}\ }
 
+<<echo=FALSE,print=FALSE>>=
+prettyVersion <- packageDescription("RcppEigen")$Version
+rcppeigen.date <- packageDescription("RcppEigen")$Date
+prettyDate <- format(Sys.Date(), "%B %e, %Y")
+@
+
 \author{Douglas Bates\\Univ.~of Wisconsin/Madison \And Dirk Eddelbuettel\\Debian Project} % \And Romain Fran\c{c}ois\\R Enthusiasts}
 \title{Fast and Elegant Numerical Linear Algebra\\ Using the \pkg{RcppEigen} Package}
+\date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
 
 \Plainauthor{Douglas Bates, Dirk Eddelbuettel} %, Romain Fran\c{c}ois} 
 \Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}   
