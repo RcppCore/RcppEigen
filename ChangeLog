@@ -1,3 +1,9 @@
+2011-11-14  Douglas Bates  <bates@stat.wisc.edu>
+
+	* vignettes/RcppEigen-intro-nojss.Rnw: Many, many changes by Dirk
+	and by Doug over the last two weeks to create a JSS paper and
+	updated package.  Too many changes to list.
+
 2011-10-26  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/doc/Rcpp.bib, inst/doc/RcppEigen-Intro.Rnw,
