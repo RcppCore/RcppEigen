@@ -7,9 +7,6 @@
 %\usepackage{booktabs,flafter,bm,amsmath}
 \usepackage{booktabs,bm,amsmath}
 
-\newcommand{\R}{\proglang{R}\ } % NB forces a space so not good before % fullstop etc.
-\newcommand{\Cpp}{\proglang{C++}\ }
-
 <<echo=FALSE,print=FALSE>>=
 prettyVersion <- packageDescription("RcppEigen")$Version
 rcppeigen.date <- packageDescription("RcppEigen")$Date
@@ -20,9 +17,9 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 \title{Fast and Elegant Numerical Linear Algebra\\ Using the \pkg{RcppEigen} Package}
 \date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
 
-\Plainauthor{Douglas Bates, Dirk Eddelbuettel} %, Romain Fran\c{c}ois} 
-\Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}   
-\Shorttitle{Fast and Elegant Numerical Linear Algebra with RcppEigen} 
+\Plainauthor{Douglas Bates, Dirk Eddelbuettel} %, Romain Fran\c{c}ois}
+\Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}
+\Shorttitle{Fast and Elegant Numerical Linear Algebra with RcppEigen}
 
 \Abstract{
   \noindent
@@ -55,7 +52,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   River Forest, IL, USA\\
   E-mail: \email{edd@debian.org}\\
   URL: \url{http://dirk.eddelbuettel.com}\\
-  
+
   % Romain Fran\c{c}ois\\
   % Professional R Enthusiast\\
   % 1 rue du Puits du Temple, 34 000 Montpellier\\
@@ -252,7 +249,7 @@ practice is always to declare mapped objects as {\ttfamily\hlkwb{const}\normalfo
 \subsection[Arrays in Eigen]{Arrays in \pkg{Eigen}}
 \label{sec:arrays}
 
-For matrix and vector classes \pkg{Eigen} overloads the \texttt{`*'}
+For matrix and vector classes \pkg{Eigen} overloads the \code{`*'}
 operator as matrix multiplication.  Occasionally component-wise
 operations instead of matrix operations are desired, for which the
 \code{Array} templated classes are used in \pkg{Eigen}.  Switching
@@ -426,7 +423,7 @@ cross-product of its two arguments.
 \end{figure}
 
 \begin{verbatim}
-R> fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"), 
+R> fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"),
 +                       prodCpp, "RcppEigen")
 R> B <- matrix(1:4, ncol=2)
 R> C <- matrix(6:1, nrow=2)
@@ -653,8 +650,8 @@ Figure~\ref{cholDet}.
 \begin{verbatim}
 R> fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen", incl)
 R> unlist(ll <- fdet(A))
-      d1       d2       ld 
-54.00000 54.00000  3.98898 
+      d1       d2       ld
+54.00000 54.00000  3.98898
 \end{verbatim}
 
 
@@ -727,7 +724,7 @@ to those from the \code{lm.fit} function in \proglang{R}
 (\code{lm.fit} is the workhorse function called by \code{lm} once the
 model matrix and response have been evaluated).
 \begin{verbatim}
-R> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), 
+R> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
 +                       lltLSCpp, "RcppEigen", incl)
 R> data(trees, package="datasets")
 R> str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
@@ -886,8 +883,8 @@ R> kappa(mm)        # large condition number, indicating rank deficiency
 R> rcond(mm)        # alternative evaluation, the reciprocal condition number
 [1] 2.3206e-17
 R> (c(rank=qr(mm)$rank, p=ncol(mm))) # rank as computed in R's qr function
-rank    p 
-  11   12 
+rank    p
+  11   12
 R> set.seed(1)
 R> dd$y <- mm %*% seq_len(ncol(mm)) + rnorm(nrow(mm), sd = 0.1)
 R> fm1 <- lm(y ~ f1 * f2, dd)
@@ -1278,7 +1275,7 @@ implementation of the BLAS (Basic Linear Algebra Subroutines) used.
 (\pkg{Eigen} methods do not use the BLAS but the other methods do.)
 The \pkg{Eigen3} template library does not use multi-threaded code for
 these operations but does use the graphics pipeline instructions (SSE
-and SSE2, in this case) in some calculations. 
+and SSE2, in this case) in some calculations.
 
 Results obtained on a desktop computer, circa 2010, are shown in
 Table~\ref{tab:lmRes}.
@@ -1328,7 +1325,7 @@ Table~\ref{tab:lmRes}.
   \caption{\code{lmBenchmark} results on a desktop computer for the
     default size, $100,000\times 40$, full-rank model matrix running
     20 repetitions for each method.  Times (Elapsed, User and Sys) are
-    in seconds.  The BLAS in use is a locally-rebuilt version of the 
+    in seconds.  The BLAS in use is a locally-rebuilt version of the
     OpenBLAS library included with Ubuntu 11.10.}
   \label{tab:lmRes}
 \end{table}
@@ -1366,7 +1363,7 @@ out of contention.
 
 %An SVD method using the Lapack SVD subroutine, \code{dgesv}, may be
 %faster than the native \pkg{Eigen} implementation of the SVD, which is
-%not a particularly fast method of evaluating the SVD. 
+%not a particularly fast method of evaluating the SVD.
 The \code{GESDD} method provides an interesting hybrid: It uses the
 \pkg{Eigen} classes, but then deploys the LAPACK routine \code{dgesdd} for
 the actual SVD calculation. The resulting time is much faster than using the
@@ -1389,7 +1386,7 @@ instead of rows of $\bm X^\prime$.
 
 Occasionally the method for \code{Rcpp::wrap} will not force an
 evaluation when it should.  This is at least what Bill Venables calls
-an ``infelicity'' in the code. %, if not an outright bug.  
+an ``infelicity'' in the code. %, if not an outright bug.
 In the code for the transpose of an integer matrix shown in
 Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi} object
 before applying \code{wrap} to it.  The assignment forces the evaluation.  If
@@ -1411,7 +1408,7 @@ shape but incorrect contents is obtained.
 \end{figure}
 \begin{verbatim}
 R> Ai <- matrix(1:6, ncol=2L)
-R> ftrans2 <- cxxfunction(signature(AA = "matrix"), 
+R> ftrans2 <- cxxfunction(signature(AA = "matrix"),
 +                         badtransCpp, "RcppEigen", incl)
 R> (At <- ftrans2(Ai))
      [,1] [,2] [,3]
@@ -1521,9 +1518,9 @@ R> res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
 +                         crossprod(KNex$mm, KNex$y)))
 R> stopifnot(all.equal(rr$betahatS, res), all.equal(rr$betahatC, res))
 R>                                         # factors are different sizes
-R> c(nnzL=length(rr$L@x), nnzCh=length(Ch@x)) 
- nnzL nnzCh 
- 7395  7451 
+R> c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
+ nnzL nnzCh
+ 7395  7451
 R> all(rr$perm == Ch@perm) # fill-reducing permutations are different
 [1] FALSE
 \end{verbatim}
@@ -1555,10 +1552,10 @@ the excellent run-time performance of the \pkg{RcppEigen} package.
 
 \end{document}
 
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
-%%% End: 
+%%% End:
 
 
 
