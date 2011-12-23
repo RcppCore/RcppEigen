@@ -66,13 +66,8 @@ if (require("RUnit", quietly = TRUE)) {
             }
         }
 
-        # if it did not work, try to use /tmp
-        if ( is.null(output) ){
-            if ( file.exists( "/tmp" ) ){
-                output <- "/tmp"
-            } else {
-                output <- getwd()
-            }
+        if( is.null(output) ) {         # if it did not work, use parent dir
+            output <- ".."              # as BDR does not want /tmp to be used
         }
 
         ## Print results
