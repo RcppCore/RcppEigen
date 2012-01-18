@@ -91,19 +91,16 @@ namespace Rcpp{
         // for plain sparse objects
         template <typename T> 
         SEXP eigen_wrap_plain_dense( const T& object, Rcpp::traits::false_type ){
-            typedef typename T::Scalar Scalar ;
-            const int  RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype  ;  
-            int          nnz = object.nonZeros(), p = object.outerSize();
-	        Dimension    dim(object.innerSize(), p);
-	        const int    *ip = object._innerIndexPtr(), *pp = object._outerIndexPtr();
-	        const Scalar *xp = object._valuePtr();
-	        IntegerVector iv(ip, ip + nnz), pv(pp, pp + p + 1);
-	        Vector<RTYPE> xv(xp, xp + nnz);
-	        S4           ans("dgCMatrix");
-			ans.slot("Dim")  = dim;
-			ans.slot("i")    = iv;
-			ans.slot("p")    = pv;
-			ans.slot("x")    = xv;
+			typedef typename T::Scalar     Scalar;
+			const int  RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype;
+			const int    nnz = object.nonZeros();
+			S4           ans(T::IsRowMajor ? "dgRMatrix" : "dgCMatrix");
+			ans.slot("Dim")  = Dimension(object.rows(), object.cols());
+			ans.slot(T::IsRowMajor ? "j" : "i") =
+				IntegerVector(object._innerIndexPtr(), object._innerIndexPtr() + nnz);
+			ans.slot("p")    = IntegerVector(object._outerIndexPtr(),
+											 object._outerIndexPtr() + object.outerSize() + 1);
+			ans.slot("x")    = Vector<RTYPE>(object._valuePtr(), object._valuePtr() + nnz);
 			return  ans;
 	    } 
         
