@@ -42,9 +42,14 @@ namespace Rcpp {
 	/* support for as */
 	template<typename T> class Exporter< Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > >;
 	template<typename T> class Exporter< Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > >;
+	template<typename T> class Exporter< Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > >;
+	template<typename T> class Exporter< Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> > >;
 	template<typename T> class Exporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >;
 	template<typename T> class Exporter< Eigen::Matrix<T, Eigen::Dynamic, 1> >;
 	template<typename T> class Exporter< Eigen::Matrix<T, 1, Eigen::Dynamic> >;
+	template<typename T> class Exporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >;
+	template<typename T> class Exporter< Eigen::Array<T, Eigen::Dynamic, 1> >;
+	template<typename T> class Exporter< Eigen::Array<T, 1, Eigen::Dynamic> >;
 	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;
 	template<typename T> class Exporter< Eigen::SparseMatrix<T> >;
 

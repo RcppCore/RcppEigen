@@ -157,6 +157,23 @@ namespace Rcpp{
 		};
 
 		template<typename T>
+		class Exporter<Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {
+		public:
+			typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >  MVType;
+			Exporter(SEXP x) : d_size(::Rf_length(x)) {
+				const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+				if (TYPEOF(x) != RTYPE)
+					throw std::invalid_argument("Wrong R type for mapped vector");
+				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
+				d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
+			}
+			MVType get() {return MVType(d_start, d_size);}
+		protected:
+			const int d_size;
+			T*        d_start;
+		};
+
+		template<typename T>
 		class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > {
 		public:
 			typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >  MMType;
@@ -178,11 +195,40 @@ namespace Rcpp{
 			T*    d_start;
 		};
 
+		template<typename T>
+		class Exporter<Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> > > {
+		public:
+			typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >  MAType;
+			Exporter(SEXP x) : d_nrow(::Rf_length(x)), d_ncol(1) {
+				const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+				if (TYPEOF(x) != RTYPE)
+					throw std::invalid_argument("Wrong R type for mapped vector");
+				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
+				d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
+				if (::Rf_isMatrix(x)) {
+					int *dims = INTEGER(::Rf_getAttrib(x, R_DimSymbol));
+					d_nrow = dims[0];
+					d_ncol = dims[1];
+				}
+			}
+			MAType get() {return MMType(d_start, d_nrow, d_ncol);}
+		protected:
+			int   d_nrow, d_ncol;
+			T*    d_start;
+		};
+
 		template <typename T> 
 		class Exporter<Eigen::Matrix<T, Eigen::Dynamic, 1> >
 			: public IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T> {
 		public: 
 			Exporter(SEXP x) : IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
+		}; 
+		
+		template <typename T> 
+		class Exporter<Eigen::Array<T, Eigen::Dynamic, 1> >
+			: public IndexingExporter<Eigen::Array<T, Eigen::Dynamic, 1>, T> {
+		public: 
+			Exporter(SEXP x) : IndexingExporter<Eigen::Array<T, Eigen::Dynamic, 1>, T >(x){}
 		}; 
 		
 		template <typename T> 
@@ -198,6 +244,14 @@ namespace Rcpp{
 		public:
 			Exporter(SEXP x) :
 				MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
+		}; 
+
+		template <typename T> 
+		class Exporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >
+			: public MatrixExporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
+		public:
+			Exporter(SEXP x) :
+				MatrixExporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
 		}; 
 
 		template<typename T>
