@@ -159,7 +159,7 @@ namespace Rcpp{
 		template<typename T>
 		class Exporter<Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {
 		public:
-			typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >  MVType;
+			typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >  MAType;
 			Exporter(SEXP x) : d_size(::Rf_length(x)) {
 				const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
 				if (TYPEOF(x) != RTYPE)
@@ -167,7 +167,7 @@ namespace Rcpp{
 				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
 				d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
 			}
-			MVType get() {return MVType(d_start, d_size);}
+			MAType get() {return MAType(d_start, d_size);}
 		protected:
 			const int d_size;
 			T*        d_start;
@@ -211,7 +211,7 @@ namespace Rcpp{
 					d_ncol = dims[1];
 				}
 			}
-			MAType get() {return MMType(d_start, d_nrow, d_ncol);}
+			MAType get() {return MAType(d_start, d_nrow, d_ncol);}
 		protected:
 			int   d_nrow, d_ncol;
 			T*    d_start;
