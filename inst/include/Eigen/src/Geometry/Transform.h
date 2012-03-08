@@ -207,9 +207,9 @@ public:
   /** type of the matrix used to represent the linear part of the transformation */
   typedef Matrix<Scalar,Dim,Dim,Options> LinearMatrixType;
   /** type of read/write reference to the linear part of the transformation */
-  typedef Block<MatrixType,Dim,Dim> LinearPart;
+  typedef Block<MatrixType,Dim,Dim,int(Mode)==(AffineCompact)> LinearPart;
   /** type of read reference to the linear part of the transformation */
-  typedef const Block<ConstMatrixType,Dim,Dim> ConstLinearPart;
+  typedef const Block<ConstMatrixType,Dim,Dim,int(Mode)==(AffineCompact)> ConstLinearPart;
   /** type of read/write reference to the affine part of the transformation */
   typedef typename internal::conditional<int(Mode)==int(AffineCompact),
                               MatrixType&,
@@ -221,9 +221,9 @@ public:
   /** type of a vector */
   typedef Matrix<Scalar,Dim,1> VectorType;
   /** type of a read/write reference to the translation part of the rotation */
-  typedef Block<MatrixType,Dim,1> TranslationPart;
+  typedef Block<MatrixType,Dim,1,int(Mode)==(AffineCompact)> TranslationPart;
   /** type of a read reference to the translation part of the rotation */
-  typedef const Block<ConstMatrixType,Dim,1> ConstTranslationPart;
+  typedef const Block<ConstMatrixType,Dim,1,int(Mode)==(AffineCompact)> ConstTranslationPart;
   /** corresponding translation type */
   typedef Translation<Scalar,Dim> TranslationType;
   
@@ -279,6 +279,9 @@ public:
   template<typename OtherDerived>
   inline explicit Transform(const EigenBase<OtherDerived>& other)
   {
+    EIGEN_STATIC_ASSERT((internal::is_same<Scalar,typename OtherDerived::Scalar>::value),
+      YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY);
+
     check_template_params();
     internal::transform_construct_from_matrix<OtherDerived,Mode,Options,Dim,HDim>::run(this, other.derived());
   }
@@ -287,6 +290,9 @@ public:
   template<typename OtherDerived>
   inline Transform& operator=(const EigenBase<OtherDerived>& other)
   {
+    EIGEN_STATIC_ASSERT((internal::is_same<Scalar,typename OtherDerived::Scalar>::value),
+      YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY);
+
     internal::transform_construct_from_matrix<OtherDerived,Mode,Options,Dim,HDim>::run(this, other.derived());
     return *this;
   }
@@ -376,9 +382,9 @@ public:
   inline MatrixType& matrix() { return m_matrix; }
 
   /** \returns a read-only expression of the linear part of the transformation */
-  inline ConstLinearPart linear() const { return m_matrix.template block<Dim,Dim>(0,0); }
+  inline ConstLinearPart linear() const { return ConstLinearPart(m_matrix,0,0); }
   /** \returns a writable expression of the linear part of the transformation */
-  inline LinearPart linear() { return m_matrix.template block<Dim,Dim>(0,0); }
+  inline LinearPart linear() { return LinearPart(m_matrix,0,0); }
 
   /** \returns a read-only expression of the Dim x HDim affine part of the transformation */
   inline ConstAffinePart affine() const { return take_affine_part::run(m_matrix); }
@@ -386,9 +392,9 @@ public:
   inline AffinePart affine() { return take_affine_part::run(m_matrix); }
 
   /** \returns a read-only expression of the translation vector of the transformation */
-  inline ConstTranslationPart translation() const { return m_matrix.template block<Dim,1>(0,Dim); }
+  inline ConstTranslationPart translation() const { return ConstTranslationPart(m_matrix,0,Dim); }
   /** \returns a writable expression of the translation vector of the transformation */
-  inline TranslationPart translation() { return m_matrix.template block<Dim,1>(0,Dim); }
+  inline TranslationPart translation() { return TranslationPart(m_matrix,0,Dim); }
 
   /** \returns an expression of the product between the transform \c *this and a matrix expression \a other
     *
@@ -608,7 +614,7 @@ public:
   
 protected:
   #ifndef EIGEN_PARSED_BY_DOXYGEN
-    EIGEN_STRONG_INLINE static void check_template_params()
+    static EIGEN_STRONG_INLINE void check_template_params()
     {
       EIGEN_STATIC_ASSERT((Options & (DontAlign|RowMajor)) == Options, INVALID_MATRIX_TEMPLATE_PARAMETERS)
     }
@@ -1219,7 +1225,7 @@ struct transform_right_product_impl< TransformType, MatrixType, 0 >
 {
   typedef typename MatrixType::PlainObject ResultType;
 
-  EIGEN_STRONG_INLINE static ResultType run(const TransformType& T, const MatrixType& other)
+  static EIGEN_STRONG_INLINE ResultType run(const TransformType& T, const MatrixType& other)
   {
     return T.matrix() * other;
   }
@@ -1237,11 +1243,11 @@ struct transform_right_product_impl< TransformType, MatrixType, 1 >
 
   typedef typename MatrixType::PlainObject ResultType;
 
-  EIGEN_STRONG_INLINE static ResultType run(const TransformType& T, const MatrixType& other)
+  static EIGEN_STRONG_INLINE ResultType run(const TransformType& T, const MatrixType& other)
   {
     EIGEN_STATIC_ASSERT(OtherRows==HDim, YOU_MIXED_MATRICES_OF_DIFFERENT_SIZES);
 
-    typedef Block<ResultType, Dim, OtherCols> TopLeftLhs;
+    typedef Block<ResultType, Dim, OtherCols, int(MatrixType::RowsAtCompileTime)==Dim> TopLeftLhs;
 
     ResultType res(other.rows(),other.cols());
     TopLeftLhs(res, 0, 0, Dim, other.cols()).noalias() = T.affine() * other;
@@ -1263,15 +1269,13 @@ struct transform_right_product_impl< TransformType, MatrixType, 2 >
 
   typedef typename MatrixType::PlainObject ResultType;
 
-  EIGEN_STRONG_INLINE static ResultType run(const TransformType& T, const MatrixType& other)
+  static EIGEN_STRONG_INLINE ResultType run(const TransformType& T, const MatrixType& other)
   {
     EIGEN_STATIC_ASSERT(OtherRows==Dim, YOU_MIXED_MATRICES_OF_DIFFERENT_SIZES);
 
-    typedef Block<ResultType, Dim, OtherCols> TopLeftLhs;
-
-    ResultType res(other.rows(),other.cols());
-    TopLeftLhs(res, 0, 0, Dim, other.cols()).noalias() = T.linear() * other;
-    TopLeftLhs(res, 0, 0, Dim, other.cols()).colwise() += T.translation();
+    typedef Block<ResultType, Dim, OtherCols, true> TopLeftLhs;
+    ResultType res(Replicate<typename TransformType::ConstTranslationPart, 1, OtherCols>(T.translation(),1,other.cols()));
+    TopLeftLhs(res, 0, 0, Dim, other.cols()).noalias() += T.linear() * other;
 
     return res;
   }

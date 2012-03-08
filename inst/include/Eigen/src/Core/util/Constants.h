@@ -188,7 +188,9 @@ enum {
   /** View matrix as an upper triangular matrix with zeros on the diagonal. */
   StrictlyUpper=ZeroDiag|Upper,
   /** Used in BandMatrix and SelfAdjointView to indicate that the matrix is self-adjoint. */
-  SelfAdjoint=0x10
+  SelfAdjoint=0x10,
+  /** Used to support symmetric, non-selfadjoint, complex matrices. */
+  Symmetric=0x20
 };
 
 /** \ingroup enums
@@ -199,8 +201,6 @@ enum {
   /** Object is aligned for vectorization. */
   Aligned=1 
 };
-
-enum { ConditionalJumpCost = 5 };
 
 /** \ingroup enums
  * Enum used by DenseBase::corner() in Eigen2 compatibility mode. */
@@ -222,8 +222,6 @@ enum DirectionType {
     * not used for PartialReduxExpr and VectorwiseOp. */
   BothDirections 
 };
-
-enum ProductEvaluationMode { NormalProduct, CacheFriendlyProduct };
 
 /** \internal \ingroup enums
   * Enum to specify how to traverse the entries of a matrix. */
@@ -255,6 +253,13 @@ enum {
   /** \internal Unroll both the inner and the outer loop. If there is only one loop, 
     * because linear traversal is used, then unroll that loop. */
   CompleteUnrolling
+};
+
+/** \internal \ingroup enums
+  * Enum to specify whether to use the default (built-in) implementation or the specialization. */
+enum {
+  Specialized,
+  BuiltIn
 };
 
 /** \ingroup enums
@@ -375,7 +380,7 @@ enum QRPreconditioners {
 #error The preprocessor symbol 'Success' is defined, possibly by the X11 header file X.h
 #endif
 
-/** \ingroups enums
+/** \ingroup enums
   * Enum for reporting the status of a computation. */
 enum ComputationInfo {
   /** Computation was successful. */
@@ -383,7 +388,10 @@ enum ComputationInfo {
   /** The provided data did not satisfy the prerequisites. */
   NumericalIssue = 1, 
   /** Iterative procedure did not converge. */
-  NoConvergence = 2
+  NoConvergence = 2,
+  /** The inputs are invalid, or the algorithm has been improperly called.
+    * When assertions are enabled, such errors trigger an assert. */
+  InvalidInput = 3
 };
 
 /** \ingroup enums

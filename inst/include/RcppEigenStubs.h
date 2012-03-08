@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-inline CHM_DN M_as_cholmod_dense(CHM_DN ans, SEXP x)
+inline CHM_DN as_cholmod_dense(CHM_DN ans, SEXP x)
 {
     static CHM_DN(*fun)(CHM_DN,SEXP) = NULL;
     if(fun == NULL)
@@ -40,7 +40,7 @@ inline CHM_DN M_as_cholmod_dense(CHM_DN ans, SEXP x)
     return fun(ans, x);
 }
 
-inline CHM_FR M_as_cholmod_factor(CHM_FR ans, SEXP x)
+inline CHM_FR as_cholmod_factor(CHM_FR ans, SEXP x)
 {
     static CHM_FR(*fun)(CHM_FR,SEXP) = NULL;
     if(fun == NULL)
@@ -49,7 +49,7 @@ inline CHM_FR M_as_cholmod_factor(CHM_FR ans, SEXP x)
     return fun(ans, x);
 }
 
-inline CHM_SP M_as_cholmod_sparse(CHM_SP ans, SEXP x, Rboolean check_Udiag, Rboolean sort_in_place)
+inline CHM_SP as_cholmod_sparse(CHM_SP ans, SEXP x, Rboolean check_Udiag, Rboolean sort_in_place)
 {
     static CHM_SP(*fun)(CHM_SP,SEXP,Rboolean,Rboolean)= NULL;
     if(fun == NULL)
@@ -58,7 +58,7 @@ inline CHM_SP M_as_cholmod_sparse(CHM_SP ans, SEXP x, Rboolean check_Udiag, Rboo
     return fun(ans, x, check_Udiag, sort_in_place);
 }
 
-inline CHM_TR M_as_cholmod_triplet(CHM_TR ans, SEXP x, Rboolean check_Udiag)
+inline CHM_TR as_cholmod_triplet(CHM_TR ans, SEXP x, Rboolean check_Udiag)
 {
     static CHM_TR(*fun)(CHM_TR,SEXP,Rboolean)= NULL;
     if(fun == NULL)
@@ -67,7 +67,7 @@ inline CHM_TR M_as_cholmod_triplet(CHM_TR ans, SEXP x, Rboolean check_Udiag)
     return fun(ans, x, check_Udiag);
 }
 
-inline SEXP M_Csparse_diagU2N(SEXP x)
+inline SEXP Csparse_diagU2N(SEXP x)
 {
     static SEXP(*fun)(SEXP) = NULL;
     if(fun == NULL)
@@ -129,7 +129,7 @@ M_chm_triplet_to_SEXP(const CHM_TR a, int dofree,
 }
 
 inline CHM_SP
-M_cholmod_aat(const_CHM_SP A, int *fset, size_t fsize,
+cholmod_aat(const_CHM_SP A, int *fset, size_t fsize,
 	      int mode, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,int*,size_t,
@@ -153,7 +153,7 @@ M_cholmod_band_inplace(CHM_SP A, int k1, int k2, int mode,
 }
 
 inline CHM_SP
-M_cholmod_add(const_CHM_SP A, const_CHM_SP B,
+cholmod_add(const_CHM_SP A, const_CHM_SP B,
 	      double alpha[2], double beta[2], int values,
 	      int sorted, CHM_CM Common)
 {
@@ -169,7 +169,7 @@ M_cholmod_add(const_CHM_SP A, const_CHM_SP B,
 }
 
 inline CHM_DN
-M_cholmod_allocate_dense(size_t nrow, size_t ncol, size_t d,
+cholmod_allocate_dense(size_t nrow, size_t ncol, size_t d,
 			 int xtype, CHM_CM Common)
 {
     static CHM_DN(*fun)(size_t,size_t,size_t,
@@ -182,7 +182,7 @@ M_cholmod_allocate_dense(size_t nrow, size_t ncol, size_t d,
 }
 
 inline CHM_SP
-M_cholmod_allocate_sparse(size_t nrow, size_t ncol, size_t nzmax,
+cholmod_allocate_sparse(size_t nrow, size_t ncol, size_t nzmax,
 			  int sorted, int packed, int stype,
 			  int xtype, CHM_CM Common)
 {
@@ -196,7 +196,7 @@ M_cholmod_allocate_sparse(size_t nrow, size_t ncol, size_t nzmax,
 }
 
 inline CHM_TR
-M_cholmod_allocate_triplet(size_t nrow, size_t ncol, size_t nzmax,
+cholmod_allocate_triplet(size_t nrow, size_t ncol, size_t nzmax,
 			   int stype, int xtype, CHM_CM Common)
 {
     static CHM_TR(*fun)(size_t,size_t,size_t, int,int,CHM_CM) = NULL;
@@ -207,7 +207,7 @@ M_cholmod_allocate_triplet(size_t nrow, size_t ncol, size_t nzmax,
 }
 
 inline CHM_SP
-M_cholmod_triplet_to_sparse(const cholmod_triplet* T, int nzmax,
+cholmod_triplet_to_sparse(const cholmod_triplet* T, int nzmax,
 			    CHM_CM Common)
 {
     static CHM_SP(*fun)(const cholmod_triplet*,int,CHM_CM) = NULL;
@@ -218,7 +218,7 @@ M_cholmod_triplet_to_sparse(const cholmod_triplet* T, int nzmax,
 }
 
 inline CHM_TR
-M_cholmod_sparse_to_triplet(const_CHM_SP A, CHM_CM Common)
+cholmod_sparse_to_triplet(const_CHM_SP A, CHM_CM Common)
 {
     static CHM_TR(*fun)(const_CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
@@ -228,7 +228,7 @@ M_cholmod_sparse_to_triplet(const_CHM_SP A, CHM_CM Common)
 }
 
 inline CHM_DN
-M_cholmod_sparse_to_dense(const_CHM_SP A, CHM_CM Common)
+cholmod_sparse_to_dense(const_CHM_SP A, CHM_CM Common)
 {
     static CHM_DN(*fun)(const_CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
@@ -238,7 +238,7 @@ M_cholmod_sparse_to_dense(const_CHM_SP A, CHM_CM Common)
 }
 
 inline CHM_FR
-M_cholmod_analyze(const_CHM_SP A, CHM_CM Common)
+cholmod_analyze(const_CHM_SP A, CHM_CM Common)
 {
     static CHM_FR(*fun)(const_CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
@@ -248,9 +248,8 @@ M_cholmod_analyze(const_CHM_SP A, CHM_CM Common)
 }
 
 inline CHM_FR
-M_cholmod_analyze_p(const_CHM_SP A, int *Perm, int *fset,
-		    size_t fsize, CHM_CM Common)
-{
+cholmod_analyze_p(const_CHM_SP A, int *Perm, int *fset,
+		  size_t fsize, CHM_CM Common) {
     static CHM_FR(*fun)(const_CHM_SP,int*,int*,size_t,
 			CHM_CM) = NULL;
     if (fun == NULL)
@@ -261,7 +260,7 @@ M_cholmod_analyze_p(const_CHM_SP A, int *Perm, int *fset,
 }
 
 inline CHM_SP
-M_cholmod_copy(const_CHM_SP A, int stype,
+cholmod_copy(const_CHM_SP A, int stype,
 	       int mode, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,int,int,CHM_CM) = NULL;
@@ -272,7 +271,7 @@ M_cholmod_copy(const_CHM_SP A, int stype,
 }
 
 inline CHM_DN
-M_cholmod_copy_dense(const_CHM_DN  A, CHM_CM Common)
+cholmod_copy_dense(const_CHM_DN  A, CHM_CM Common)
 {
     static CHM_DN(*fun)(const_CHM_DN,CHM_CM) = NULL;
     if (fun == NULL)
@@ -282,7 +281,7 @@ M_cholmod_copy_dense(const_CHM_DN  A, CHM_CM Common)
 }
 
 inline CHM_FR
-M_cholmod_copy_factor(const_CHM_FR L, CHM_CM Common)
+cholmod_copy_factor(const_CHM_FR L, CHM_CM Common)
 {
     static CHM_FR(*fun)(const_CHM_FR,CHM_CM) = NULL;
     if (fun == NULL)
@@ -292,7 +291,7 @@ M_cholmod_copy_factor(const_CHM_FR L, CHM_CM Common)
 }
 
 inline int
-M_cholmod_change_factor(int to_xtype, int to_ll, int to_super, int to_packed,
+cholmod_change_factor(int to_xtype, int to_ll, int to_super, int to_packed,
 			int to_monotonic, CHM_FR L, CHM_CM Common)
 {
     static int(*fun)(int,int,int,int,int,CHM_FR,CHM_CM) = NULL;
@@ -303,7 +302,7 @@ M_cholmod_change_factor(int to_xtype, int to_ll, int to_super, int to_packed,
 }
 
 inline CHM_SP
-M_cholmod_copy_sparse(const_CHM_SP A, CHM_CM Common)
+cholmod_copy_sparse(const_CHM_SP A, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
@@ -313,7 +312,7 @@ M_cholmod_copy_sparse(const_CHM_SP A, CHM_CM Common)
 }
 
 inline CHM_SP
-M_cholmod_factor_to_sparse(const_CHM_FR L, CHM_CM Common)
+cholmod_factor_to_sparse(const_CHM_FR L, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_FR,CHM_CM) = NULL;
     if (fun == NULL)
@@ -323,7 +322,7 @@ M_cholmod_factor_to_sparse(const_CHM_FR L, CHM_CM Common)
 }
 
 inline CHM_SP
-M_cholmod_submatrix(const_CHM_SP A, int *rset, int rsize, int *cset,
+cholmod_submatrix(const_CHM_SP A, int *rset, int rsize, int *cset,
 		    int csize, int values, int sorted, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,int*,int,int*,int,
@@ -336,7 +335,7 @@ M_cholmod_submatrix(const_CHM_SP A, int *rset, int rsize, int *cset,
 }
 
 inline CHM_SP
-M_cholmod_dense_to_sparse(const_CHM_DN  X, int values, CHM_CM Common)
+cholmod_dense_to_sparse(const_CHM_DN  X, int values, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_DN,int,CHM_CM) = NULL;
     if (fun == NULL)
@@ -346,7 +345,7 @@ M_cholmod_dense_to_sparse(const_CHM_DN  X, int values, CHM_CM Common)
 }
 
 inline int
-M_cholmod_factorize(const_CHM_SP A, CHM_FR L, CHM_CM Common)
+cholmod_factorize(const_CHM_SP A, CHM_FR L, CHM_CM Common)
 {
     static int(*fun)(const_CHM_SP,CHM_FR,CHM_CM) = NULL;
     if (fun == NULL)
@@ -356,7 +355,7 @@ M_cholmod_factorize(const_CHM_SP A, CHM_FR L, CHM_CM Common)
 }
 
 inline int
-M_cholmod_factorize_p(const_CHM_SP A, double *beta, int *fset,
+cholmod_factorize_p(const_CHM_SP A, double *beta, int *fset,
 		      size_t fsize, CHM_FR L,
 		      CHM_CM Common)
 {
@@ -370,7 +369,7 @@ M_cholmod_factorize_p(const_CHM_SP A, double *beta, int *fset,
 }
 
 inline int
-M_cholmod_finish(CHM_CM Common)
+cholmod_finish(CHM_CM Common)
 {
 
     static int(*fun)(CHM_CM) = NULL;
@@ -381,7 +380,7 @@ M_cholmod_finish(CHM_CM Common)
 }
 
 inline int
-M_cholmod_sort(CHM_SP A, CHM_CM Common)
+cholmod_sort(CHM_SP A, CHM_CM Common)
 {
     static int(*fun)(CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
@@ -391,7 +390,7 @@ M_cholmod_sort(CHM_SP A, CHM_CM Common)
 }
 
 inline int
-M_cholmod_free_dense(CHM_DN  *A, CHM_CM Common)
+cholmod_free_dense(CHM_DN  *A, CHM_CM Common)
 {
     static int(*fun)(CHM_DN*,CHM_CM) = NULL;
     if (fun == NULL)
@@ -401,7 +400,7 @@ M_cholmod_free_dense(CHM_DN  *A, CHM_CM Common)
 }
 
 inline int
-M_cholmod_free_factor(CHM_FR *L, CHM_CM Common)
+cholmod_free_factor(CHM_FR *L, CHM_CM Common)
 {
     static int(*fun)(CHM_FR*,CHM_CM) = NULL;
     if (fun == NULL)
@@ -411,7 +410,7 @@ M_cholmod_free_factor(CHM_FR *L, CHM_CM Common)
 }
 
 inline int
-M_cholmod_free_sparse(CHM_SP *A, CHM_CM Common)
+cholmod_free_sparse(CHM_SP *A, CHM_CM Common)
 {
     static int(*fun)(CHM_SP*,CHM_CM) = NULL;
     if (fun == NULL)
@@ -421,7 +420,7 @@ M_cholmod_free_sparse(CHM_SP *A, CHM_CM Common)
 }
 
 inline int
-M_cholmod_free_triplet(cholmod_triplet **T, CHM_CM Common)
+cholmod_free_triplet(cholmod_triplet **T, CHM_CM Common)
 {
     static int(*fun)(cholmod_triplet**,CHM_CM) = NULL;
     if (fun == NULL)
@@ -430,9 +429,8 @@ M_cholmod_free_triplet(cholmod_triplet **T, CHM_CM Common)
     return fun(T, Common);
 }
 
-inline long
-M_cholmod_nnz(const_CHM_SP A, CHM_CM Common)
-{
+inline long int
+cholmod_nnz(const_CHM_SP A, CHM_CM Common) {
     static long(*fun)(const_CHM_SP,CHM_CM) = NULL;
     if (fun == NULL)
 	fun = (long(*)(const_CHM_SP,CHM_CM))
@@ -441,7 +439,7 @@ M_cholmod_nnz(const_CHM_SP A, CHM_CM Common)
 }
 
 inline int
-M_cholmod_sdmult(const_CHM_SP A, int transpose,
+cholmod_sdmult(const_CHM_SP A, int transpose,
 		 const double *alpha, const double *beta,
 		 const_CHM_DN X, CHM_DN  Y,
 		 CHM_CM Common)
@@ -458,10 +456,8 @@ M_cholmod_sdmult(const_CHM_SP A, int transpose,
 }
 
 inline CHM_SP
-M_cholmod_ssmult(const_CHM_SP A, const_CHM_SP B,
-		 int stype, int values, int sorted,
-		 CHM_CM Common)
-{
+cholmod_ssmult(const_CHM_SP A, const_CHM_SP B, int stype,
+	       int values, int sorted, CHM_CM Common) {
     static CHM_SP(*fun)(const_CHM_SP,const_CHM_SP,
 			int,int,int,CHM_CM) = NULL;
     if (fun == NULL)
@@ -472,9 +468,7 @@ M_cholmod_ssmult(const_CHM_SP A, const_CHM_SP B,
 }
 
 inline CHM_DN
-M_cholmod_solve(int sys, const_CHM_FR L,
-		const_CHM_DN B, CHM_CM Common)
-{
+cholmod_solve(int sys, const_CHM_FR L, const_CHM_DN B, CHM_CM Common) {
     static CHM_DN(*fun)(int,const_CHM_FR,const_CHM_DN,
 			CHM_CM) = NULL;
     if (fun == NULL)
@@ -485,7 +479,7 @@ M_cholmod_solve(int sys, const_CHM_FR L,
 }
 
 inline CHM_SP
-M_cholmod_speye(size_t nrow, size_t ncol,
+cholmod_speye(size_t nrow, size_t ncol,
 		int xtype, CHM_CM Common)
 {
     static CHM_SP(*fun)(size_t,size_t,int,CHM_CM) = NULL;
@@ -496,7 +490,7 @@ M_cholmod_speye(size_t nrow, size_t ncol,
 }
 
 inline CHM_SP
-M_cholmod_spsolve(int sys, const_CHM_FR L,
+cholmod_spsolve(int sys, const_CHM_FR L,
 		  const_CHM_SP B, CHM_CM Common)
 {
     static CHM_SP(*fun)(int,const_CHM_FR,
@@ -509,7 +503,7 @@ M_cholmod_spsolve(int sys, const_CHM_FR L,
 }
 
 inline int
-M_cholmod_defaults (CHM_CM Common)
+cholmod_defaults (CHM_CM Common)
 {
     static int(*fun)(CHM_CM) = NULL;
     if (fun == NULL)
@@ -521,7 +515,7 @@ M_cholmod_defaults (CHM_CM Common)
 /* extern cholmod_common c; */
 
 inline void
-M_R_cholmod_error(int status, const char *file, int line, const char *message)
+R_cholmod_error(int status, const char *file, int line, const char *message)
 {
 /* NB: keep in sync with R_cholmod_error(), ../../src/chm_common.c */
 
@@ -538,22 +532,8 @@ M_R_cholmod_error(int status, const char *file, int line, const char *message)
 		message, file, line);
 }
 
-#if 0  /* no longer used */
-/* just to get 'int' instead of 'void' as required by CHOLMOD's print_function */
-static int
-R_cholmod_printf(const char* fmt, ...)
-{
-    va_list(ap);
-
-    va_start(ap, fmt);
-    Rprintf((char *)fmt, ap);
-    va_end(ap);
-    return 0;
-}
-#endif
-
 inline int
-M_R_cholmod_start(CHM_CM Common)
+cholmod_start(CHM_CM Common)
 {
     int val;
     static int(*fun)(CHM_CM) = NULL;
@@ -565,12 +545,12 @@ M_R_cholmod_start(CHM_CM Common)
     /* do not allow CHOLMOD printing - currently */
     Common->print_function = NULL;/* was  R_cholmod_printf; /.* Rprintf gives warning */
 /* Consider using your own error handler: */
-    Common->error_handler = M_R_cholmod_error;
+    Common->error_handler = R_cholmod_error;
     return val;
 }
 
 inline CHM_SP
-M_cholmod_transpose(const_CHM_SP A, int values, CHM_CM Common)
+cholmod_transpose(const_CHM_SP A, int values, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,int,CHM_CM) = NULL;
     if (fun == NULL)
@@ -580,7 +560,7 @@ M_cholmod_transpose(const_CHM_SP A, int values, CHM_CM Common)
 }
 
 inline CHM_SP
-M_cholmod_vertcat(const_CHM_SP A, const_CHM_SP B, int values, CHM_CM Common)
+cholmod_vertcat(const_CHM_SP A, const_CHM_SP B, int values, CHM_CM Common)
 {
     static CHM_SP(*fun)(const_CHM_SP,const_CHM_SP,int,CHM_CM) = NULL;
     if (fun == NULL)
@@ -589,28 +569,8 @@ M_cholmod_vertcat(const_CHM_SP A, const_CHM_SP B, int values, CHM_CM Common)
     return fun(A, B, values, Common);
 }
 
-inline SEXP
-M_dpoMatrix_chol(SEXP x)
-{
-    static SEXP(*fun)(SEXP) = NULL;
-    if (fun == NULL)
-	fun = (SEXP(*)(SEXP))
-	    R_GetCCallable("Matrix", "dpoMatrix_chol");
-    return fun(x);
-}
-
-inline CHM_DN
-M_numeric_as_chm_dense(CHM_DN ans, double *v, int nr, int nc)
-{
-    static CHM_DN(*fun)(CHM_DN,double*,int,int) = NULL;
-    if (fun == NULL)
-	fun = (CHM_DN(*)(CHM_DN,double*,int,int))
-	    R_GetCCallable("Matrix", "numeric_as_chm_dense");
-    return fun(ans, v, nr, nc);
-}
-
 inline int
-M_cholmod_scale(const_CHM_DN S, int scale, CHM_SP A,
+cholmod_scale(const_CHM_DN S, int scale, CHM_SP A,
 		CHM_CM Common)
 {
     static int(*fun)(const_CHM_DN,int,CHM_SP, CHM_CM) = NULL;
