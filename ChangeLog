@@ -1,3 +1,34 @@
+2012-03-08  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/tests/test-solutions.R, inst/tests/test-transform.R,
+	  inst/tests/test-wrap.R: Add testthat test files, temporarily disabled
+	  for R CMD check because of an unknown conflict
+	* DESCRIPTION, R/unit.test.R, inst/include/Eigen/Cholesky,
+	 ..., src/Makevars: Massive changes in upgrade to Eigen-3.1.0-alpha2
+
+2012-03-03  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h: Correct a typo.
+
+2012-02-28  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h: Add as
+	  templates for ArrayXd and ArrayXXd
+
+2012-02-03  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h, inst/unitTests/runit.sparse.R: Allow
+	  import of compressed row sparse matrices. Add test of same.
+
+2012-01-18  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h: Allow for wrapping sparse row-major
+	  matrices.
+
+2011-12-31  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenCholmod.h: Minor typo in a comment
+
 2011-12-23  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/unitTests/runTests.R: unit tests output 'fallback' directory

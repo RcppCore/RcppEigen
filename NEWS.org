@@ -1,0 +1,45 @@
+#+TITLE:     NEWS for RcppEigen-0.2.0
+#+AUTHOR:    Douglas Bates
+#+EMAIL:     bates@stat.wisc.edu
+#+DATE:      2012-03-08 Thu
+#+DESCRIPTION: News regarding the latest version of RcppEigen
+#+KEYWORDS:
+#+LANGUAGE:  en
+
+* New features visible to users
+  + Upgraded the version of Eigen to 3.1.0-alpha2, in which the sparse
+    matrix modules are now in the "supported" tree.
+  + Added several "unsupported" Eigen modules including
+    - AutoDiff (a small automatic differentiation package adapted to
+      vectors and matrices)
+    - IterativeSolvers (iterative linear and nonlinear solver algorithms)
+    - KroneckerProduct (as the name implies)
+    - MatrixFunctions (matrix cos, exp, log, sin, sinh, etc.)
+    - NonlinearOptimization (based on minpack but uses reverse
+      communication - yay!)
+    - NumericalDiff (numerical differentiation of vector-valued or
+      matrix-valued functions)
+    - Polynomials (polynomial representation and solution using a QR
+      algorithm)
+    - Skyline (sparse skyline matrices useful in finite-element codes)
+    - SparseExtra (dynamic sparse matrices, now deprecated, and Matrix
+      Market I/O functions)
+    - Splines (multidimensional spline representations and spline
+      interpolation)
+  + At present all these modules, including the MatrixFunctions
+    module, are included with RcppEigen.h but that may change if too
+    many people get unexpected results from A.exp()
+  + The ability to wrap RowMajor sparse matrices and to use
+    as<Eigen::ArrayXd> etc.
+
+* New features not visible to users
+  + Migrated some tests to the testthat package.  Currently there is
+    some difficulty with combining testthat, inline and R CMD check.
+    These checks are available as
+#+BEGIN_EXAMPLE
+library(testthat)
+test_package(RcppEigen)
+#+END_EXAMPLE
+
+ 
+
