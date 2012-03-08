@@ -24,7 +24,6 @@
 
 #include <RcppCommon.h>
 #include <Rconfig.h>
-#include <RcppEigenConfig.h>
 #include <RcppEigenCholmod.h>
 #include <RcppEigenStubs.h>
 #include <Eigen/Dense>
