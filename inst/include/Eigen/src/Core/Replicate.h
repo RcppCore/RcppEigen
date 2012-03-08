@@ -87,7 +87,7 @@ template<typename MatrixType,int RowFactor,int ColFactor> class Replicate
     }
 
     template<typename OriginalMatrixType>
-    inline Replicate(const OriginalMatrixType& matrix, int rowFactor, int colFactor)
+    inline Replicate(const OriginalMatrixType& matrix, Index rowFactor, Index colFactor)
       : m_matrix(matrix), m_rowFactor(rowFactor), m_colFactor(colFactor)
     {
       EIGEN_STATIC_ASSERT((internal::is_same<typename internal::remove_const<MatrixType>::type,OriginalMatrixType>::value),
@@ -122,9 +122,13 @@ template<typename MatrixType,int RowFactor,int ColFactor> class Replicate
       return m_matrix.template packet<LoadMode>(actual_row, actual_col);
     }
 
+    const typename internal::remove_all<typename MatrixType::Nested>::type& nestedExpression() const 
+    { 
+      return m_matrix; 
+    }
 
   protected:
-    const typename MatrixType::Nested m_matrix;
+    typename MatrixType::Nested m_matrix;
     const internal::variable_if_dynamic<Index, RowFactor> m_rowFactor;
     const internal::variable_if_dynamic<Index, ColFactor> m_colFactor;
 };

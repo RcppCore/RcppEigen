@@ -28,7 +28,17 @@
 #include <RcppEigenCholmod.h>
 #include <RcppEigenStubs.h>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/CholmodSupport>
+#include <unsupported/Eigen/AutoDiff>
+#include <unsupported/Eigen/IterativeSolvers>
+#include <unsupported/Eigen/KroneckerProduct>
+#include <unsupported/Eigen/MatrixFunctions>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
+#include <unsupported/Eigen/Polynomials>
 #include <unsupported/Eigen/SparseExtra> // also includes Eigen/Sparse
+#include <unsupported/Eigen/Splines>
 
 /* forward declarations */
 namespace Rcpp {

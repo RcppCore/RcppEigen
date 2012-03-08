@@ -93,17 +93,23 @@ namespace Rcpp{
         SEXP eigen_wrap_plain_dense( const T& object, Rcpp::traits::false_type ){
 			typedef typename T::Scalar     Scalar;
 			const int  RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype;
-            if ( RTYPE != REALSXP ) {
-                throw std::invalid_argument("No sparse matrix for types other than REALSXP implemented in R.");
-            }
+			std::string klass;
+			switch(RTYPE) {
+			case REALSXP: klass = T::IsRowMajor ? "dgRMatrix" : "dgCMatrix";
+				break;
+			case INTSXP: klass = T::IsRowMajor ? "igRMatrix" : "igCMatrix";
+				break;
+			default:
+				throw std::invalid_argument("RTYPE not matched in conversion to sparse matrix");
+			}
+			S4           ans(klass);
 			const int    nnz = object.nonZeros();
-			S4           ans(T::IsRowMajor ? "dgRMatrix" : "dgCMatrix");
 			ans.slot("Dim")  = Dimension(object.rows(), object.cols());
 			ans.slot(T::IsRowMajor ? "j" : "i") =
-				IntegerVector(object._innerIndexPtr(), object._innerIndexPtr() + nnz);
-			ans.slot("p")    = IntegerVector(object._outerIndexPtr(),
-											 object._outerIndexPtr() + object.outerSize() + 1);
-			ans.slot("x")    = Vector<RTYPE>(object._valuePtr(), object._valuePtr() + nnz);
+				IntegerVector(object.innerIndexPtr(), object.innerIndexPtr() + nnz);
+			ans.slot("p")    = IntegerVector(object.outerIndexPtr(),
+											 object.outerIndexPtr() + object.outerSize() + 1);
+			ans.slot("x")    = Vector<RTYPE>(object.valuePtr(), object.valuePtr() + nnz);
 			return  ans;
 	    } 
         

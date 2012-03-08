@@ -273,11 +273,8 @@ template<typename _MatrixType, unsigned int _Mode> class TriangularView
     inline const TriangularView<MatrixConjugateReturnType,Mode> conjugate() const
     { return m_matrix.conjugate(); }
 
-    /** \sa MatrixBase::adjoint() */
-    inline TriangularView<typename MatrixType::AdjointReturnType,TransposeMode> adjoint()
-    { return m_matrix.adjoint(); }
     /** \sa MatrixBase::adjoint() const */
-    inline const TriangularView<typename MatrixType::AdjointReturnType,TransposeMode> adjoint() const
+    inline const TriangularView<const typename MatrixType::AdjointReturnType,TransposeMode> adjoint() const
     { return m_matrix.adjoint(); }
 
     /** \sa MatrixBase::transpose() */
@@ -288,11 +285,13 @@ template<typename _MatrixType, unsigned int _Mode> class TriangularView
     }
     /** \sa MatrixBase::transpose() const */
     inline const TriangularView<Transpose<MatrixType>,TransposeMode> transpose() const
-    { return m_matrix.transpose(); }
+    {
+      return m_matrix.transpose();
+    }
 
     /** Efficient triangular matrix times vector/matrix product */
     template<typename OtherDerived>
-    TriangularProduct<Mode,true,MatrixType,false,OtherDerived,OtherDerived::IsVectorAtCompileTime>
+    TriangularProduct<Mode,true,MatrixType,false,OtherDerived, OtherDerived::IsVectorAtCompileTime>
     operator*(const MatrixBase<OtherDerived>& rhs) const
     {
       return TriangularProduct
@@ -375,7 +374,8 @@ template<typename _MatrixType, unsigned int _Mode> class TriangularView
     template<typename OtherDerived>
     void swap(MatrixBase<OtherDerived> const & other)
     {
-      TriangularView<SwapWrapper<MatrixType>,Mode>(const_cast<MatrixType&>(m_matrix)).lazyAssign(other.derived());
+      SwapWrapper<MatrixType> swaper(const_cast<MatrixType&>(m_matrix));
+      TriangularView<SwapWrapper<MatrixType>,Mode>(swaper).lazyAssign(other.derived());
     }
 
     Scalar determinant() const
@@ -433,7 +433,7 @@ template<typename _MatrixType, unsigned int _Mode> class TriangularView
     template<typename ProductDerived, typename Lhs, typename Rhs>
     EIGEN_STRONG_INLINE TriangularView& assignProduct(const ProductBase<ProductDerived, Lhs,Rhs>& prod, const Scalar& alpha);
 
-    const MatrixTypeNested m_matrix;
+    MatrixTypeNested m_matrix;
 };
 
 /***************************************************************************
@@ -452,7 +452,7 @@ struct triangular_assignment_selector
   
   typedef typename Derived1::Scalar Scalar;
 
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     triangular_assignment_selector<Derived1, Derived2, Mode, UnrollCount-1, ClearOpposite>::run(dst, src);
 
@@ -480,7 +480,7 @@ struct triangular_assignment_selector
 template<typename Derived1, typename Derived2, unsigned int Mode, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, Mode, 0, ClearOpposite>
 {
-  inline static void run(Derived1 &, const Derived2 &) {}
+  static inline void run(Derived1 &, const Derived2 &) {}
 };
 
 template<typename Derived1, typename Derived2, bool ClearOpposite>
@@ -488,7 +488,7 @@ struct triangular_assignment_selector<Derived1, Derived2, Upper, Dynamic, ClearO
 {
   typedef typename Derived1::Index Index;
   typedef typename Derived1::Scalar Scalar;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {
@@ -506,7 +506,7 @@ template<typename Derived1, typename Derived2, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, Lower, Dynamic, ClearOpposite>
 {
   typedef typename Derived1::Index Index;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {
@@ -524,7 +524,7 @@ template<typename Derived1, typename Derived2, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, StrictlyUpper, Dynamic, ClearOpposite>
 {
   typedef typename Derived1::Index Index;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {
@@ -542,7 +542,7 @@ template<typename Derived1, typename Derived2, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, StrictlyLower, Dynamic, ClearOpposite>
 {
   typedef typename Derived1::Index Index;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {
@@ -560,7 +560,7 @@ template<typename Derived1, typename Derived2, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, UnitUpper, Dynamic, ClearOpposite>
 {
   typedef typename Derived1::Index Index;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {
@@ -580,7 +580,7 @@ template<typename Derived1, typename Derived2, bool ClearOpposite>
 struct triangular_assignment_selector<Derived1, Derived2, UnitLower, Dynamic, ClearOpposite>
 {
   typedef typename Derived1::Index Index;
-  inline static void run(Derived1 &dst, const Derived2 &src)
+  static inline void run(Derived1 &dst, const Derived2 &src)
   {
     for(Index j = 0; j < dst.cols(); ++j)
     {

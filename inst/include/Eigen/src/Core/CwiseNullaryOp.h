@@ -101,6 +101,9 @@ class CwiseNullaryOp : internal::no_assignment_operator,
       return m_functor.packetOp(index);
     }
 
+    /** \returns the functor representing the nullary operation */
+    const NullaryOp& functor() const { return m_functor; }
+
   protected:
     const internal::variable_if_dynamic<Index, RowsAtCompileTime> m_rows;
     const internal::variable_if_dynamic<Index, ColsAtCompileTime> m_cols;
@@ -394,6 +397,22 @@ EIGEN_STRONG_INLINE Derived& DenseBase<Derived>::setLinSpaced(Index size, const 
 {
   EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
   return derived() = Derived::NullaryExpr(size, internal::linspaced_op<Scalar,false>(low,high,size));
+}
+
+/**
+  * \brief Sets a linearly space vector.
+  *
+  * The function fill *this with equally spaced values in the closed interval [low,high].
+  *
+  * \only_for_vectors
+  *
+  * \sa setLinSpaced(Index, const Scalar&, const Scalar&), CwiseNullaryOp
+  */
+template<typename Derived>
+EIGEN_STRONG_INLINE Derived& DenseBase<Derived>::setLinSpaced(const Scalar& low, const Scalar& high)
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return setLinSpaced(size(), low, high);
 }
 
 // zero:

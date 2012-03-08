@@ -220,6 +220,38 @@ struct functor_traits<scalar_quotient_op<Scalar> > {
   };
 };
 
+/** \internal
+  * \brief Template functor to compute the and of two booleans
+  *
+  * \sa class CwiseBinaryOp, ArrayBase::operator&&
+  */
+struct scalar_boolean_and_op {
+  EIGEN_EMPTY_STRUCT_CTOR(scalar_boolean_and_op)
+  EIGEN_STRONG_INLINE bool operator() (const bool& a, const bool& b) const { return a && b; }
+};
+template<> struct functor_traits<scalar_boolean_and_op> {
+  enum {
+    Cost = NumTraits<bool>::AddCost,
+    PacketAccess = false
+  };
+};
+
+/** \internal
+  * \brief Template functor to compute the or of two booleans
+  *
+  * \sa class CwiseBinaryOp, ArrayBase::operator||
+  */
+struct scalar_boolean_or_op {
+  EIGEN_EMPTY_STRUCT_CTOR(scalar_boolean_or_op)
+  EIGEN_STRONG_INLINE bool operator() (const bool& a, const bool& b) const { return a || b; }
+};
+template<> struct functor_traits<scalar_boolean_or_op> {
+  enum {
+    Cost = NumTraits<bool>::AddCost,
+    PacketAccess = false
+  };
+};
+
 // unary functors:
 
 /** \internal
@@ -780,6 +812,20 @@ struct scalar_pow_op {
 template<typename Scalar>
 struct functor_traits<scalar_pow_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
+
+/** \internal
+  * \brief Template functor to compute the quotient between a scalar and array entries.
+  * \sa class CwiseUnaryOp, Cwise::inverse()
+  */
+template<typename Scalar>
+struct scalar_inverse_mult_op {
+  scalar_inverse_mult_op(const Scalar& other) : m_other(other) {}
+  inline Scalar operator() (const Scalar& a) const { return m_other / a; }
+  template<typename Packet>
+  inline const Packet packetOp(const Packet& a) const
+  { return internal::pdiv(pset1<Packet>(m_other),a); }
+  Scalar m_other;
+};
 
 /** \internal
   * \brief Template functor to compute the inverse of a scalar
