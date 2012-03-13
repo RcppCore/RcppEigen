@@ -34,7 +34,9 @@ namespace Rcpp{
 
 //FIXME: Should extend this selection according to T
 			S4 ans(std::string(f->is_super ? "dCHMsuper" : "dCHMsimpl"));
-			ans.slot("Dim") = Dimension(f->n, f->n);
+			IntegerVector  dd(2);
+			dd[0] = dd[1] = f->n;
+			ans.slot("Dim") = dd;
 			ans.slot("perm") = ::Rcpp::wrap((int*)f->Perm, (int*)f->Perm + f->n);
 			ans.slot("colcount") = ::Rcpp::wrap((int*)f->ColCount, (int*)f->ColCount + f->n);
 			IntegerVector tt(f->is_super ? 6 : 4);
@@ -78,14 +80,20 @@ namespace Rcpp{
         // for plain dense objects
         template <typename T> 
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ){
-            // FIXME: deal with RowMajor, etc ...
-            const int RTYPE = Rcpp::traits::r_sexptype_traits<typename T::Scalar>::rtype ;
             if( T::ColsAtCompileTime == 1 ) {
                 return wrap( obj.data(), obj.data() + obj.size() ) ;
             } else {
-                Rcpp::Matrix<RTYPE> x( obj.rows(), obj.cols(), obj.data() ) ;
-                return x; 
-            }   
+				if (T::IsRowMajor)
+					throw std::invalid_argument("R requires column-major dense matrices");
+				typedef  typename T::Scalar                                Scalar;
+				const int RTYPE = Rcpp::traits::r_sexptype_traits<Scalar>::rtype ;
+				typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
+				int m(obj.rows()), n(obj.cols());
+				SEXP ans = ::Rf_allocMatrix(RTYPE, m, n);
+				std::copy(obj.data(), obj.data() + m * n, 
+						  ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(ans));
+				return ans;
+            }
         }
         
         // for plain sparse objects
