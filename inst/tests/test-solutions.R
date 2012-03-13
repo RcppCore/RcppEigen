@@ -41,9 +41,9 @@ Mat         Ainv(lu.inverse());
 Vec            x(lu.solve(b));
 
 return List::create(Named("A",    A),
-                    Named("Ainv", lu.inverse()),
+                    Named("Ainv", Ainv),
                     Named("b",    b),
-                    Named("x",    lu.solve(b)));
+                    Named("x",    x));
 '),
          "dense_CPQR" = list(signature(A_="matrix", b_="numeric"),'
 MMat           A(as<MMat>(A_));
