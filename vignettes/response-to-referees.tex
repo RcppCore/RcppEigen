@@ -1,0 +1,476 @@
+\documentclass[10pt]{article}
+\usepackage{url}
+\usepackage{vmargin}
+\setpapersize{USletter}
+% left top right bottom -- headheight headsep footheight footskop
+\setmarginsrb{1in}{1in}{1in}{0.5in}{0pt}{0mm}{10pt}{0.5in}
+\usepackage{charter}
+
+\setlength{\parskip}{1ex plus1ex minus1ex}
+\setlength{\parindent}{0pt}
+
+\newcommand{\proglang}[1]{\textsf{#1}}
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+
+\newcommand{\pointRaised}[2]{\smallskip %\hrule 
+  \textsl{{\fontseries{b}\selectfont #1}: #2}\newline}
+\newcommand{\simplePointRaised}[1]{\bigskip \hrule\textsl{#1} }
+\newcommand{\reply}[1]{\textbf{Reply}:\ #1 \smallskip } %\hrule \smallskip}
+
+\author{Douglas Bates\\ {\small \url{bates@stat.wisc.edu}}
+  \and Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }}
+\title{Response to Editor's and Reviewer's Comments \\
+  concerning JSS Submission 835}
+
+\begin{document}
+
+\maketitle
+
+Thank you for reviewing our manuscript, and of course for assigning it
+a favorable verdict of \textsl{Accept Subject to Revisions}.
+
+We are grateful for the detailed comments and suggestions which have been helpful
+to further improve the paper. Below, we have regrouped the sets of comments
+and have provided a detailed point-by-point replies.
+
+We hope that this satisfies the request for changes necessary to proceed with
+the publication of the updated manuscript.
+
+\section*{Initial Comments by the Editor}
+
+\pointRaised{Comment a}{
+  This is a very nice application of the Rcpp library developed by one
+  of the authors.
+}
+\reply{Thank you. 
+  %% We are, respectively, half of the authors and contributors to Rcpp.
+  %% DE: Could add the above, but may be too thick...
+}
+
+
+\pointRaised{Comment b}{
+  Sec.~2.1, about the Map class for avoiding object copy, is very
+  important, as many R users have very large matrices. Thus this section
+  should be elaborated. Exactly how is the mapping done? If it's more
+  than just passing a pointer, does this involve extra overhead per
+  access? A picture or numerical example (i.e. showing memory addresses)
+  would be helpful.}
+\reply{The mechanism is simple, an Eigen::Matrix structure is allocated
+  without storage for the contents being allocated.  A pointer to the
+  contents of the R object is used instead of new storage being
+  allocated.
+}
+
+
+\pointRaised{Comment c}{
+  In line with comment (b) above, is this package usable for truly
+  large matrices, stored in something like R's bigmemory package?
+}
+\reply{
+  Not easily.  The bigmemory package uses its own, perhaps
+  memory-mapped, storage and Eigen requires a pointer to a memory
+  address.  Also, the bigmemory project already has an associated project
+  biganalytics (by the same authors, in the same repository).  While easier
+  C++ access to bigmemory data structures would be an interesting project in itself, it
+  is outside the scope of our current work even before considering how to
+  bridge it to Eigen.
+}
+
+
+\pointRaised{Comment d}{
+  The authors use stopifnot(all.equal(A,B)) at many points, to check
+  their code against a purely-R computation. Surely they can't mean this;
+  roundoff error will often make A and B unequal, especially for large
+  matrices.
+}
+\reply{
+  That is in fact what happens: As detailed in ?all.equal.numeric the
+  all.equal method for numeric vectors or arrays performs a relative
+  comparison, not a comparison for exact equality (which is still available
+  via identical(), but inappropriate for the reason you note.)
+}
+
+
+\pointRaised{Comment e}{
+  The authors use the term "cross product" for A'B. I realize that
+  this is consistent with R terminology, but it may mislead some who know
+  of vector cross product in the physics sense.
+}
+\reply{
+  TODO/DB: I will add a sentence saying that crossprod(X) produces X'X
+}
+
+
+\pointRaised{Comment f}{
+  Are the "views" in Eigen maps or copies?
+}
+\reply{
+  They are maps.  That is they use the same memory locations as the
+  contents of the original matrix but access these contents
+  differently.  For example, a triangular view only accesses the
+  memory locations for the values in the indicated triangle, the
+  others being systematic zeros.
+}
+
+
+
+\pointRaised{Comment g}{
+  The authors have a great passage in Sec.~3.3:
+  % 
+  %\begin{quote}
+  ``To some, the expressions in Figure 3 to construct AtA and AAt are
+  compact and elegant. To others, they are hopelessly confusing.''
+  % \end{quote}
+  % 
+  %\newline
+  Indeed!  Many of us consider this to be a major failing of C++, or at
+  least of the usage to which C++ is often put.
+  %
+  %\newline
+  For that reason, I'd really like to see this passage elaborated, with a
+  stagewise breakdown.  In an expression x.y.u.v.w, they would explain
+  what x.y is, then x.y.u and so on.  This only need be done once, but
+  this one time would be worthwhile.
+}
+\reply{
+  TODO/DB: I will add such an explanation
+}
+
+
+\pointRaised{Comment h}{
+  In many applications of linear models we are interested in
+  estimating linear combinations of the betas, not just individual betas.
+  Thus it's not enough to just compute the standard errors of the
+  beta-hats; one needs to have the estimated covariance matrix of the
+  beta-hats.  Thus in Section 4, I would suggest adding this to the list
+  returned by the least-squares computation.
+}
+\reply{
+  TODO/DB: I can add this.  Things will get more complicated for the
+   rank-deficient cases.
+}
+
+
+\pointRaised{Comment i}{
+  Also in Sec.~4, the authors might add a comment that the Eigen
+  solve() is analogous to R's.
+}
+\reply{
+  TODO/DB: Will do.
+}
+
+
+\pointRaised{Comment j}{
+  Sec.~4.3 on the case of less than full rank is very good. The
+  authors might consider adding a brief example of how it arises in 
+  "ordinary" situations (i.e. not from missing values), such as ANOVA, due
+  to identifiability issues.
+}
+\reply{
+  But that is not the case unless the user has constructed the
+  indicator columns and the intercept column by hand.  A call to lm()
+  or aov() using a formula with categorical variables applies
+  contrasts to the indicators when appropriate.
+}
+
+
+\pointRaised{Comment k}{
+  In Sec.~4.7, the authors note correctly that in parallel processing,
+  there is always an issue of communications overhead. But in the types
+  of problems they're looking at, the problems are especially acute. With
+  an nxp X matrix, the real work is mainly in the inversion (or
+  equivalent), which has time complexity $O(p^3)$. That's an issue if p is
+  really large, but the value p = 40 in their experiments just isn't large
+  enough to take really good advantage of parallelism.
+}
+\reply{
+  Yes.  In general it is difficult to gain much from parallel
+  execution of the equivalent of lm.fit except in the crossprod()
+  applications.  A function like glm.fit where the sections of
+  matrices and vectors are passed to a processor once only but used
+  multiple times can benefit more from parallel execution.
+}
+
+
+\section*{Referee Comments}
+
+{ \sl
+  Review report
+
+  Title: Fast and elegant numerical linear algebra using the RcppEigen Package \\
+  Authors: D. Bates and D. Eddelbuettel \\
+  Journal: J. of Statistical Software \\
+
+  The paper introduces the RcppEigen package, which provides an
+  access from R to the Eigen C++ template library for computational
+  problems in linear algebra. It begins with a review of Eigen
+  classes and examples of some basic matrix operations, and then
+  provides substantial details on using RcppEigen to solve the
+  linear least squares problem with different methods. Near the end
+  of the paper, it briefly discusses delayed evaluation and sparse
+  matrix classes. 
+
+  The following are few comments: 
+}
+
+
+\pointRaised{Comment 1}{     
+  The placement of figures are very confused with the normal text. 
+  For examples, if we read page 8, it's hard to tell what belongs to 
+  Figures 4 and 5, and what are the part of text. 
+}
+\reply{
+  TODO/DB: I'm not sure how to address that.  I suppose that once any
+  changes are incorporated we can look at the placement of figures
+  and fiddle a bit if necessary.
+  \newline
+  DE: Agreed.  Latex floats can be tedious, but they can be tamed.  He does
+  have point, though, inasmuch as figures 4 and 5 really flow into each
+  other, and have no visual separator. For the infamous book draft, I gave up
+  on what I had suggested to you here and just went with (the latex package)
+  listings.   
+}
+
+
+\pointRaised{Comment 2}{
+  It might better to re-order the subsections of Section 4 as follows: \\
+  * Least squares using the ``LLt'' Cholesky \\
+  * Least squares using the unpivoted QR decomposition\\
+  * Least squares using the SVD \\
+  * Least squares using the eigendecomposition \\
+  * Handling the ranking-deficient case \\
+    a) using column-pivoted QR decomposition \\
+    b) Using SVD \\
+  * Comparative speed 
+}
+\reply{
+  But the SVD and eigendecomposition methods are set up to handle
+  the rank-deficient cases with the Dplus function.  That is the
+  reason for introducing the rank-deficient case. 
+  %
+  TODO/DB: Although perhaps
+  we should look carefully again at the organization of that section.
+  %
+  DE: Tricky, very tricky.  I like what we have. I don't have a good argument
+  here.
+}
+
+\pointRaised{Comment 3}{
+  Even it is not within the scope of this paper to mention
+  numerical stability about different least squares methods, 
+  it would be very help to briefly discuss the issue and provides
+  the references for further discussions. 
+}
+\reply{
+  I haven't really kept up with the numerical stability
+  discussions.  Long ago we learned that the QR decomposition is
+  more stable than the Cholesky decomposition because the condition
+  number of X'X is the square of the condition number of X.  I'm
+  not sure what current thinking on SVD versus QR versus Cholesky
+  would be.
+}
+
+
+\pointRaised{Comment}{
+  Overall, the paper is well-written and should be very help 
+  for RcppEigen users. 
+}
+\reply{Thank you.}
+
+
+\section*{Editor's Recommentations}
+
+{\sl 
+  I definitely feel that the paper should be accepted for publication in
+  JSS, subject to revision.
+  
+  I disagree with the referee's comment that numerical stability is
+  outside the scope of the paper. After all, the authors do have a timing
+  comparison of the various methods in Sec. 4.7; why not add a bit on the
+  accuracy as well?
+  
+  Sorry for the delay in handling this paper.
+}
+
+\end{document}
+
+
+
+1.  My own comments:
+
+a.  This is a very nice application of the Rcpp library developed by one
+of the authors.
+
+  Thank you.
+
+b.  Sec. 2.1, about the Map class for avoiding object copy, is very
+important, as many R users have very large matrices.  Thus this section
+should be elaborated.  Exactly how is the mapping done?  If it's more
+than just passing a pointer, does this involve extra overhead per
+access?  A picture or numerical example (i.e. showing memory addresses)
+would be helpful.
+
+  The mechanism is simple, an Eigen::Matrix structure is allocated
+  without storage for the contents being allocated.  A pointer to the
+  contents of the R object is used instead of new storage being
+  allocated.
+
+c.  In line with comment (b) above, is this package usable for truly
+large matrices, stored in something like R's bigmemory package?
+
+  Not easily.  The bigmemory package uses its own, perhaps
+  memory-mapped, storage and Eigen requires a pointer to a memory
+  address.
+
+d.  The authors use stopifnot(all.equal(A,B)) at many points, to check
+their code against a purely-R computation.  Surely they can't mean this;
+roundoff error will often make A and B unequal, especially for large
+matrices.
+
+  As described in ?all.equal.numeric the all.equal method for numeric
+  vectors or arrays performs a relative comparison, not a comparison
+  for exact equality.
+
+e.  The authors use the term "cross product" for A'B.  I realize that
+this is consistent with R terminology, but it may mislead some who know
+of vector cross product in the physics sense.
+
+  <I will add a sentence saying that crossprod(X) produces X'X>
+
+f.  Are the "views" in Eigen maps or copies?
+
+   They are maps.  That is they use the same memory locations as the
+   contents of the original matrix but access these contents
+   differently.  For example, a triangular view only accesses the
+   memory locations for the values in the indicated triangle, the
+   others being systematic zeros.
+
+g.  The authors have a great passage in Sec. 3.3:
+
+     To some, the expressions in Figure 3 to construct AtA and AAt are
+     compact and elegant.  To others, they are hopelessly confusing.
+
+Indeed!  Many of us consider this to be a major failing of C++, or at
+least of the usage to which C++ is often put.
+
+For that reason, I'd really like to see this passage elaborated, with a
+stagewise breakdown.  In an expression x.y.u.v.w, they would explain
+what x.y is, then x.y.u and so on.  This only need be done once, but
+this one time would be worthwhile.
+
+   <I will add such an explanation>
+
+h.  In many applications of linear models we are interested in
+estimating linear combinations of the betas, not just individual betas.
+Thus it's not enough to just compute the standard errors of the
+beta-hats; one needs to have the estimated covariance matrix of the
+beta-hats.  Thus in Section 4, I would suggest adding this to the list
+returned by the least-squares computation.
+
+   <I can add this.  Things will get more complicated for the
+   rank-deficient cases.>
+
+i.  Also in Sec. 4, the authors might add a comment that the Eigen
+solve() is analogous to R's.
+
+   <Will do.>
+
+j.  Sec. 4.3 on the case of less than full rank is very good.  The
+authors might consider adding a brief example of how it arises in 
+"ordinary" situations (i.e. not from missing values), such as ANOVA, due
+to identifiability issues.
+
+   But that is not the case unless the user has constructed the
+   indicator columns and the intercept column by hand.  A call to lm()
+   or aov() using a formula with categorical variables applies
+   contrasts to the indicators when appropriate.
+
+k.  In Sec. 4.7, the authors note correctly that in parallel processing,
+there is always an issue of communications overhead.  But in the types
+of problems they're looking at, the problems are especially acute.  With
+an nxp X matrix, the real work is mainly in the inversion (or
+equivalent), which has time complexity O(p^3).  That's an issue if p is
+really large, but the value p = 40 in their experiments just isn't large
+enough to take really good advantage of parallelism.
+
+   Yes.  In general it is difficult to gain much from parallel
+   execution of the equivalent of lm.fit except in the crossprod()
+   applications.  A function like glm.fit where the sections of
+   matrices and vectors are passed to a processor once only but used
+   multiple times can benefit more from parallel execution.
+
+2.  Evaluation of the referee:
+
+     Review report
+
+     Title: Fast and elegant numerical linear algebra using the 
+     RcppEigen Package 
+     Authors: D. Bates and D. Eddelbuettel 
+     Journal:  J. of Statistical Software 
+
+     The paper introduces the RcppEigen package, which provides an
+     access from R to the Eigen C++ template library for computational
+     problems in linear algebra. It begins with a review of Eigen
+     classes and examples of some basic matrix operations, and then
+     provides substantial details on using RcppEigen to solve the
+     linear least squares problem with different methods. Near the end
+     of the paper, it briefly discusses delayed evaluation and sparse
+     matrix classes. 
+
+     The following are few comments: 
+
+     (1) The placement of figures are very confused with the normal text. 
+     For examples, if we read page 8, it's hard to tell what belongs to 
+     Figures 4 and 5, and what are the part of text. 
+
+     <I'm not sure how to address that.  I suppose that once any
+     changes are incorporated we can look at the placement of figures
+     and fiddle a bit if necessary.>
+
+     (2) It might better to re-order the subsections of Section 4 as follows: 
+         * Least squares using the ``LLt'' Cholesky 
+         * Least squares using the unpivoted QR decomposition
+         * Least squares using the SVD 
+         * Lasst squares using the eigendecomposition 
+         * Handling the ranking-deficient case 
+             a) using column-pivoted QR decomposition
+             b) Using SVD
+         * Comparative speed 
+
+     But the SVD and eigendecomposition methods are set up to handle
+     the rank-deficient cases with the Dplus function.  That is the
+     reason for introducing the rank-deficient case. <Although perhaps
+     we should look carefully again at the organization of that section>
+
+     (3) Even it is not within the scope of this paper to mention
+     numerical stability about different least squares methods, 
+     it would be very help to briefly discuss the issue and provides
+     the references for further discussions. 
+
+     I haven't really kept up with the numerical stability
+     discussions.  Long ago we learned that the QR decomposition is
+     more stable than the Cholesky decomposition because the condition
+     number of X'X is the square of the condition number of X.  I'm
+     not sure what current thinking on SVD versus QR versus Cholesky
+     would be.
+
+     Overall, the paper is well-written and should be very help 
+     for RcppEigen users. 
+
+3.  My recommendations:
+
+I definitely feel that the paper should be accepted for publication in
+JSS, subject to revision.
+
+I disagree with the referee's comment that numerical stability is
+outside the scope of the paper.  After all, the authors do have a timing
+comparison of the various methods in Sec. 4.7; why not add a bit on the
+accuracy as well?
+
+Sorry for the delay in handling this paper.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
