@@ -1419,6 +1419,7 @@ shape but incorrect contents is obtained.
 
 \begin{figure}[htb]
   %\begin{quote}
+  \hrule \smallskip
   \noindent
   \ttfamily
   \hlstd{}\hlkwb{const\ }\hlstd{MapMati}\hlstd{\ \ }\hlstd{}\hlkwd{A}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMati}\hlopt{$>$(}\hlstd{AA}\hlopt{));}\hspace*{\fill}\\
@@ -1427,6 +1428,7 @@ shape but incorrect contents is obtained.
   \normalfont
   \normalsize
   %\end{quote}
+  \hrule
   \caption{\code{badtransCpp}: Transpose producing incorrect results.}
   \label{badtrans}
 \end{figure}
@@ -1454,6 +1456,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
 
 \begin{figure}[htb]
   %\begin{quote}
+  \hrule \smallskip
   \noindent
   \ttfamily
   \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{;}\hspace*{\fill}\\
@@ -1467,6 +1470,7 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
   \mbox{}
   \normalfont
   \normalsize
+  \hrule
   \caption{\code{sparseProdCpp}: Transpose and product with sparse matrices.}
   \label{sparseProd}
   %\end{quote}
@@ -1494,6 +1498,7 @@ Figure~\ref{fig:spLS}.
 
 \begin{figure}[htb]
   %\begin{quote}
+  \hrule \smallskip
     \noindent
     \ttfamily
     \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MSpMat}\hlopt{;}\hspace*{\fill}\\
@@ -1515,6 +1520,7 @@ Figure~\ref{fig:spLS}.
     \normalfont
     \normalsize
   %\end{quote}
+  \hrule
   \caption{\code{sparseLSCpp}: Solving a sparse least squares problem.}
   \label{fig:spLS}
 \end{figure}
