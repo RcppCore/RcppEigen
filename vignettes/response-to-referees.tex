@@ -228,20 +228,21 @@ the publication of the updated manuscript.
   have point, though, inasmuch as figures 4 and 5 really flow into each
   other, and have no visual separator. For the infamous book draft, I gave up
   on what I had suggested to you here and just went with (the latex package)
-  listings.   
+  listings.   [Follow-up 9 May] I just added a set of horizontal rules to each
+  of the floats.  Take a look and see if you think that that makes it better.
 }
 
 
 \pointRaised{Comment 2}{
   It might better to re-order the subsections of Section 4 as follows: \\
-  * Least squares using the ``LLt'' Cholesky \\
-  * Least squares using the unpivoted QR decomposition\\
-  * Least squares using the SVD \\
-  * Least squares using the eigendecomposition \\
-  * Handling the ranking-deficient case \\
-    a) using column-pivoted QR decomposition \\
-    b) Using SVD \\
-  * Comparative speed 
+  -- Least squares using the ``LLt'' Cholesky \\
+  -- Least squares using the unpivoted QR decomposition\\
+  -- Least squares using the SVD \\
+  -- Least squares using the eigendecomposition \\
+  -- Handling the ranking-deficient case \\
+  \phantom{---} a) using column-pivoted QR decomposition \\
+  \phantom{---} b) Using SVD \\
+  -- Comparative speed 
 }
 \reply{
   But the SVD and eigendecomposition methods are set up to handle
