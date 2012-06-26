@@ -25,6 +25,8 @@
 #ifndef EIGEN_SPARSEMATRIXBASE_H
 #define EIGEN_SPARSEMATRIXBASE_H
 
+namespace Eigen { 
+
 /** \ingroup SparseCore_Module
   *
   * \class SparseMatrixBase
@@ -370,7 +372,7 @@ template<typename Derived> class SparseMatrixBase : public EigenBase<Derived>
     const typename SparseDenseProductReturnType<Derived,OtherDerived>::Type
     operator*(const MatrixBase<OtherDerived> &other) const;
     
-     /** \returns an expression of P^-1 H P */
+     /** \returns an expression of P H P^-1 where H is the matrix represented by \c *this */
     SparseSymmetricPermutationProduct<Derived,Upper|Lower> twistedBy(const PermutationMatrix<Dynamic,Dynamic,Index>& perm) const
     {
       return SparseSymmetricPermutationProduct<Derived,Upper|Lower>(derived(), perm);
@@ -465,5 +467,7 @@ template<typename Derived> class SparseMatrixBase : public EigenBase<Derived>
 
     bool m_isRValue;
 };
+
+} // end namespace Eigen
 
 #endif // EIGEN_SPARSEMATRIXBASE_H

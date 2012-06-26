@@ -105,8 +105,8 @@ namespace Rcpp{
 			switch(RTYPE) {
 			case REALSXP: klass = T::IsRowMajor ? "dgRMatrix" : "dgCMatrix";
 				break;
-			case INTSXP: klass = T::IsRowMajor ? "igRMatrix" : "igCMatrix";
-				break;
+//			case INTSXP: klass = T::IsRowMajor ? "igRMatrix" : "igCMatrix";  // classes not exported
+//				break;
 			default:
 				throw std::invalid_argument("RTYPE not matched in conversion to sparse matrix");
 			}

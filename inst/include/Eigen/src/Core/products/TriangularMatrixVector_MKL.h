@@ -33,6 +33,8 @@
 #ifndef EIGEN_TRIANGULAR_MATRIX_VECTOR_MKL_H
 #define EIGEN_TRIANGULAR_MATRIX_VECTOR_MKL_H
 
+namespace Eigen { 
+
 namespace internal {
 
 /**********************************************************************
@@ -103,7 +105,7 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
 /* Square part handling */\
 \
    char trans, uplo, diag; \
-   MKL_INT m, n, k, lda, incx, incy; \
+   MKL_INT m, n, lda, incx, incy; \
    EIGTYPE const *a; \
    MKLTYPE alpha_, beta_; \
    assign_scalar_eig2mkl<MKLTYPE, EIGTYPE>(alpha_, alpha); \
@@ -121,7 +123,6 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
    diag = IsUnitDiag ? 'U' : 'N'; \
 \
 /* call ?TRMV*/ \
-      std::cout << "TRMV: CM\n";\
    MKLPREFIX##trmv(&uplo, &trans, &diag, &n, (const MKLTYPE*)_lhs, &lda, (MKLTYPE*)x, &incx); \
 \
 /* Add op(a_tr)rhs into res*/ \
@@ -137,7 +138,7 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
        m = rows-size; \
        n = size; \
      } \
-     if (size<cols) { \
+     else { \
        x += size; \
        y = _res; \
        a = _lhs + size*lda; \
@@ -189,7 +190,7 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
 /* Square part handling */\
 \
    char trans, uplo, diag; \
-   MKL_INT m, n, k, lda, incx, incy; \
+   MKL_INT m, n, lda, incx, incy; \
    EIGTYPE const *a; \
    MKLTYPE alpha_, beta_; \
    assign_scalar_eig2mkl<MKLTYPE, EIGTYPE>(alpha_, alpha); \
@@ -207,7 +208,6 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
    diag = IsUnitDiag ? 'U' : 'N'; \
 \
 /* call ?TRMV*/ \
-      std::cout << "TRMV: RM\n";\
    MKLPREFIX##trmv(&uplo, &trans, &diag, &n, (const MKLTYPE*)_lhs, &lda, (MKLTYPE*)x, &incx); \
 \
 /* Add op(a_tr)rhs into res*/ \
@@ -223,7 +223,7 @@ struct triangular_matrix_vector_product_trmv<Index,Mode,EIGTYPE,ConjLhs,EIGTYPE,
        m = rows-size; \
        n = size; \
      } \
-     if (size<cols) { \
+     else { \
        x += size; \
        y = _res; \
        a = _lhs + size; \
@@ -240,6 +240,8 @@ EIGEN_MKL_TRMV_RM(dcomplex, MKL_Complex16, cd, z)
 EIGEN_MKL_TRMV_RM(float, float, f, s)
 EIGEN_MKL_TRMV_RM(scomplex, MKL_Complex8, cf, c)
 
-} //end of namespase
+} // end namespase internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_TRIANGULAR_MATRIX_VECTOR_MKL_H

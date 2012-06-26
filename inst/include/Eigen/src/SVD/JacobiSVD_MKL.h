@@ -35,6 +35,8 @@
 
 #include "Eigen/src/Core/util/MKL_support.h"
 
+namespace Eigen { 
+
 /** \internal Specialization for the data types supported by MKL */
 
 #define EIGEN_MKL_SVD(EIGTYPE, MKLTYPE, MKLRTYPE, MKLPREFIX, EIGCOLROW, MKLCOLROW) \
@@ -47,7 +49,7 @@ JacobiSVD<Matrix<EIGTYPE, Dynamic, Dynamic, EIGCOLROW, Dynamic, Dynamic>, ColPiv
   typedef MatrixType::RealScalar RealScalar; \
   allocate(matrix.rows(), matrix.cols(), computationOptions); \
 \
-  const RealScalar precision = RealScalar(2) * NumTraits<Scalar>::epsilon(); \
+  /*const RealScalar precision = RealScalar(2) * NumTraits<Scalar>::epsilon();*/ \
   m_nonzeroSingularValues = m_diagSize; \
 \
   lapack_int lda = matrix.outerStride(), ldu, ldvt; \
@@ -73,7 +75,7 @@ JacobiSVD<Matrix<EIGTYPE, Dynamic, Dynamic, EIGCOLROW, Dynamic, Dynamic>, ColPiv
  /* for(int i=0;i<m_diagSize;i++) if (m_singularValues.coeffRef(i) < precision) { m_nonzeroSingularValues--; m_singularValues.coeffRef(i)=RealScalar(0);}*/ \
   m_isInitialized = true; \
   return *this; \
-};
+}
 
 EIGEN_MKL_SVD(double,   double,        double, d, ColMajor, LAPACK_COL_MAJOR)
 EIGEN_MKL_SVD(float,    float,         float , s, ColMajor, LAPACK_COL_MAJOR)
@@ -84,5 +86,7 @@ EIGEN_MKL_SVD(double,   double,        double, d, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_SVD(float,    float,         float , s, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_SVD(dcomplex, MKL_Complex16, double, z, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_SVD(scomplex, MKL_Complex8,  float , c, RowMajor, LAPACK_ROW_MAJOR)
+
+} // end namespace Eigen
 
 #endif // EIGEN_JACOBISVD_MKL_H

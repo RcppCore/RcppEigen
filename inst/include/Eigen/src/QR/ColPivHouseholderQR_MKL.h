@@ -36,6 +36,8 @@
 
 #include "Eigen/src/Core/util/MKL_support.h"
 
+namespace Eigen { 
+
 /** \internal Specialization for the data types supported by MKL */
 
 #define EIGEN_MKL_QR_COLPIV(EIGTYPE, MKLTYPE, MKLPREFIX, EIGCOLROW, MKLCOLROW) \
@@ -56,7 +58,7 @@ ColPivHouseholderQR<Matrix<EIGTYPE, Dynamic, Dynamic, EIGCOLROW, Dynamic, Dynami
   m_hCoeffs.resize(size);\
 \
   m_colsTranspositions.resize(cols);\
-  Index number_of_transpositions = 0;\
+  /*Index number_of_transpositions = 0;*/ \
 \
   m_nonzero_pivots = 0; \
   m_maxpivot = RealScalar(0);\
@@ -79,7 +81,7 @@ ColPivHouseholderQR<Matrix<EIGTYPE, Dynamic, Dynamic, EIGCOLROW, Dynamic, Dynami
   /*m_det_pq = (number_of_transpositions%2) ? -1 : 1;  // TODO: It's not needed now; fix upon availability in Eigen */ \
 \
   return *this; \
-};
+}
 
 EIGEN_MKL_QR_COLPIV(double,   double,        d, ColMajor, LAPACK_COL_MAJOR)
 EIGEN_MKL_QR_COLPIV(float,    float,         s, ColMajor, LAPACK_COL_MAJOR)
@@ -90,5 +92,7 @@ EIGEN_MKL_QR_COLPIV(double,   double,        d, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_QR_COLPIV(float,    float,         s, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_QR_COLPIV(dcomplex, MKL_Complex16, z, RowMajor, LAPACK_ROW_MAJOR)
 EIGEN_MKL_QR_COLPIV(scomplex, MKL_Complex8,  c, RowMajor, LAPACK_ROW_MAJOR)
+
+} // end namespace Eigen
 
 #endif // EIGEN_COLPIVOTINGHOUSEHOLDERQR_MKL_H

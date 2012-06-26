@@ -27,8 +27,8 @@
 #define EIGEN_MACROS_H
 
 #define EIGEN_WORLD_VERSION 3
-#define EIGEN_MAJOR_VERSION 0
-#define EIGEN_MINOR_VERSION 92
+#define EIGEN_MAJOR_VERSION 1
+#define EIGEN_MINOR_VERSION 0
 
 #define EIGEN_VERSION_AT_LEAST(x,y,z) (EIGEN_WORLD_VERSION>x || (EIGEN_WORLD_VERSION>=x && \
                                       (EIGEN_MAJOR_VERSION>y || (EIGEN_MAJOR_VERSION>=y && \
@@ -268,7 +268,7 @@
  * If we made alignment depend on whether or not EIGEN_VECTORIZE is defined, it would be impossible to link
  * vectorized and non-vectorized code.
  */
-#if (defined __GNUC__) || (defined __PGI) || (defined __IBMCPP__)
+#if (defined __GNUC__) || (defined __PGI) || (defined __IBMCPP__) || (defined __ARMCC_VERSION)
   #define EIGEN_ALIGN_TO_BOUNDARY(n) __attribute__((aligned(n)))
 #elif (defined _MSC_VER)
   #define EIGEN_ALIGN_TO_BOUNDARY(n) __declspec(align(n))

@@ -25,7 +25,9 @@
 #ifndef EIGEN_SUPERLUSUPPORT_H
 #define EIGEN_SUPERLUSUPPORT_H
 
-#define DECL_GSSVX(PREFIX,FLOATTYPE,KEYTYPE)                                                              \
+namespace Eigen { 
+
+#define DECL_GSSVX(PREFIX,FLOATTYPE,KEYTYPE)		\
     extern "C" {                                                                                          \
       typedef struct { FLOATTYPE for_lu; FLOATTYPE total_needed; int expansions; } PREFIX##mem_usage_t;   \
       extern void PREFIX##gssvx(superlu_options_t *, SuperMatrix *, int *, int *, int *,                  \
@@ -159,14 +161,14 @@ struct SluMatrix : SuperMatrix
     }
   }
 
-  template<typename Scalar, int Rows, int Cols, int Options, int MRows, int MCols>
-  static SluMatrix Map(Matrix<Scalar,Rows,Cols,Options,MRows,MCols>& mat)
+  template<typename MatrixType>
+  static SluMatrix Map(MatrixBase<MatrixType>& _mat)
   {
-    typedef Matrix<Scalar,Rows,Cols,Options,MRows,MCols> MatrixType;
-    eigen_assert( ((Options&RowMajor)!=RowMajor) && "row-major dense matrices is not supported by SuperLU");
+    MatrixType& mat(_mat.derived());
+    eigen_assert( ((MatrixType::Flags&RowMajorBit)!=RowMajorBit) && "row-major dense matrices are not supported by SuperLU");
     SluMatrix res;
     res.setStorageType(SLU_DN);
-    res.setScalarType<Scalar>();
+    res.setScalarType<typename MatrixType::Scalar>();
     res.Mtype     = SLU_GE;
 
     res.nrow      = mat.rows();
@@ -301,7 +303,7 @@ MappedSparseMatrix<Scalar,Flags,Index> map_superlu(SluMatrix& sluMat)
   * \brief The base class for the direct and incomplete LU factorization of SuperLU
   */
 template<typename _MatrixType, typename Derived>
-class SuperLUBase
+class SuperLUBase : internal::noncopyable
 {
   public:
     typedef _MatrixType MatrixType;
@@ -470,6 +472,9 @@ class SuperLUBase
     int m_factorizationIsOk;
     int m_analysisIsOk;
     mutable bool m_extractedDataAreDirty;
+    
+  private:
+    SuperLUBase(SuperLUBase& ) { }
 };
 
 
@@ -604,6 +609,10 @@ class SuperLU : public SuperLUBase<_MatrixType,SuperLU<_MatrixType> >
       m_sluOptions.Trans            = NOTRANS;
       m_sluOptions.ColPerm          = COLAMD;
     }
+    
+    
+  private:
+    SuperLU(SuperLU& ) { }
 };
 
 template<typename MatrixType>
@@ -916,6 +925,9 @@ class SuperILU : public SuperLUBase<_MatrixType,SuperILU<_MatrixType> >
       m_sluOptions.ILU_DropRule = DROP_BASIC;
       m_sluOptions.ILU_DropTol = NumTraits<Scalar>::dummy_precision()*10;
     }
+    
+  private:
+    SuperILU(SuperILU& ) { }
 };
 
 template<typename MatrixType>
@@ -1021,6 +1033,8 @@ struct sparse_solve_retval<SuperLUBase<_MatrixType,Derived>, Rhs>
   }
 };
 
-}
+} // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_SUPERLUSUPPORT_H

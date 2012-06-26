@@ -25,6 +25,8 @@
 #ifndef EIGEN_SPARSE_SELFADJOINTVIEW_H
 #define EIGEN_SPARSE_SELFADJOINTVIEW_H
 
+namespace Eigen { 
+
 /** \ingroup SparseCore_Module
   * \class SparseSelfAdjointView
   *
@@ -123,7 +125,7 @@ template<typename MatrixType, unsigned int UpLo> class SparseSelfAdjointView
       _dest = tmp;
     }
     
-    /** \returns an expression of P^-1 H P */
+    /** \returns an expression of P H P^-1 */
     SparseSymmetricPermutationProduct<_MatrixTypeNested,UpLo> twistedBy(const PermutationMatrix<Dynamic,Dynamic,Index>& perm) const
     {
       return SparseSymmetricPermutationProduct<_MatrixTypeNested,UpLo>(m_matrix, perm);
@@ -134,6 +136,20 @@ template<typename MatrixType, unsigned int UpLo> class SparseSelfAdjointView
     {
       permutedMatrix.evalTo(*this);
       return *this;
+    }
+
+
+    SparseSelfAdjointView& operator=(const SparseSelfAdjointView& src)
+    {
+      PermutationMatrix<Dynamic> pnull;
+      return *this = src.twistedBy(pnull);
+    }
+
+    template<typename SrcMatrixType,unsigned int SrcUpLo>
+    SparseSelfAdjointView& operator=(const SparseSelfAdjointView<SrcMatrixType,SrcUpLo>& src)
+    {
+      PermutationMatrix<Dynamic> pnull;
+      return *this = src.twistedBy(pnull);
     }
     
 
@@ -473,5 +489,7 @@ class SparseSymmetricPermutationProduct
     const Perm& m_perm;
 
 };
+
+} // end namespace Eigen
 
 #endif // EIGEN_SPARSE_SELFADJOINTVIEW_H

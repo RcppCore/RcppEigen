@@ -32,6 +32,8 @@
 # define EIGEN_INITIALIZE_BY_ZERO_IF_THAT_OPTION_IS_ENABLED
 #endif
 
+namespace Eigen {
+
 namespace internal {
 
 template<typename Index>
@@ -47,7 +49,7 @@ EIGEN_ALWAYS_INLINE void check_rows_cols_for_overflow(Index rows, Index cols)
     throw_std_bad_alloc();
 }
 
-template <typename Derived, typename OtherDerived = Derived, bool IsVector = static_cast<bool>(Derived::IsVectorAtCompileTime)> struct conservative_resize_like_impl;
+template <typename Derived, typename OtherDerived = Derived, bool IsVector = bool(Derived::IsVectorAtCompileTime)> struct conservative_resize_like_impl;
 
 template<typename MatrixTypeA, typename MatrixTypeB, bool SwapPointers> struct matrix_swap_impl;
 
@@ -774,5 +776,7 @@ struct matrix_swap_impl<MatrixTypeA, MatrixTypeB, true>
 };
 
 } // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_DENSESTORAGEBASE_H

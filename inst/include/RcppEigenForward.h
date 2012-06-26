@@ -29,7 +29,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/CholmodSupport>
-#include <unsupported/Eigen/AutoDiff>
+//#include <unsupported/Eigen/AutoDiff>  // causes problems redefining sign
 #include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>

@@ -26,6 +26,8 @@
 #ifndef EIGEN_DENSEBASE_H
 #define EIGEN_DENSEBASE_H
 
+namespace Eigen {
+
 /** \class DenseBase
   * \ingroup Core_Module
   *
@@ -169,8 +171,8 @@ template<typename Derived> class DenseBase
 
       IsRowMajor = int(Flags) & RowMajorBit, /**< True if this expression has row-major storage order. */
 
-      InnerSizeAtCompileTime = int(IsVectorAtCompileTime) ? SizeAtCompileTime
-                             : int(IsRowMajor) ? ColsAtCompileTime : RowsAtCompileTime,
+      InnerSizeAtCompileTime = int(IsVectorAtCompileTime) ? int(SizeAtCompileTime)
+                             : int(IsRowMajor) ? int(ColsAtCompileTime) : int(RowsAtCompileTime),
 
       CoeffReadCost = internal::traits<Derived>::CoeffReadCost,
         /**< This is a rough measure of how expensive it is to read one coefficient from
@@ -540,5 +542,7 @@ template<typename Derived> class DenseBase
     DenseBase(int,int);
     template<typename OtherDerived> explicit DenseBase(const DenseBase<OtherDerived>&);
 };
+
+} // end namespace Eigen
 
 #endif // EIGEN_DENSEBASE_H

@@ -25,6 +25,8 @@
 #ifndef EIGEN_INCOMPLETE_LUT_H
 #define EIGEN_INCOMPLETE_LUT_H
 
+namespace Eigen { 
+
 /**
  * \brief Incomplete LU factorization with dual-threshold strategy
  * During the numerical factorization, two dropping rules are used :
@@ -49,7 +51,7 @@
  * see http://www-users.cs.umn.edu/~saad/software/SPARSKIT/README for more details.
  */
 template <typename _Scalar>
-class IncompleteLUT
+class IncompleteLUT : internal::noncopyable
 {
     typedef _Scalar Scalar;
     typedef typename NumTraits<Scalar>::Real RealScalar;
@@ -466,6 +468,9 @@ struct solve_retval<IncompleteLUT<_MatrixType>, Rhs>
   }
 };
 
-}
+} // end namespace internal
+
+} // end namespace Eigen
+
 #endif // EIGEN_INCOMPLETE_LUT_H
 

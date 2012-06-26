@@ -25,6 +25,8 @@
 
 #ifndef EIGEN_QUATERNION_H
 #define EIGEN_QUATERNION_H
+namespace Eigen { 
+
 
 /***************************************************************************
 * Definition of QuaternionBase<Derived>
@@ -283,6 +285,9 @@ public:
   template<typename OtherScalar, int OtherOptions>
   explicit inline Quaternion(const Quaternion<OtherScalar, OtherOptions>& other)
   { m_coeffs = other.coeffs().template cast<Scalar>(); }
+
+  template<typename Derived1, typename Derived2>
+  static Quaternion FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
 
   inline Coefficients& coeffs() { return m_coeffs;}
   inline const Coefficients& coeffs() const { return m_coeffs;}
@@ -624,6 +629,27 @@ inline Derived& QuaternionBase<Derived>::setFromTwoVectors(const MatrixBase<Deri
   return derived();
 }
 
+
+/** Returns a quaternion representing a rotation between
+  * the two arbitrary vectors \a a and \a b. In other words, the built
+  * rotation represent a rotation sending the line of direction \a a
+  * to the line of direction \a b, both lines passing through the origin.
+  *
+  * \returns resulting quaternion
+  *
+  * Note that the two input vectors do \b not have to be normalized, and
+  * do not need to have the same norm.
+  */
+template<typename Scalar, int Options>
+template<typename Derived1, typename Derived2>
+Quaternion<Scalar,Options> Quaternion<Scalar,Options>::FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
+{
+    Quaternion quat;
+    quat.setFromTwoVectors(a, b);
+    return quat;
+}
+
+
 /** \returns the multiplicative inverse of \c *this
   * Note that in most cases, i.e., if you simply want the opposite rotation,
   * and/or the quaternion is normalized, then it is enough to use the conjugate.
@@ -761,5 +787,7 @@ struct quaternionbase_assign_impl<Other,4,1>
 };
 
 } // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_QUATERNION_H

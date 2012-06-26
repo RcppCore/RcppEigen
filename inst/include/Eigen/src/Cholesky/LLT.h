@@ -25,6 +25,8 @@
 #ifndef EIGEN_LLT_H
 #define EIGEN_LLT_H
 
+namespace Eigen { 
+
 namespace internal{
 template<typename MatrixType, int UpLo> struct LLT_Traits;
 }
@@ -335,7 +337,7 @@ template<typename Scalar> struct llt_inplace<Scalar, Lower>
   template<typename MatrixType, typename VectorType>
   static typename MatrixType::Index rankUpdate(MatrixType& mat, const VectorType& vec, const RealScalar& sigma)
   {
-    return llt_rank_update_lower(mat, vec, sigma);
+    return Eigen::internal::llt_rank_update_lower(mat, vec, sigma);
   }
 };
   
@@ -365,8 +367,8 @@ template<typename Scalar> struct llt_inplace<Scalar, Upper>
 
 template<typename MatrixType> struct LLT_Traits<MatrixType,Lower>
 {
-  typedef TriangularView<const MatrixType, Lower> MatrixL;
-  typedef TriangularView<const typename MatrixType::AdjointReturnType, Upper> MatrixU;
+  typedef const TriangularView<const MatrixType, Lower> MatrixL;
+  typedef const TriangularView<const typename MatrixType::AdjointReturnType, Upper> MatrixU;
   static inline MatrixL getL(const MatrixType& m) { return m; }
   static inline MatrixU getU(const MatrixType& m) { return m.adjoint(); }
   static bool inplace_decomposition(MatrixType& m)
@@ -375,8 +377,8 @@ template<typename MatrixType> struct LLT_Traits<MatrixType,Lower>
 
 template<typename MatrixType> struct LLT_Traits<MatrixType,Upper>
 {
-  typedef TriangularView<const typename MatrixType::AdjointReturnType, Lower> MatrixL;
-  typedef TriangularView<const MatrixType, Upper> MatrixU;
+  typedef const TriangularView<const typename MatrixType::AdjointReturnType, Lower> MatrixL;
+  typedef const TriangularView<const MatrixType, Upper> MatrixU;
   static inline MatrixL getL(const MatrixType& m) { return m.adjoint(); }
   static inline MatrixU getU(const MatrixType& m) { return m; }
   static bool inplace_decomposition(MatrixType& m)
@@ -496,5 +498,6 @@ SelfAdjointView<MatrixType, UpLo>::llt() const
   return LLT<PlainObject,UpLo>(m_matrix);
 }
 
-#endif // EIGEN_LLT_H
+} // end namespace Eigen
 
+#endif // EIGEN_LLT_H

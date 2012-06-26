@@ -25,6 +25,8 @@
 #ifndef EIGEN_JACOBISVD_H
 #define EIGEN_JACOBISVD_H
 
+namespace Eigen { 
+
 namespace internal {
 // forward declaration (needed by ICC)
 // the empty body is required by MSVC
@@ -730,8 +732,8 @@ void JacobiSVD<MatrixType, QRPreconditioner>::allocate(Index rows, Index cols, u
                           : 0);
   m_workMatrix.resize(m_diagSize, m_diagSize);
   
-  m_qr_precond_morecols.allocate(*this);
-  m_qr_precond_morerows.allocate(*this);
+  if(m_cols>m_rows) m_qr_precond_morecols.allocate(*this);
+  if(m_rows>m_cols) m_qr_precond_morerows.allocate(*this);
 }
 
 template<typename MatrixType, int QRPreconditioner>
@@ -875,6 +877,6 @@ MatrixBase<Derived>::jacobiSvd(unsigned int computationOptions) const
   return JacobiSVD<PlainObject>(*this, computationOptions);
 }
 
-
+} // end namespace Eigen
 
 #endif // EIGEN_JACOBISVD_H
