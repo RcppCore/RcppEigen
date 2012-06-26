@@ -63,27 +63,27 @@ test.wrapSparse.double.ColMajor.R <- function(){
     checkEquals( res, rr, msg = "wrap<SparseMatrix<double, Eigen::ColMajor> >")
 }
 
-test.wrapSparse.int.ColMajor.R <- function(){
+## test.wrapSparse.int.ColMajor.R <- function(){  ## classes not yet exported from Matrix
 
-    fx <- cxxfunction( , '
+##     fx <- cxxfunction( , '
 
-    Eigen::SparseMatrix<int, Eigen::ColMajor>  mm(9,3);
-    mm.reserve(9);
-    for (int j = 0; j < 3; ++j) {
-        mm.startVec(j);
-        for (int i = 3 * j; i < 3 * (j + 1); ++i)
-            mm.insertBack(i, j) = 1;
-    }
-    mm.finalize();
-    return wrap(mm);
-' , plugin = "RcppEigen" )
+##     Eigen::SparseMatrix<int, Eigen::ColMajor>  mm(9,3);
+##     mm.reserve(9);
+##     for (int j = 0; j < 3; ++j) {
+##         mm.startVec(j);
+##         for (int i = 3 * j; i < 3 * (j + 1); ++i)
+##             mm.insertBack(i, j) = 1;
+##     }
+##     mm.finalize();
+##     return wrap(mm);
+## ' , plugin = "RcppEigen" )
 
-    #res <- fx()
-    #rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
-    #colnames(rr) <- NULL
-    #checkEquals( res, rr, msg = "wrap<SparseMatrix<double, Eigen::ColMajor> >")
-    checkException( fx(), msg = "wrap<SparseMatrix<int, Eigen::ColMajor> >" )
-}
+##     #res <- fx()
+##     #rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
+##     #colnames(rr) <- NULL
+##     #checkEquals( res, rr, msg = "wrap<SparseMatrix<double, Eigen::ColMajor> >")
+##     checkException( fx(), msg = "wrap<SparseMatrix<int, Eigen::ColMajor> >" )
+## }
 
 test.wrapSparse.double.RowMajor.R <- function(){
 
@@ -105,26 +105,26 @@ test.wrapSparse.double.RowMajor.R <- function(){
     checkEquals( res, rr, msg = "wrap<SparseMatrix<double, Eigen::RowMajor> >")
 }
 
-test.wrapSparse.int.RowMajor.R <- function(){
+## test.wrapSparse.int.RowMajor.R <- function(){
 
-    fx <- cxxfunction( , '
+##     fx <- cxxfunction( , '
 
-    Eigen::SparseMatrix<int, Eigen::RowMajor>  mm(9,3);
-    mm.reserve(9);
-    for (int irow = 0; irow < 9; ++irow) {
-        mm.startVec(irow);
-        mm.insertBack(irow, irow / 3) = 9 - irow;
-    }
-    mm.finalize();
-    return wrap(mm);
-' , plugin = "RcppEigen" )
+##     Eigen::SparseMatrix<int, Eigen::RowMajor>  mm(9,3);
+##     mm.reserve(9);
+##     for (int irow = 0; irow < 9; ++irow) {
+##         mm.startVec(irow);
+##         mm.insertBack(irow, irow / 3) = 9 - irow;
+##     }
+##     mm.finalize();
+##     return wrap(mm);
+## ' , plugin = "RcppEigen" )
 
-    #res <- fx()
-    #rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=9L:1L, Dim=c(9L,3L) )
-    #colnames(rr) <- NULL
-    #checkEquals( res, rr, msg = "wrap<SparseMatrix<int, Eigen::RowMajor> >")
-    checkException( fx(), msg = "wrap<SparseMatrix<int, Eigen::RowMajor> >" )
-}
+##     #res <- fx()
+##     #rr <- new( "igRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=9L:1L, Dim=c(9L,3L) )
+##     #colnames(rr) <- NULL
+##     #checkEquals( res, rr, msg = "wrap<SparseMatrix<int, Eigen::RowMajor> >")
+##     checkException( fx(), msg = "wrap<SparseMatrix<int, Eigen::RowMajor> >" )
+## }
 
 test.asSparse.double.ColMajor.R <- function(){
 

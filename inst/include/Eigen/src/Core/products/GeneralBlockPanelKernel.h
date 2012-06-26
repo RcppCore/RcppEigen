@@ -25,6 +25,8 @@
 #ifndef EIGEN_GENERAL_BLOCK_PANEL_H
 #define EIGEN_GENERAL_BLOCK_PANEL_H
 
+namespace Eigen { 
+  
 namespace internal {
 
 template<typename _LhsScalar, typename _RhsScalar, bool _ConjLhs=false, bool _ConjRhs=false>
@@ -40,9 +42,14 @@ inline std::ptrdiff_t manage_caching_sizes_helper(std::ptrdiff_t a, std::ptrdiff
 /** \internal */
 inline void manage_caching_sizes(Action action, std::ptrdiff_t* l1=0, std::ptrdiff_t* l2=0)
 {
-  static std::ptrdiff_t m_l1CacheSize = manage_caching_sizes_helper(queryL1CacheSize(),8 * 1024);
-  static std::ptrdiff_t m_l2CacheSize = manage_caching_sizes_helper(queryTopLevelCacheSize(),1*1024*1024);
-
+  static std::ptrdiff_t m_l1CacheSize = 0;
+  static std::ptrdiff_t m_l2CacheSize = 0;
+  if(m_l2CacheSize==0)
+  {
+    m_l1CacheSize = manage_caching_sizes_helper(queryL1CacheSize(),8 * 1024);
+    m_l2CacheSize = manage_caching_sizes_helper(queryTopLevelCacheSize(),1*1024*1024);
+  }
+  
   if(action==SetAction)
   {
     // set the cpu cache size and cache all block sizes from a global cache size in byte
@@ -1321,5 +1328,7 @@ inline void setCpuCacheSizes(std::ptrdiff_t l1, std::ptrdiff_t l2)
 {
   internal::manage_caching_sizes(SetAction, &l1, &l2);
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_GENERAL_BLOCK_PANEL_H

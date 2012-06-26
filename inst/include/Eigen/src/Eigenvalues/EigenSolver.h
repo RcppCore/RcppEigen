@@ -26,8 +26,9 @@
 #ifndef EIGEN_EIGENSOLVER_H
 #define EIGEN_EIGENSOLVER_H
 
-#include "./EigenvaluesCommon.h"
 #include "./RealSchur.h"
+
+namespace Eigen { 
 
 /** \eigenvalues_module \ingroup Eigenvalues_Module
   *
@@ -587,5 +588,7 @@ void EigenSolver<MatrixType>::doComputeEigenvectors()
     m_eivec.col(j) = m_tmp;
   }
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_EIGENSOLVER_H

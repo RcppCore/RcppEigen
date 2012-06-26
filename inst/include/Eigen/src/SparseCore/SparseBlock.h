@@ -25,6 +25,8 @@
 #ifndef EIGEN_SPARSE_BLOCK_H
 #define EIGEN_SPARSE_BLOCK_H
 
+namespace Eigen { 
+
 namespace internal {
 template<typename MatrixType, int Size>
 struct traits<SparseInnerVectorSet<MatrixType, Size> >
@@ -59,6 +61,17 @@ class SparseInnerVectorSet : internal::no_assignment_operator,
       public:
         inline InnerIterator(const SparseInnerVectorSet& xpr, Index outer)
           : MatrixType::InnerIterator(xpr.m_matrix, xpr.m_outerStart + outer), m_outer(outer)
+        {}
+        inline Index row() const { return IsRowMajor ? m_outer : this->index(); }
+        inline Index col() const { return IsRowMajor ? this->index() : m_outer; }
+      protected:
+        Index m_outer;
+    };
+    class ReverseInnerIterator: public MatrixType::ReverseInnerIterator
+    {
+      public:
+        inline ReverseInnerIterator(const SparseInnerVectorSet& xpr, Index outer)
+          : MatrixType::ReverseInnerIterator(xpr.m_matrix, xpr.m_outerStart + outer), m_outer(outer)
         {}
         inline Index row() const { return IsRowMajor ? m_outer : this->index(); }
         inline Index col() const { return IsRowMajor ? this->index() : m_outer; }
@@ -121,6 +134,17 @@ class SparseInnerVectorSet<SparseMatrix<_Scalar, _Options, _Index>, Size>
       public:
         inline InnerIterator(const SparseInnerVectorSet& xpr, Index outer)
           : MatrixType::InnerIterator(xpr.m_matrix, xpr.m_outerStart + outer), m_outer(outer)
+        {}
+        inline Index row() const { return IsRowMajor ? m_outer : this->index(); }
+        inline Index col() const { return IsRowMajor ? this->index() : m_outer; }
+      protected:
+        Index m_outer;
+    };
+    class ReverseInnerIterator: public MatrixType::ReverseInnerIterator
+    {
+      public:
+        inline ReverseInnerIterator(const SparseInnerVectorSet& xpr, Index outer)
+          : MatrixType::ReverseInnerIterator(xpr.m_matrix, xpr.m_outerStart + outer), m_outer(outer)
         {}
         inline Index row() const { return IsRowMajor ? m_outer : this->index(); }
         inline Index col() const { return IsRowMajor ? this->index() : m_outer; }
@@ -372,5 +396,7 @@ SparseInnerVectorSet<Derived,Dynamic> SparseMatrixBase<Derived>::innerVectors(In
 template<typename Derived>
 const SparseInnerVectorSet<Derived,Dynamic> SparseMatrixBase<Derived>::innerVectors(Index outerStart, Index outerSize) const
 { return SparseInnerVectorSet<Derived,Dynamic>(derived(), outerStart, outerSize); }
+
+} // end namespace Eigen
 
 #endif // EIGEN_SPARSE_BLOCK_H

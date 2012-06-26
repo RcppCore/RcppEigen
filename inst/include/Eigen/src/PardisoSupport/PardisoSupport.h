@@ -32,6 +32,8 @@
 #ifndef EIGEN_PARDISOSUPPORT_H
 #define EIGEN_PARDISOSUPPORT_H
 
+namespace Eigen { 
+
 template<typename _MatrixType> class PardisoLU;
 template<typename _MatrixType, int Options=Upper> class PardisoLLT;
 template<typename _MatrixType, int Options=Upper> class PardisoLDLT;
@@ -296,6 +298,9 @@ class PardisoImpl
     mutable Array<Index,64,1> m_iparm;
     mutable IntColVectorType m_perm;
     Index m_size;
+    
+  private:
+    PardisoImpl(PardisoImpl &) {}
 };
 
 template<class Derived>
@@ -451,6 +456,9 @@ class PardisoLU : public PardisoImpl< PardisoLU<MatrixType> >
     {
       m_matrix = matrix;
     }
+    
+  private:
+    PardisoLU(PardisoLU& ) {}
 };
 
 /** \ingroup PardisoSupport_Module
@@ -507,6 +515,9 @@ class PardisoLLT : public PardisoImpl< PardisoLLT<MatrixType,_UpLo> >
       m_matrix.resize(matrix.rows(), matrix.cols());
       m_matrix.template selfadjointView<Upper>() = matrix.template selfadjointView<UpLo>().twistedBy(p_null);
     }
+    
+  private:
+    PardisoLLT(PardisoLLT& ) {}
 };
 
 /** \ingroup PardisoSupport_Module
@@ -563,6 +574,9 @@ class PardisoLDLT : public PardisoImpl< PardisoLDLT<MatrixType,Options> >
       m_matrix.resize(matrix.rows(), matrix.cols());
       m_matrix.template selfadjointView<Upper>() = matrix.template selfadjointView<UpLo>().twistedBy(p_null);
     }
+    
+  private:
+    PardisoLDLT(PardisoLDLT& ) {}
 };
 
 namespace internal {
@@ -593,6 +607,8 @@ struct sparse_solve_retval<PardisoImpl<Derived>, Rhs>
   }
 };
 
-}
+} // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_PARDISOSUPPORT_H

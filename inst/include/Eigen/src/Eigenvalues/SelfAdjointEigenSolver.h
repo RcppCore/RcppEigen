@@ -26,8 +26,9 @@
 #ifndef EIGEN_SELFADJOINTEIGENSOLVER_H
 #define EIGEN_SELFADJOINTEIGENSOLVER_H
 
-#include "./EigenvaluesCommon.h"
 #include "./Tridiagonalization.h"
+
+namespace Eigen { 
 
 template<typename _MatrixType>
 class GeneralizedSelfAdjointEigenSolver;
@@ -795,6 +796,9 @@ static void tridiagonal_qr_step(RealScalar* diag, RealScalar* subdiag, Index sta
     }
   }
 }
+
 } // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_SELFADJOINTEIGENSOLVER_H

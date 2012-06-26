@@ -27,8 +27,9 @@
 #ifndef EIGEN_COMPLEX_SCHUR_H
 #define EIGEN_COMPLEX_SCHUR_H
 
-#include "./EigenvaluesCommon.h"
 #include "./HessenbergDecomposition.h"
+
+namespace Eigen { 
 
 namespace internal {
 template<typename MatrixType, bool IsComplex> struct complex_schur_reduce_to_hessenberg;
@@ -404,5 +405,7 @@ void ComplexSchur<MatrixType>::reduceToTriangularForm(bool computeU)
   m_isInitialized = true;
   m_matUisUptodate = computeU;
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_COMPLEX_SCHUR_H

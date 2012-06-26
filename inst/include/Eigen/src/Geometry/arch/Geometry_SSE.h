@@ -26,6 +26,8 @@
 #ifndef EIGEN_GEOMETRY_SSE_H
 #define EIGEN_GEOMETRY_SSE_H
 
+namespace Eigen { 
+
 namespace internal {
 
 template<class Derived, class OtherDerived>
@@ -96,7 +98,7 @@ struct quat_product<Architecture::SSE, Derived, OtherDerived, double, Aligned>
    */
   t1 = padd(pmul(a_ww, b_xy), pmul(a_yy, b_zw));
   t2 = psub(pmul(a_zz, b_xy), pmul(a_xx, b_zw));
-#ifdef __SSE3__
+#ifdef EIGEN_VECTORIZE_SSE3
   EIGEN_UNUSED_VARIABLE(mask)
   pstore(&res.x(), _mm_addsub_pd(t1, preverse(t2)));
 #else
@@ -110,7 +112,7 @@ struct quat_product<Architecture::SSE, Derived, OtherDerived, double, Aligned>
    */
   t1 = psub(pmul(a_ww, b_zw), pmul(a_yy, b_xy));
   t2 = padd(pmul(a_zz, b_zw), pmul(a_xx, b_xy));
-#ifdef __SSE3__
+#ifdef EIGEN_VECTORIZE_SSE3
   EIGEN_UNUSED_VARIABLE(mask)
   pstore(&res.z(), preverse(_mm_addsub_pd(preverse(t1), t2)));
 #else
@@ -122,5 +124,7 @@ struct quat_product<Architecture::SSE, Derived, OtherDerived, double, Aligned>
 };
 
 } // end namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_GEOMETRY_SSE_H

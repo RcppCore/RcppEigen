@@ -1,12 +1,23 @@
-#+TITLE:     NEWS for RcppEigen-0.2.0
+#+TITLE:     NEWS for RcppEigen-0.3.0
 #+AUTHOR:    Douglas Bates
 #+EMAIL:     bates@stat.wisc.edu
-#+DATE:      2012-03-08 Thu
+#+DATE:      2012-06-26 Tue
 #+DESCRIPTION: News regarding the latest version of RcppEigen
 #+KEYWORDS:
 #+LANGUAGE:  en
 
 * New features visible to users
+  + Upgraded to Eigen 3.1.0
+  + Removed the "unsupported" Eigen module AutoDiff which defined a
+    macro "sign" that conflicted with a function in the R API (which
+    really should be visible as "Rf_sign", not sure why it shows up as
+    "sign" and don't have time to investigate)
+  + Commented out several tests involving complex vectors and
+    matrices.  Again there are compilation problems related to
+    conflicting definitions in the std:: namespace and the R API and
+    Eigen, which I don't have time to investigate.
+
+* New features visible to users in RcppEigen-0.2.0
   + Upgraded the version of Eigen to 3.1.0-alpha2, in which the sparse
     matrix modules are now in the "supported" tree.
   + Added several "unsupported" Eigen modules including
@@ -32,7 +43,7 @@
   + The ability to wrap RowMajor sparse matrices and to use
     as<Eigen::ArrayXd> etc.
 
-* New features not visible to users
+* New features not visible to users in RcppEigen-0.2.0
   + Migrated some tests to the testthat package.  Currently there is
     some difficulty with combining testthat, inline and R CMD check.
     These checks are available as
@@ -42,4 +53,4 @@ test_package(RcppEigen)
 #+END_EXAMPLE
 
  
-
+  

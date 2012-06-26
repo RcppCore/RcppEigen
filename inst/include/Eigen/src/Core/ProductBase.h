@@ -25,6 +25,8 @@
 #ifndef EIGEN_PRODUCTBASE_H
 #define EIGEN_PRODUCTBASE_H
 
+namespace Eigen { 
+
 /** \class ProductBase
   * \ingroup Core_Module
   *
@@ -152,7 +154,8 @@ class ProductBase : public MatrixBase<Derived>
 #else
       EIGEN_STATIC_ASSERT_SIZE_1x1(Derived)
       eigen_assert(this->rows() == 1 && this->cols() == 1);
-      return derived().coeff(row,col);
+      Matrix<Scalar,1,1> result = *this;
+      return result.coeff(row,col);
 #endif
     }
 
@@ -160,7 +163,8 @@ class ProductBase : public MatrixBase<Derived>
     {
       EIGEN_STATIC_ASSERT_SIZE_1x1(Derived)
       eigen_assert(this->rows() == 1 && this->cols() == 1);
-      return derived().coeff(i);
+      Matrix<Scalar,1,1> result = *this;
+      return result.coeff(i);
     }
 
     const Scalar& coeffRef(Index row, Index col) const
@@ -284,5 +288,6 @@ Derived& MatrixBase<Derived>::lazyAssign(const ProductBase<ProductDerived, Lhs,R
   return derived();
 }
 
+} // end namespace Eigen
 
 #endif // EIGEN_PRODUCTBASE_H

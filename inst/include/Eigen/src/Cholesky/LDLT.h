@@ -28,6 +28,8 @@
 #ifndef EIGEN_LDLT_H
 #define EIGEN_LDLT_H
 
+namespace Eigen { 
+
 namespace internal {
 template<typename MatrixType, int UpLo> struct LDLT_Traits;
 }
@@ -419,16 +421,16 @@ template<> struct ldlt_inplace<Upper>
 
 template<typename MatrixType> struct LDLT_Traits<MatrixType,Lower>
 {
-  typedef TriangularView<const MatrixType, UnitLower> MatrixL;
-  typedef TriangularView<const typename MatrixType::AdjointReturnType, UnitUpper> MatrixU;
+  typedef const TriangularView<const MatrixType, UnitLower> MatrixL;
+  typedef const TriangularView<const typename MatrixType::AdjointReturnType, UnitUpper> MatrixU;
   static inline MatrixL getL(const MatrixType& m) { return m; }
   static inline MatrixU getU(const MatrixType& m) { return m.adjoint(); }
 };
 
 template<typename MatrixType> struct LDLT_Traits<MatrixType,Upper>
 {
-  typedef TriangularView<const typename MatrixType::AdjointReturnType, UnitLower> MatrixL;
-  typedef TriangularView<const MatrixType, UnitUpper> MatrixU;
+  typedef const TriangularView<const typename MatrixType::AdjointReturnType, UnitLower> MatrixL;
+  typedef const TriangularView<const MatrixType, UnitUpper> MatrixU;
   static inline MatrixL getL(const MatrixType& m) { return m.adjoint(); }
   static inline MatrixU getU(const MatrixType& m) { return m; }
 };
@@ -477,7 +479,7 @@ LDLT<MatrixType,_UpLo>& LDLT<MatrixType,_UpLo>::rankUpdate(const MatrixBase<Deri
     for (Index i = 0; i < size; i++)
       m_transpositions.coeffRef(i) = i;
     m_temporary.resize(size);
-    m_sign = sigma;
+    m_sign = sigma>=0 ? 1 : -1;
     m_isInitialized = true;
   }
 
@@ -599,5 +601,7 @@ MatrixBase<Derived>::ldlt() const
 {
   return LDLT<PlainObject>(derived());
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_LDLT_H

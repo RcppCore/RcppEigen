@@ -1,3 +1,8 @@
+2012-06-26  Douglas Bates  <bates@stat.wisc.edu>
+
+	* DESCRIPTION, R/unit.test.R, inst/include/Eigen/*: Massive
+	changes related to upgrade to Eigen-3.1.0
+
 2012-03-08  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/tests/test-solutions.R, inst/tests/test-transform.R,

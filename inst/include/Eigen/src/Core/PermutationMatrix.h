@@ -26,6 +26,8 @@
 #ifndef EIGEN_PERMUTATIONMATRIX_H
 #define EIGEN_PERMUTATIONMATRIX_H
 
+namespace Eigen { 
+
 template<int RowCol,typename IndicesType,typename MatrixType, typename StorageKind> class PermutedImpl;
 
 /** \class PermutationBase
@@ -56,6 +58,8 @@ namespace internal {
 
 template<typename PermutationType, typename MatrixType, int Side, bool Transposed=false>
 struct permut_matrix_product_retval;
+template<typename PermutationType, typename MatrixType, int Side, bool Transposed=false>
+struct permut_sparsematrix_product_retval;
 enum PermPermProduct_t {PermPermProduct};
 
 } // end namespace internal
@@ -692,5 +696,7 @@ const PermutationWrapper<const Derived> MatrixBase<Derived>::asPermutation() con
 {
   return derived();
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_PERMUTATIONMATRIX_H

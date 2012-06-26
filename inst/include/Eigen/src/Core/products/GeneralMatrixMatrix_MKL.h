@@ -33,6 +33,8 @@
 #ifndef EIGEN_GENERAL_MATRIX_MATRIX_MKL_H
 #define EIGEN_GENERAL_MATRIX_MATRIX_MKL_H
 
+namespace Eigen { 
+
 namespace internal {
 
 /**********************************************************************
@@ -56,8 +58,8 @@ static void run(Index rows, Index cols, Index depth, \
   const EIGTYPE* _rhs, Index rhsStride, \
   EIGTYPE* res, Index resStride, \
   EIGTYPE alpha, \
-  level3_blocking<EIGTYPE, EIGTYPE>& blocking, \
-  GemmParallelInfo<Index>* info = 0) \
+  level3_blocking<EIGTYPE, EIGTYPE>& /*blocking*/, \
+  GemmParallelInfo<Index>* /*info = 0*/) \
 { \
   using std::conj; \
 \
@@ -109,6 +111,8 @@ GEMM_SPECIALIZATION(float,    f,  float,         s)
 GEMM_SPECIALIZATION(dcomplex, cd, MKL_Complex16, z)
 GEMM_SPECIALIZATION(scomplex, cf, MKL_Complex8,  c)
 
-} //end of namespase
+} // end namespase internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_GENERAL_MATRIX_MATRIX_MKL_H
