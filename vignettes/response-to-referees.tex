@@ -92,12 +92,12 @@ the publication of the updated manuscript.
 
 
 \pointRaised{Comment e}{
-  The authors use the term "cross product" for A'B. I realize that
+  The authors use the term ``cross product'' for A'B. I realize that
   this is consistent with R terminology, but it may mislead some who know
   of vector cross product in the physics sense.
 }
 \reply{
-  TODO/DB: I will add a sentence saying that crossprod(X) produces X'X
+  We added a parenthetical comment explaining this usage.
 }
 
 
@@ -111,8 +111,6 @@ the publication of the updated manuscript.
   memory locations for the values in the indicated triangle, the
   others being systematic zeros.
 }
-
-
 
 \pointRaised{Comment g}{
   The authors have a great passage in Sec.~3.3:
@@ -133,21 +131,37 @@ the publication of the updated manuscript.
   this one time would be worthwhile.
 }
 \reply{
-  TODO/DB: I will add such an explanation
+  We have added such an explanation.
 }
 
 
-\pointRaised{Comment h}{
-  In many applications of linear models we are interested in
-  estimating linear combinations of the betas, not just individual betas.
-  Thus it's not enough to just compute the standard errors of the
-  beta-hats; one needs to have the estimated covariance matrix of the
-  beta-hats.  Thus in Section 4, I would suggest adding this to the list
-  returned by the least-squares computation.
+\pointRaised{Comment h}{ In many applications of linear models we are
+  interested in estimating linear combinations of the betas, not just
+  individual betas.  Thus it's not enough to just compute the standard
+  errors of the beta-hats; one needs to have the estimated covariance
+  matrix of the beta-hats.  Thus in Section 4, I would suggest adding
+  this to the list returned by the least-squares computation.
 }
-\reply{
-  TODO/DB: I can add this.  Things will get more complicated for the
-   rank-deficient cases.
+\reply{ 
+  It is not terribly difficult to create the covariance matrix of the
+  coefficient estimators but incorporating this change would require
+  considerable reorganization of the paper.  In the last paragraph of
+  section 4.1 we describe how we omit the redundant parts of the code
+  in sections 4.2 to 4.6 and just show the parts that change because
+  all the code is available in the fastLm.h and fastLm.cpp files in
+  the source package.  The functions defined there are for comparison
+  with similar functions in the Rcpp and RcppArmadillo packages.  The
+  task being compared in all three of these packages is to produce the
+  estimated coefficients and their standard errors.  If we change the
+  purpose of the functions described here we either lose the ability
+  to compare timings with the other packages (we don't plan to rewrite
+  the other packages) or we need to include much more detail in this
+  paper because we would not be able to refer the reader to the code
+  in the package itself.
+
+  Also, this code illustrates the use of the rowwise() and colwise()
+  methods in Eigen, which behave like apply() in R and we think it is
+  valuable to illustrate these methods.
 }
 
 
@@ -156,7 +170,17 @@ the publication of the updated manuscript.
   solve() is analogous to R's.
 }
 \reply{
-  TODO/DB: Will do.
+  It's not quite that simple.  Several of the Eigen classes
+  representing decompositions have solve() methods and the action taken
+  depends on the type of decomposition.  In the same paragraph where
+  the colwise() and rowwise() Eigen methods are compared to the
+  apply() function in R, we mention that the solve() method for an
+  Eigen::LLT class solves a system defined by the original matrix that
+  was decomposed, not with respect to the triangular matrix in the
+  decomposition.  All the other uses of solve methods are for matrices
+  that are known to be triangular (i.e. they are of the triangularView
+  class) and in R the calculation should be done with backsolve()
+  or forwardsolve(), not R's solve().
 }
 
 

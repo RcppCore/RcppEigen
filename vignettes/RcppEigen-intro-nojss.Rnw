@@ -405,7 +405,8 @@ As mentioned in Section~\ref{sec:arrays}, the \code{`*'} operator is
 overloaded as matrix multiplication for the various matrix and vector
 classes in \pkg{Eigen}. The \proglang{C++} code in
 Figure~\ref{prod} produces a list containing both the product and
-cross-product of its two arguments.
+cross-product (in the sense of the \proglang{R} function call
+\code{crossproduct(A, B)} evaluating $\bm A^\prime\bm B$) of its two arguments
 
 \begin{figure}[htb]
   \hrule \smallskip
@@ -521,6 +522,22 @@ elements are zero, regarding it as a self-adjoint (\textit{i.e.,} symmetric) mat
 using the elements in the lower triangle, then adding $\bm A\bm A^\prime$
 to it and converting back to a general matrix form (\textit{i.e.,} the strict lower
 triangle is copied into the strict upper triangle).
+
+In more detail:
+\begin{enumerate}
+\item \code{MatrixXi(n, n)} creates an $n\times n$ integer matrix with
+  arbitrary contents
+\item \code{.setZero()} zeros out the contents of the matrix
+\item \code{.selfAdjointView<Lower>()} causes what follows to treat
+  the matrix as a symmetric matrix in which only the lower triangle is
+  used, the strict upper triangle being inferred by symmetry
+\item \code{.rankUpdate(A)} forms the sum $\bm B+\bm A\bm A^\prime$
+  where $\bm B$ is the symmetric matrix of zeros created in the
+  previous steps.
+\end{enumerate}
+The assignment of this symmetric matrix to the (general)
+\code{MatrixXi} object \code{AAt} causes the result to be symmetrized
+during the assignment.
 
 For these products one could define the symmetric matrix from either
 the lower triangle or the upper triangle as the result will be
