@@ -150,14 +150,14 @@ the publication of the updated manuscript.
   in sections 4.2 to 4.6 and just show the parts that change because
   all the code is available in the fastLm.h and fastLm.cpp files in
   the source package.  The functions defined there are for comparison
-  with similar functions in the Rcpp and RcppArmadillo packages.  The
-  task being compared in all three of these packages is to produce the
-  estimated coefficients and their standard errors.  If we change the
-  purpose of the functions described here we either lose the ability
-  to compare timings with the other packages (we don't plan to rewrite
-  the other packages) or we need to include much more detail in this
-  paper because we would not be able to refer the reader to the code
-  in the package itself.
+  with similar functions in the Rcpp, RcppArmadillo and RcppGSL
+  packages.  The task being compared in all four of these packages is
+  to produce the estimated coefficients and their standard errors.  If
+  we change the purpose of the functions described here we either lose
+  the ability to compare timings with the other packages (we don't
+  plan to rewrite the other packages) or we need to include much more
+  detail in this paper because we would not be able to refer the
+  reader to the code in the package itself.
 
   Also, this code illustrates the use of the rowwise() and colwise()
   methods in Eigen, which behave like apply() in R and we think it is
