@@ -14,10 +14,15 @@ using   Eigen::VectorXd;
 typedef Map<MatrixXd>  MapMatd;
 typedef Map<MatrixXi>  MapMati;
 typedef Map<VectorXd>  MapVecd;
-inline MatrixXd AtA(const MapMatd& A) {
+inline  MatrixXd AtA(const MatrixXd& A) {
     int    n(A.cols());
     return   MatrixXd(n,n).setZero().selfadjointView<Lower>()
              .rankUpdate(A.adjoint());
+}
+inline  MatrixXd AAt(const MatrixXd& A) {
+    int    n(A.cols());
+    return   MatrixXd(n,n).setZero().selfadjointView<Lower>()
+             .rankUpdate(A);
 }
 '
 
@@ -123,16 +128,15 @@ const VectorXd  betahat(llt.solve(X.adjoint() * y));
 const VectorXd   fitted(X * betahat);
 const VectorXd    resid(y - fitted);
 const int            df(n - p);
-const double          s(resid.norm() / std::sqrt(double(df)));
-const VectorXd       se(s * llt.matrixL().solve(MatrixXd::Identity(p, p))
-                        .colwise().norm());
+const double        ssq(resid.squaredNorm() / double(df));
+const MatrixXd     vcov(ssq * llt.solve(MatrixXd::Identity(p, p)));
 return     List::create(Named("coefficients")   = betahat,
                         Named("fitted.values")  = fitted,
                         Named("residuals")      = resid,
-                        Named("s")              = s,
+                        Named("s")              = sqrt(ssq),
                         Named("df.residual")    = df,
                         Named("rank")           = p,
-                        Named("Std. Error")     = se);
+                        Named("vcov")           = vcov);
 '
 
 lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
@@ -142,9 +146,8 @@ str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
 str(lmFit <- with(trees, lm.fit(cbind(1, log(Girth)), log(Volume))))
 for (nm in c("coefficients", "residuals", "fitted.values", "rank"))
     stopifnot(all.equal(lltFit[[nm]], unname(lmFit[[nm]])))
-stopifnot(all.equal(lltFit[["Std. Error"]],
-                    unname(coef(summary(lm(log(Volume) ~ log(Girth), trees)))[,2])))
-
+stopifnot(all.equal(unname(vcov(lm(log(Volume) ~ log(Girth), trees))),
+                    lltVCFit$vcov))
 
 ## section 4.3
 
