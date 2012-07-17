@@ -11,6 +11,8 @@
 prettyVersion <- packageDescription("RcppEigen")$Version
 rcppeigen.date <- packageDescription("RcppEigen")$Date
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
+#require("RcppEigen")
+#eigenVersion <- paste(unlist(.Call("eigen_version", FALSE)), collapse=".")
 @
 
 \author{Douglas Bates\\Univ.~of Wisconsin/Madison \And Dirk Eddelbuettel\\Debian Project} % \And Romain Fran\c{c}ois\\R Enthusiasts}
@@ -1425,14 +1427,19 @@ has been passed a matrix that is to be used in its transposed form and
 evaluates the update by taking inner products of columns of $\bm X$
 instead of rows of $\bm X^\prime$.
 
-Occasionally the method for \code{Rcpp::wrap} will not force an
-evaluation when it should.  This is at least what Bill Venables calls
-an ``infelicity'' in the code. %, if not an outright bug.
+As \pkg{Eigen} has developed some of these unevaluated expressions
+have been modified.  In \pkg{Eigen 3.1}, which is incorporated in
+version \Sexpr{prettyVersion} of \pkg{RcppEigen}, the \code{.adjoint()} method applied
+to a real dense matrix copies the contents of the original matrix, flags
+it as row-major and interchanges the number of rows and columns.  This
+is indeed the adjoint of the original matrix but the \code{wrap} method
+is not prepared to handle a row-major matrix and throws an error.
+
 In the code for the transpose of an integer matrix shown in
-Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi} object
-before applying \code{wrap} to it.  The assignment forces the evaluation.  If
-this step is skipped, as in Figure~\ref{badtrans}, an answer with the correct
-shape but incorrect contents is obtained.
+Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi}
+object before applying \code{wrap} to it.  The assignment forces the
+evaluation as a column-major matrix.  If this step is skipped, as in
+Figure~\ref{badtrans}, an error results.
 
 \begin{figure}[htb]
   %\begin{quote}
@@ -1446,7 +1453,7 @@ shape but incorrect contents is obtained.
   \normalsize
   %\end{quote}
   \hrule
-  \caption{\code{badtransCpp}: Transpose producing incorrect results.}
+  \caption{\code{badtransCpp}: Transpose producing a run-time error.}
   \label{badtrans}
 \end{figure}
 \begin{verbatim}
@@ -1454,14 +1461,10 @@ R> Ai <- matrix(1:6, ncol=2L)
 R> ftrans2 <- cxxfunction(signature(AA = "matrix"),
 +                         badtransCpp, "RcppEigen", incl)
 R> (At <- ftrans2(Ai))
-     [,1] [,2] [,3]
-[1,]    1    3    5
-[2,]    2    4    6
-R> all.equal(At, t(Ai))
-[1] "Mean relative difference: 0.4285714"
+Error in ftrans2(Ai) : R requires column-major dense matrices
 \end{verbatim}
 
-So the recommended practice is to first assign objects before wrapping them
+The recommended practice is to first assign objects before wrapping them
 for return to \proglang{R}.
 
 \section{Sparse matrices}
@@ -1505,13 +1508,8 @@ R> stopifnot(all.equal(rr$At, t(KNex$mm)),
 Sparse Cholesky decompositions are provided by the
 \code{SimplicialLLT} and \code{SimplicialLDLT} classes in the
 \pkg{RcppEigen} package for \proglang{R}.  These are
-subclasses of the \code{SimplicialCholesky} templated class in the
-\code{unsupported} section of the \pkg{Eigen} library.  A sample usage
-is shown in Figure~\ref{fig:spLS}.  The \pkg{RcppEigen} package also
-provides the \code{CholmodDecomposition} class which uses the
-\pkg{CHOLMOD} sparse matrix decompositions provided in the compiled
-code for the \pkg{Matrix} package.  Its use is also shown in
-Figure~\ref{fig:spLS}.
+subclasses of the \code{SimplicialCholesky} templated.  A sample usage
+is shown in Figure~\ref{fig:spLS}.
 
 \begin{figure}[htb]
   %\begin{quote}
@@ -1521,18 +1519,13 @@ Figure~\ref{fig:spLS}.
     \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MSpMat}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{SpMat}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SimplicialLDLt}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{SpChol}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{CholmodDecomposition}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$\ }\hlstd{CholMD}\hlopt{;}\hspace*{\fill}\\
     \hlstd{}\hspace*{\fill}\\
     \hlkwb{const\ }\hlstd{SpMat}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MSpMat}\hlopt{$>$(}\hlstd{AA}\hlopt{).}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ }\hlstd{}\hlkwd{Aty}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{as}\hlopt{$<$}\hlstd{MapVecd}\hlopt{$>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
     \hlstd{}\hlkwb{const\ }\hlstd{SpChol}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Ch}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{At}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
     \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ }\hlstd{CholMD}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{L}\hlstd{}\hlopt{(}\hlstd{At}\hlopt{);}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{L}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"L"}\hlstd{}\hlopt{{)}}\hlstd{\ \ \ \ \ \ \ \ }\hlopt{=\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlopt{(}\hlstd{L}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"betahatS"}\hlstd{}\hlopt{{)}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}{{(}}\hlstd{}\hlstr{"betahatC"}\hlstd{}\hlopt{{)}\ =\ }\hlstd{L}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{)}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
+    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"betahat"}\hlstd{}\hlopt{{)}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{)}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
     \mbox{}
     \normalfont
     \normalsize
@@ -1546,40 +1539,15 @@ Figure~\ref{fig:spLS}.
 R> sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
 +                         sparseLSCpp, "RcppEigen", incl)
 R> str(rr <-  sparse2(KNex$mm, KNex$y))
-List of 4
- $ L       :Formal class 'dCHMsimpl' [package "Matrix"] with 10 slots
-  .. ..@ x       : num [1:7395] 1 0.0919 -0.1241 -0.0984 1 ...
-  .. ..@ p       : int [1:713] 0 4 8 12 16 24 31 39 46 54 ...
-  .. ..@ i       : int [1:7395] 0 694 699 708 1 692 698 707 2 692 ...
-  .. ..@ nz      : int [1:712] 4 4 4 4 8 7 8 7 8 7 ...
-  .. ..@ nxt     : int [1:714] 1 2 3 4 5 6 7 8 9 10 ...
-  .. ..@ prv     : int [1:714] 713 0 1 2 3 4 5 6 7 8 ...
-  .. ..@ colcount: int [1:712] 4 4 4 4 8 7 8 7 8 7 ...
-  .. ..@ perm    : int [1:712] 256 243 242 241 213 693 212 692 125 633 ...
-  .. ..@ type    : int [1:4] 2 0 0 1
-  .. ..@ Dim     : int [1:2] 712 712
- $ betahatS: num [1:712] 823 340 473 349 188 ...
- $ betahatC: num [1:712] 823 340 473 349 188 ...
- $ perm    : int [1:712] 120 334 118 332 331 489 333 490 340 131 ...
+List of 2
+ $ betahat: num [1:712] 823 340 473 349 188 ...
+ $ perm   : int [1:712] 572 410 414 580 420 425 417 426 431 445 ...
 R> res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
 +                         crossprod(KNex$mm, KNex$y)))
-R> stopifnot(all.equal(rr$betahatS, res), all.equal(rr$betahatC, res))
-R>                                         # factors are different sizes
-R> c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
- nnzL nnzCh
- 7395  7451
+R> stopifnot(all.equal(rr$betahatS, res))
 R> all(rr$perm == Ch@perm) # fill-reducing permutations are different
 [1] FALSE
 \end{verbatim}
-
-The last two comparisons show that the fill-reducing permutation
-computed for the \code{CholMD} object is better (in the sense of
-producing a factor with fewer non-zero elements) than the one
-calculated by the \code{Matrix::Cholesky} function.  This is because
-the \code{CholMD} object is created from
-$\bm X$ using the COLAMD algorithm whereas the \code{Matrix::Cholesky}
-function requires $\bm X^\prime\bm X$ and uses the AMD algorithm.
-
 
 \section{Summary}
 

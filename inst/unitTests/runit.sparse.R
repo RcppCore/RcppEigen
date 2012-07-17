@@ -153,7 +153,7 @@ test.asSparse.double.RowMajor.R <- function(){
     checkEquals( res, rr, msg = "as<SparseMatrix<double, Eigen::RowMajor> >")  
 }
 
-test.solveCholmod.R <- function() {
+test.sparseCholesky.R <- function() {
     suppressMessages(require("Matrix", character.only=TRUE))
     data("KNex", package = "Matrix")
 
@@ -164,18 +164,17 @@ test.solveCholmod.R <- function() {
     using Eigen::Map;
     using Eigen::MappedSparseMatrix;
     using Eigen::SparseMatrix;
-    using Eigen::CholmodDecomposition;
-    using Eigen::CholmodAuto;
+    using Eigen::SimplicialLDLT;
     using Eigen::Success;
 
     List input(input_);
     const MappedSparseMatrix<double> m1 = input[0];
-    const Map<VectorXd>         v1 = input[1];
-    SparseMatrix<double>        m2(m1.cols(), m1.cols());
+    const Map<VectorXd>              v1 = input[1];
+    SparseMatrix<double>             m2(m1.cols(), m1.cols());
     m2.selfadjointView<Lower>().rankUpdate(m1.adjoint());
 
-    CholmodDecomposition<SparseMatrix<double> > ff(m2);
-    VectorXd                   res = ff.solve(m1.adjoint() * v1);
+    SimplicialLDLT<SparseMatrix<double> > ff(m2);
+    VectorXd                        res = ff.solve(m1.adjoint() * v1);
     
     return List::create(_["res"]   = res,
                         _["rows"]  = ff.rows(),
@@ -189,37 +188,3 @@ test.solveCholmod.R <- function() {
                                        "Cholmod solution")
 }
 
-test.solveCholmodRect.R <- function() {
-    suppressMessages(require("Matrix", character.only=TRUE))
-    data("KNex", package = "Matrix")
-
-    fx <- cxxfunction( signature(input_ = "list"), '
-    using Eigen::VectorXd;
-    using Eigen::MatrixXd;
-    using Eigen::Lower;
-    using Eigen::Map;
-    using Eigen::MappedSparseMatrix;
-    using Eigen::SparseMatrix;
-    using Eigen::CholmodDecomposition;
-    using Eigen::CholmodAuto;
-    using Eigen::Success;
-
-    List input(input_);
-    const MappedSparseMatrix<double> m1 = input[0];
-    const Map<VectorXd>         v1 = input[1];
-    SparseMatrix<double>        m2(m1.adjoint());
-
-    CholmodDecomposition<SparseMatrix<double> > ff(m2);
-    VectorXd                   res = ff.solve(m2 * v1);
-    
-    return List::create(_["res"]   = res,
-                        _["rows"]  = ff.rows(),
-                        _["cols"]  = ff.cols());
-',
-                      plugin = "RcppEigen")
-
-    rr <- fx(KNex)
-    checkEquals(rr[[1]], as.vector(solve(crossprod(KNex[[1]]),
-                                         crossprod(KNex[[1]], KNex[[2]]))),
-                                       "Cholmod solution")
-}
