@@ -33,7 +33,7 @@ fastLm.default <- function(X, y, method = 0L, ...) {
 
     res <- fastLmPure(X, y, as.integer(method[1]))
     res$call <- match.call()
-    res$intercept <- any(apply(X, 2, sd) == 0)
+    res$intercept <- any(apply(X, 2, function(x) all(x == 1)))
 
     class(res) <- "fastLm"
     res
