@@ -1,3 +1,7 @@
+2012-07-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/fastLm.R: Corrections for R^2 in no-intercept case
+
 2012-06-26  Douglas Bates  <bates@stat.wisc.edu>
 
 	* DESCRIPTION, R/unit.test.R, inst/include/Eigen/*: Massive
