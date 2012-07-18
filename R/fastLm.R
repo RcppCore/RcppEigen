@@ -1,6 +1,6 @@
 ## fastLm.R: Rcpp/Eigen implementation of lm()
 ##
-## Copyright (C)  2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C)  2011 - 2012  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -33,6 +33,7 @@ fastLm.default <- function(X, y, method = 0L, ...) {
 
     res <- fastLmPure(X, y, as.integer(method[1]))
     res$call <- match.call()
+    res$intercept <- any(apply(X, 2, sd) == 0)
 
     class(res) <- "fastLm"
     res
@@ -58,11 +59,12 @@ summary.fastLm <- function(object, ...) {
     ## cf src/stats/R/lm.R and case with no weights and an intercept
     f <- object$fitted.values
     r <- object$residuals
-    mss <- sum((f - mean(f))^2)
+    #mss <- sum((f - mean(f))^2)
+    mss <- if (object$intercept) sum((f - mean(f))^2) else sum(f^2)
     rss <- sum(r^2)
 
     object$r.squared <- mss/(mss + rss)
-    df.int <- 1 		# case of intercept
+    df.int <- if (object$intercept) 1L else 0L
     n <- length(f)
     rdf <- object$df
     object$adj.r.squared <- 1 - (1 - object$r.squared) * ((n - df.int)/rdf)
@@ -73,10 +75,12 @@ summary.fastLm <- function(object, ...) {
 print.summary.fastLm <- function(x, ...) {
     cat("\nCall:\n")
     print(x$call)
+    cat("\nResiduals:\n")
+    digits <- max(3, getOption("digits") - 3)
+    print(summary(x$residuals, digits=digits)[-4])
     cat("\n")
 
     printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE, ...)
-    digits <- max(3, getOption("digits") - 3)
     cat("\nResidual standard error: ", formatC(sqrt(x$s), digits=digits), " on ",
         formatC(x$df), " degrees of freedom\n", sep="")
     cat("Multiple R-squared: ", formatC(x$r.squared, digits=digits),
@@ -92,8 +96,9 @@ fastLm.formula <- function(formula, data=list(), method = 0L, ...) {
 
     res <- fastLm.default(X, y, method=method, ...)
     res$call <- match.call()
-    # I think this is redundant.  The formula is available as res$call$formula
+    ## I think this is redundant.  The formula is available as res$call$formula
     res$formula <- formula
+    res$intercept <- attr(attr(mf, "terms"), "intercept")
     res
 }
 
