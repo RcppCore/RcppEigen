@@ -189,8 +189,8 @@ return wrap(A.transpose());
 
 Ai <- matrix(1:6, ncol=2L)
 ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp, "RcppEigen", incl)
-(At <- ftrans2(Ai))
-all.equal(At, t(Ai))
+#(At <- ftrans2(Ai)) # now throws an error
+#all.equal(At, t(Ai))
 
 
 
@@ -215,20 +215,23 @@ stopifnot(all.equal(rr$At, t(KNex$mm)),
 
 
 sparseLSCpp <- '
-typedef Eigen::MappedSparseMatrix<double>   MSpMat;
-typedef Eigen::SparseMatrix<double>          SpMat;
-typedef Eigen::SimplicialLDLT<SpMat>        SpChol;
-//typedef Eigen::CholmodSimplicialLDLT<SpMat> CholMD;
+typedef Eigen::MappedSparseMatrix<double>  MSpMat;
+typedef Eigen::SparseMatrix<double>         SpMat;
+typedef Eigen::SimplicialLDLT<SpMat>       SpChol;
+typedef Eigen::CholmodDecomposition<SpMat> CholMD;
 
 const SpMat      At(as<MSpMat>(AA).adjoint());
 const VectorXd  Aty(At * as<MapVecd>(yy));
 const SpChol     Ch(At * At.adjoint());
 if (Ch.info() != Eigen::Success) return R_NilValue;
-//const CholMD      L(At);
-//if (L.info() != Eigen::Success) return R_NilValue;
-return List::create(//Named("L")        = wrap(L),
-                    Named("betahat")  = Ch.solve(Aty),
-//                    Named("betahatC") = L.solve(Aty),
+CholMD           L;
+L.compute(At * At.adjoint());
+if (L.info() != Eigen::Success) return R_NilValue;
+const VectorXd betahat  = Ch.solve(Aty);
+const VectorXd betahatC = L.solve(Aty);
+return List::create(//Named("L")        = L,
+                    Named("betahat")  = betahat,
+                    Named("betahatC") = betahatC,
                     Named("perm")     = Ch.permutationP().indices());
 '
 
@@ -239,5 +242,5 @@ res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
                        crossprod(KNex$mm, KNex$y)))
 stopifnot(all.equal(rr$betahat, res))
                                         # factors are different sizes
-c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
+#c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
 all(rr$perm == Ch@perm) # fill-reducing permutations are different
