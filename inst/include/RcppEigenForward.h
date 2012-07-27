@@ -43,8 +43,8 @@
 namespace Rcpp {
     /* support for wrap */
    
-    template<>
-    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<double> >& obj);
+    template<typename T>
+    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj);
 
     namespace traits {
 
