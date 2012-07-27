@@ -26,7 +26,7 @@ test.wrap.R <- function(){
     fx <- cxxfunction( , '
 
     List vecs = List::create(
-//        _["Vec<complex>"] = Eigen::VectorXcd::Zero(5),
+        _["Vec<complex>"] = Eigen::VectorXcd::Zero(5),
         _["Vec<double>"]  = Eigen::VectorXd::Zero(5),
         _["Vec<float>"]   = Eigen::VectorXf::Zero(5),
         _["Vec<int>"]     = Eigen::VectorXi::Zero(5)
@@ -39,7 +39,7 @@ test.wrap.R <- function(){
     // during execution of the code.  A MatrixX<T> object can be resized to have
     // a different number of columns.  A VectorX<T> object cannot.
     List cols = List::create(
-//        _["Col<complex>"] = Eigen::MatrixXcd::Zero(5, 1),
+        _["Col<complex>"] = Eigen::MatrixXcd::Zero(5, 1),
         _["Col<double>"]  = Eigen::MatrixXd::Zero(5, 1),
         _["Col<float>"]   = Eigen::MatrixXf::Zero(5, 1),
         _["Col<int>"]     = Eigen::MatrixXi::Zero(5, 1)
@@ -53,7 +53,7 @@ test.wrap.R <- function(){
 //    );
 
     List matrices = List::create(
-//        _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
+        _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
         _["Mat<double>"]  = Eigen::MatrixXd::Identity(3, 3),
         _["Mat<float>"]   = Eigen::MatrixXf::Identity(3, 3),
         _["Mat<int>"]     = Eigen::MatrixXi::Identity(3, 3)
@@ -63,7 +63,7 @@ test.wrap.R <- function(){
     // componentwise arithmetic.  A * B is matrix multiplication for
     // matrices and componentwise multiplication for arrays.
     List arrays2 = List::create(
-//        _["Arr2<complex>"] = Eigen::ArrayXXcd::Zero(3, 3),
+        _["Arr2<complex>"] = Eigen::ArrayXXcd::Zero(3, 3),
         _["Arr2<double>"]  = Eigen::ArrayXXd::Zero(3, 3),
         _["Arr2<float>"]   = Eigen::ArrayXXf::Zero(3, 3),
         _["Arr2<int>"]     = Eigen::ArrayXXi::Zero(3, 3)
@@ -73,7 +73,7 @@ test.wrap.R <- function(){
     // but allow componentwise arithmetic, including functions like exp, log,
     // sqrt, ...
     List arrays1 = List::create(
-//        _["Arr1<complex>"] = Eigen::ArrayXcd::Zero(5),
+        _["Arr1<complex>"] = Eigen::ArrayXcd::Zero(5),
         _["Arr1<double>"]  = Eigen::ArrayXd::Zero(5),
         _["Arr1<float>"]   = Eigen::ArrayXf::Zero(5),
         _["Arr1<int>"]     = Eigen::ArrayXi::Zero(5)
@@ -102,35 +102,35 @@ test.wrap.R <- function(){
 
     res <- fx()
 
-##    checkEquals( res[[1]][[1]], complex(5), msg = "VectorXcd::Zero(5)")
-    checkEquals( res[[1]][[1]], double(5), msg = "VectorXd::Zero(5)")
-    checkEquals( res[[1]][[2]], double(5), msg = "VectorXf::Zero(5)")
-    checkEquals( res[[1]][[3]], integer(5), msg = "VectorXi::Zero(5)")
+    checkEquals( res[[1]][[1]], complex(5), msg = "VectorXcd::Zero(5)")
+    checkEquals( res[[1]][[2]], double(5), msg = "VectorXd::Zero(5)")
+    checkEquals( res[[1]][[3]], double(5), msg = "VectorXf::Zero(5)")
+    checkEquals( res[[1]][[4]], integer(5), msg = "VectorXi::Zero(5)")
 
-##    checkEquals( res[[2]][[1]], (1+0i) * diag(nr=3L), msg = "MatrixXcd::Identity(3,3)")
-    checkEquals( res[[2]][[1]], diag(nr=3L), msg = "MatrixXd::Identity(3,3)")
-    checkEquals( res[[2]][[2]], diag(nr=3L), msg = "MatrixXf::Identity(3,3)")
-    checkEquals( res[[2]][[3]], matrix(as.integer((diag(nr=3L))),nr=3L), msg = "MatrixXi::Identity(3,3)")
+    checkEquals( res[[2]][[1]], (1+0i) * diag(nr=3L), msg = "MatrixXcd::Identity(3,3)")
+    checkEquals( res[[2]][[2]], diag(nr=3L), msg = "MatrixXd::Identity(3,3)")
+    checkEquals( res[[2]][[3]], diag(nr=3L), msg = "MatrixXf::Identity(3,3)")
+    checkEquals( res[[2]][[4]], matrix(as.integer((diag(nr=3L))),nr=3L), msg = "MatrixXi::Identity(3,3)")
 
 ##    checkEquals( res[[3]][[1]], matrix(complex(5), nr=1L), msg = "RowVectorXcd::Zero(5)" )
 ##    checkEquals( res[[3]][[1]], matrix(numeric(5), nr=1L), msg = "RowVectorXd::Zero(5)" )
 ##    checkEquals( res[[3]][[2]], matrix(numeric(5), nr=1L), msg = "RowVectorXf::Zero(5)" )
 ##    checkEquals( res[[3]][[3]], matrix(integer(5), nr=1L), msg = "RowVectorXi::Zero(5)" )
 
-##    checkEquals( res[[4]][[1]], as.matrix(complex(5)), msg = "MatrixXcd::Zero(5, 1)")
-    checkEquals( res[[3]][[1]], as.matrix(numeric(5)), msg = "MatrixXd::Zero(5, 1)")
-    checkEquals( res[[3]][[2]], as.matrix(numeric(5)), msg = "MatrixXf::Zero(5, 1)")
-    checkEquals( res[[3]][[3]], as.matrix(integer(5)), msg = "MatrixXi::Zero(5, 1)")
+    checkEquals( res[[3]][[1]], as.matrix(complex(5)), msg = "MatrixXcd::Zero(5, 1)")
+    checkEquals( res[[3]][[2]], as.matrix(numeric(5)), msg = "MatrixXd::Zero(5, 1)")
+    checkEquals( res[[3]][[3]], as.matrix(numeric(5)), msg = "MatrixXf::Zero(5, 1)")
+    checkEquals( res[[3]][[4]], as.matrix(integer(5)), msg = "MatrixXi::Zero(5, 1)")
 
-##    checkEquals( res[[5]][[1]], matrix(complex(9L), nc=3L), msg = "ArrayXXcd::Zero(3,3)")
-    checkEquals( res[[4]][[1]], matrix(numeric(9L), nc=3L), msg = "ArrayXXd::Zero(3,3)")
-    checkEquals( res[[4]][[2]], matrix(numeric(9L), nc=3L), msg = "ArrayXXf::Zero(3,3)")
-    checkEquals( res[[4]][[3]], matrix(integer(9L), nc=3L), msg = "ArrayXXi::Zero(3,3)")
+    checkEquals( res[[4]][[1]], matrix(complex(9L), nc=3L), msg = "ArrayXXcd::Zero(3,3)")
+    checkEquals( res[[4]][[2]], matrix(numeric(9L), nc=3L), msg = "ArrayXXd::Zero(3,3)")
+    checkEquals( res[[4]][[3]], matrix(numeric(9L), nc=3L), msg = "ArrayXXf::Zero(3,3)")
+    checkEquals( res[[4]][[4]], matrix(integer(9L), nc=3L), msg = "ArrayXXi::Zero(3,3)")
 
-##    checkEquals( res[[6]][[1]], complex(5), msg = "ArrayXcd::Zero(5)")
-    checkEquals( res[[5]][[1]], double(5), msg = "ArrayXd::Zero(5)")
-    checkEquals( res[[5]][[2]], double(5), msg = "ArrayXf::Zero(5)")
-    checkEquals( res[[5]][[3]], integer(5), msg = "ArrayXi::Zero(5)")
+    checkEquals( res[[5]][[1]], complex(5), msg = "ArrayXcd::Zero(5)")
+    checkEquals( res[[5]][[2]], double(5), msg = "ArrayXd::Zero(5)")
+    checkEquals( res[[5]][[3]], double(5), msg = "ArrayXf::Zero(5)")
+    checkEquals( res[[5]][[4]], integer(5), msg = "ArrayXi::Zero(5)")
 
     oneTen <- seq(1, 10, length.out=6L)
 
@@ -184,9 +184,10 @@ test.as.MMat <- function(){
     List input(input_) ;
     const Eigen::Map<Eigen::MatrixXi>   m1 = input[0]; // maps share storage and do not allow conversion
     const Eigen::Map<Eigen::MatrixXd>   m2 = input[1] ;
+// FIXME: Write a version of as specifically for complex matrices.
 //    const Eigen::Map<Eigen::MatrixXcd>  m3 = input[2] ; 
 
-    List res = List::create(m1.sum(), m2.sum()); //, m3.sum());
+    List res = List::create(m1.sum(), m2.sum());//, m3.sum());
 
     return res ;
 
@@ -194,10 +195,10 @@ test.as.MMat <- function(){
 
     integer_mat <- matrix(as.integer(diag(nr=4L)), nc=4L)
     numeric_mat <- diag(nr=5L)
-#    complex_mat <- (1+0i) * diag(nr=5L)
-    res <- fx(list(integer_mat, numeric_mat)) #, complex_mat))
-    checkEquals(unlist(res), c(4L, 5#, 5+0i
-                               ), msg = "as<MMat>" )
+    complex_mat <- (1+0i) * diag(nr=5L)
+    res <- fx(list(integer_mat, numeric_mat, complex_mat))
+    checkEquals(unlist(res), c(4L, 5)#, 5+0i)
+                , msg = "as<MMat>" )
 }
 
 test.as.MSpMat <- function() {

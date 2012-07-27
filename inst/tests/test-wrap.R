@@ -68,18 +68,18 @@ List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
     // during execution of the code.  A MatrixX<T> object can be resized to have
     // a different number of columns.  A VectorX<T> object cannot.
 
-List cols = List::create(Named("Col<complex>", cdMat::Zero(5, 1)),
+    List cols = List::create(Named("Col<complex>", cdMat::Zero(5, 1)),
 			 Named("Col<double>",    Mat::Zero(5, 1)),
 			 Named("Col<float>",    fMat::Zero(5, 1)),
 			 Named("Col<int>",      iMat::Zero(5, 1))
     );
 
-    List rows = List::create(
-        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
-        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
-        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
-        _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
-    );
+//    List rows = List::create(
+//        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
+//        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
+//        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
+//        _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
+//    );
 
     List matrices = List::create(
         _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
@@ -119,7 +119,7 @@ List cols = List::create(Named("Col<complex>", cdMat::Zero(5, 1)),
     List output = List::create(
     	_["vectors : VectorX<T>"]   = vecs,
     	_["matrices : MatrixX<T>"]  = matrices,
-    	_["rows : RowVectorX<T>"]   = rows,
+//    	_["rows : RowVectorX<T>"]   = rows,
     	_["columns : MatrixX<T>"]   = cols,
         _["arrays2d : ArrayXX<T>"]  = arrays2,
         _["arrays1d : ArrayX<T>"]   = arrays1,
@@ -170,33 +170,33 @@ test_that("array", {
     expect_that(res[[2]][[3]], equals(diag(nr=3L)))
     expect_that(res[[2]][[4]], equals(matrix(as.integer((diag(nr=3L))),nr=3L)))
 
-    expect_that(res[[3]][[1]], equals(matrix(complex(5), nr=1L)))
-    expect_that(res[[3]][[2]], equals(matrix(numeric(5), nr=1L)))
-    expect_that(res[[3]][[3]], equals(matrix(numeric(5), nr=1L)))
-    expect_that(res[[3]][[4]], equals(matrix(integer(5), nr=1L)))
+#    expect_that(res[[3]][[1]], equals(matrix(complex(5), nr=1L)))
+#    expect_that(res[[3]][[1]], equals(matrix(numeric(5), nr=1L)))
+#    expect_that(res[[3]][[2]], equals(matrix(numeric(5), nr=1L)))
+#    expect_that(res[[3]][[3]], equals(matrix(integer(5), nr=1L)))
 
-    expect_that(res[[4]][[1]], equals(as.matrix(complex(5))))
-    expect_that(res[[4]][[2]], equals(as.matrix(numeric(5))))
-    expect_that(res[[4]][[3]], equals(as.matrix(numeric(5))))
-    expect_that(res[[4]][[4]], equals(as.matrix(integer(5))))
+    expect_that(res[[3]][[1]], equals(as.matrix(complex(5))))
+    expect_that(res[[3]][[2]], equals(as.matrix(numeric(5))))
+    expect_that(res[[3]][[3]], equals(as.matrix(numeric(5))))
+    expect_that(res[[3]][[4]], equals(as.matrix(integer(5))))
 
-    expect_that(res[[5]][[1]], equals(matrix(complex(9L), nc=3L)))
-    expect_that(res[[5]][[2]], equals(matrix(numeric(9L), nc=3L)))
-    expect_that(res[[5]][[3]], equals(matrix(numeric(9L), nc=3L)))
-    expect_that(res[[5]][[4]], equals(matrix(integer(9L), nc=3L)))
+    expect_that(res[[4]][[1]], equals(matrix(complex(9L), nc=3L)))
+    expect_that(res[[4]][[2]], equals(matrix(numeric(9L), nc=3L)))
+    expect_that(res[[4]][[3]], equals(matrix(numeric(9L), nc=3L)))
+    expect_that(res[[4]][[4]], equals(matrix(integer(9L), nc=3L)))
 
-    expect_that(res[[6]][[1]], equals(complex(5)))
-    expect_that(res[[6]][[2]], equals(double(5)))
-    expect_that(res[[6]][[3]], equals(double(5)))
-    expect_that(res[[6]][[4]], equals(integer(5)))
+    expect_that(res[[5]][[1]], equals(complex(5)))
+    expect_that(res[[5]][[2]], equals(double(5)))
+    expect_that(res[[5]][[3]], equals(double(5)))
+    expect_that(res[[5]][[4]], equals(integer(5)))
 
     oneTen <- seq(1, 10, length.out=6L)
 
-    expect_that(res[[7]][[1]], equals(oneTen))
-    expect_that(res[[7]][[2]], equals(log(oneTen)))
-    expect_that(res[[7]][[3]], equals(exp(oneTen)))
-    expect_that(res[[7]][[4]], equals(sqrt(oneTen)))
-    expect_that(res[[7]][[5]], equals(cos(oneTen)))
+    expect_that(res[[6]][[1]], equals(oneTen))
+    expect_that(res[[6]][[2]], equals(log(oneTen)))
+    expect_that(res[[6]][[3]], equals(exp(oneTen)))
+    expect_that(res[[6]][[4]], equals(sqrt(oneTen)))
+    expect_that(res[[6]][[5]], equals(cos(oneTen)))
 })
 
 res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
