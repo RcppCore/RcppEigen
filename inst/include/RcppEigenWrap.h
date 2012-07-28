@@ -26,8 +26,8 @@ namespace Rcpp{
 
     namespace RcppEigen{
 
-//        template<>
-        SEXP Eigen_cholmod_wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<double> >& obj) {
+        template<typename T>
+        SEXP Eigen_cholmod_wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj) {
             const cholmod_factor* f = obj.factor();
             if (f->minor < f->n)
                 throw std::runtime_error("CHOLMOD factorization was unsuccessful");
@@ -63,8 +63,8 @@ namespace Rcpp{
 
     } /* namespace RcppEigen */
 
-    template<>
-    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<double> >& obj) {
+    template<typename T>
+    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj) {
         return RcppEigen::Eigen_cholmod_wrap(obj);
     }
 
@@ -81,10 +81,14 @@ namespace Rcpp{
         template <typename T> 
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ){
             int m = obj.rows(), n = obj.cols();
-            SEXP ans = PROTECT(::Rcpp::wrap(obj.data(), obj.data() + m * n));
+			typename Eigen::internal::conditional<T::IsRowMajor,
+												  Eigen::Matrix<typename T::Scalar,
+																T::RowsAtCompileTime,
+																T::ColsAtCompileTime,
+																Eigen::ColMajor>,
+												  const T&>::type objCopy(obj);	
+			SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + m * n));
             if( T::ColsAtCompileTime != 1 ) {
-                if (T::IsRowMajor)
-                    throw std::invalid_argument("R requires column-major dense matrices");
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
                 d[0] = m;
