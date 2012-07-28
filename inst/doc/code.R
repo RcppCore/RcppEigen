@@ -189,8 +189,8 @@ return wrap(A.transpose());
 
 Ai <- matrix(1:6, ncol=2L)
 ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp, "RcppEigen", incl)
-#(At <- ftrans2(Ai)) # now throws an error
-#all.equal(At, t(Ai))
+(At <- ftrans2(Ai))
+all.equal(At, t(Ai))
 
 
 
