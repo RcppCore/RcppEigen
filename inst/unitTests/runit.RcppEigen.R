@@ -45,7 +45,7 @@ test.wrap.R <- function(){
         _["Col<int>"]     = Eigen::MatrixXi::Zero(5, 1)
     );
 
-//    List rows = List::create(
+//    List rows = List::create(         // Do not try to wrap row vectors
 //        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
 //        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
 //        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
@@ -102,43 +102,43 @@ test.wrap.R <- function(){
 
     res <- fx()
 
-    checkEquals( res[[1]][[1]], complex(5), msg = "VectorXcd::Zero(5)")
-    checkEquals( res[[1]][[2]], double(5), msg = "VectorXd::Zero(5)")
-    checkEquals( res[[1]][[3]], double(5), msg = "VectorXf::Zero(5)")
-    checkEquals( res[[1]][[4]], integer(5), msg = "VectorXi::Zero(5)")
+    checkEquals( res[["vectors : VectorX<T>"]][["Vec<complex>"]], complex(5), msg = "VectorXcd::Zero(5)")
+    checkEquals( res[["vectors : VectorX<T>"]][["Vec<double>"]], double(5), msg = "VectorXd::Zero(5)")
+    checkEquals( res[["vectors : VectorX<T>"]][["Vec<float>"]], double(5), msg = "VectorXf::Zero(5)")
+    checkEquals( res[["vectors : VectorX<T>"]][["Vec<int>"]], integer(5), msg = "VectorXi::Zero(5)")
 
-    checkEquals( res[[2]][[1]], (1+0i) * diag(nr=3L), msg = "MatrixXcd::Identity(3,3)")
-    checkEquals( res[[2]][[2]], diag(nr=3L), msg = "MatrixXd::Identity(3,3)")
-    checkEquals( res[[2]][[3]], diag(nr=3L), msg = "MatrixXf::Identity(3,3)")
-    checkEquals( res[[2]][[4]], matrix(as.integer((diag(nr=3L))),nr=3L), msg = "MatrixXi::Identity(3,3)")
+    checkEquals( res[["matrices : MatrixX<T>"]][["Mat<complex>"]], (1+0i) * diag(nr=3L), msg = "MatrixXcd::Identity(3,3)")
+    checkEquals( res[["matrices : MatrixX<T>"]][["Mat<double>"]], diag(nr=3L), msg = "MatrixXd::Identity(3,3)")
+    checkEquals( res[["matrices : MatrixX<T>"]][["Mat<float>"]], diag(nr=3L), msg = "MatrixXf::Identity(3,3)")
+    checkEquals( res[["matrices : MatrixX<T>"]][["Mat<int>"]], matrix(as.integer((diag(nr=3L))),nr=3L), msg = "MatrixXi::Identity(3,3)")
 
-##    checkEquals( res[[3]][[1]], matrix(complex(5), nr=1L), msg = "RowVectorXcd::Zero(5)" )
-##    checkEquals( res[[3]][[1]], matrix(numeric(5), nr=1L), msg = "RowVectorXd::Zero(5)" )
-##    checkEquals( res[[3]][[2]], matrix(numeric(5), nr=1L), msg = "RowVectorXf::Zero(5)" )
-##    checkEquals( res[[3]][[3]], matrix(integer(5), nr=1L), msg = "RowVectorXi::Zero(5)" )
+#    checkEquals( res[["rows : RowVectorX<T>"]][["Row<complex>"]], matrix(complex(5), nr=1L), msg = "RowVectorXcd::Zero(5)" )
+#    checkEquals( res[["rows : RowVectorX<T>"]][["Row<double>"]], matrix(numeric(5), nr=1L), msg = "RowVectorXd::Zero(5)" )
+#    checkEquals( res[["rows : RowVectorX<T>"]][["Row<float>"]], matrix(numeric(5), nr=1L), msg = "RowVectorXf::Zero(5)" )
+#    checkEquals( res[["rows : RowVectorX<T>"]][["Row<int>"]], matrix(integer(5), nr=1L), msg = "RowVectorXi::Zero(5)" )
 
-    checkEquals( res[[3]][[1]], as.matrix(complex(5)), msg = "MatrixXcd::Zero(5, 1)")
-    checkEquals( res[[3]][[2]], as.matrix(numeric(5)), msg = "MatrixXd::Zero(5, 1)")
-    checkEquals( res[[3]][[3]], as.matrix(numeric(5)), msg = "MatrixXf::Zero(5, 1)")
-    checkEquals( res[[3]][[4]], as.matrix(integer(5)), msg = "MatrixXi::Zero(5, 1)")
+    checkEquals( res[["columns : MatrixX<T>"]][["Col<complex>"]], as.matrix(complex(5)), msg = "MatrixXcd::Zero(5, 1)")
+    checkEquals( res[["columns : MatrixX<T>"]][["Col<double>"]], as.matrix(numeric(5)), msg = "MatrixXd::Zero(5, 1)")
+    checkEquals( res[["columns : MatrixX<T>"]][["Col<float>"]], as.matrix(numeric(5)), msg = "MatrixXf::Zero(5, 1)")
+    checkEquals( res[["columns : MatrixX<T>"]][["Col<int>"]], as.matrix(integer(5)), msg = "MatrixXi::Zero(5, 1)")
 
-    checkEquals( res[[4]][[1]], matrix(complex(9L), nc=3L), msg = "ArrayXXcd::Zero(3,3)")
-    checkEquals( res[[4]][[2]], matrix(numeric(9L), nc=3L), msg = "ArrayXXd::Zero(3,3)")
-    checkEquals( res[[4]][[3]], matrix(numeric(9L), nc=3L), msg = "ArrayXXf::Zero(3,3)")
-    checkEquals( res[[4]][[4]], matrix(integer(9L), nc=3L), msg = "ArrayXXi::Zero(3,3)")
+    checkEquals( res[["arrays2d : ArrayXX<T>"]][["Arr2<complex>"]], matrix(complex(9L), nc=3L), msg = "ArrayXXcd::Zero(3,3)")
+    checkEquals( res[["arrays2d : ArrayXX<T>"]][["Arr2<double>"]], matrix(numeric(9L), nc=3L), msg = "ArrayXXd::Zero(3,3)")
+    checkEquals( res[["arrays2d : ArrayXX<T>"]][["Arr2<float>"]], matrix(numeric(9L), nc=3L), msg = "ArrayXXf::Zero(3,3)")
+    checkEquals( res[["arrays2d : ArrayXX<T>"]][["Arr2<int>"]], matrix(integer(9L), nc=3L), msg = "ArrayXXi::Zero(3,3)")
 
-    checkEquals( res[[5]][[1]], complex(5), msg = "ArrayXcd::Zero(5)")
-    checkEquals( res[[5]][[2]], double(5), msg = "ArrayXd::Zero(5)")
-    checkEquals( res[[5]][[3]], double(5), msg = "ArrayXf::Zero(5)")
-    checkEquals( res[[5]][[4]], integer(5), msg = "ArrayXi::Zero(5)")
+    checkEquals( res[["arrays1d : ArrayX<T>"]][["Arr1<complex>"]], complex(5), msg = "ArrayXcd::Zero(5)")
+    checkEquals( res[["arrays1d : ArrayX<T>"]][["Arr1<double>"]], double(5), msg = "ArrayXd::Zero(5)")
+    checkEquals( res[["arrays1d : ArrayX<T>"]][["Arr1<float>"]], double(5), msg = "ArrayXf::Zero(5)")
+    checkEquals( res[["arrays1d : ArrayX<T>"]][["Arr1<int>"]], integer(5), msg = "ArrayXi::Zero(5)")
 
     oneTen <- seq(1, 10, length.out=6L)
 
-    checkEquals( res[[6]][[1]], oneTen,       msg = "Op_seq")
-    checkEquals( res[[6]][[2]], log(oneTen),  msg = "Op_log")
-    checkEquals( res[[6]][[3]], exp(oneTen),  msg = "Op_exp")
-    checkEquals( res[[6]][[4]], sqrt(oneTen), msg = "Op_sqrt")
-    checkEquals( res[[6]][[5]], cos(oneTen),  msg = "Op_cos")
+    checkEquals( res[["operations : ArrayXd"]][["Op_seq"]],  oneTen,       msg = "Op_seq")
+    checkEquals( res[["operations : ArrayXd"]][["Op_log"]],  log(oneTen),  msg = "Op_log")
+    checkEquals( res[["operations : ArrayXd"]][["Op_exp"]],  exp(oneTen),  msg = "Op_exp")
+    checkEquals( res[["operations : ArrayXd"]][["Op_sqrt"]], sqrt(oneTen), msg = "Op_sqrt")
+    checkEquals( res[["operations : ArrayXd"]][["Op_cos"]],  cos(oneTen),  msg = "Op_cos")
 
 }
 
