@@ -80,13 +80,12 @@ namespace Rcpp{
         // for plain dense objects
         template <typename T> 
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ){
-            int m = obj.rows(), n = obj.cols();
 			typename Eigen::internal::conditional<T::IsRowMajor,
 												  Eigen::Matrix<typename T::Scalar,
 																T::RowsAtCompileTime,
-																T::ColsAtCompileTime,
-																Eigen::ColMajor>,
+																T::ColsAtCompileTime>,
 												  const T&>::type objCopy(obj);	
+            int m = obj.rows(), n = obj.cols();
 			SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + m * n));
             if( T::ColsAtCompileTime != 1 ) {
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
