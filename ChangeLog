@@ -1,3 +1,33 @@
+2012-07-30  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h, inst/unitTests/runit.RcppEigen.R:
+	  Another suggestion from Gael Guennebaud to allow row vectors to be
+	  wrapped.
+
+2012-07-28  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h, inst/unitTests/runit.RcppEigen.R: More
+	  fixes to RcppEigenWrap.h and adjustment of tests accordingly.
+	  The changes allow RowMajor matrices to be wrapped (thanks to Gael
+	  Guennebaud) but cannot handle RowVector types. There will need to be
+	  more template metaprogramming done to redirect the case of RowVector,
+	  which cannot be changed to a ColMajor form.
+	* src/Makevars: Because of changes in R, -DNDEBUG is automatic.
+	  One must override it with -UNDEBUG in the local ~/.R/Makevars to
+	  activate the debugging code.
+	* inst/doc/code.R: New version of wrap code provides correct answer to
+	  the badtrans example
+	* DESCRIPTION: Bump the date.
+2012-07-27  Douglas Bates <bates@stat.wisc.edu>
+	* inst/include/Eigen/*: Changed to released version of Eigen-3.1.0
+	  using the MPL2 license.
+
+2012-07-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/fastLm.R: o correct residual standard error display
+	* R/fastLm.R: o improved test for intercept once more with a tip of the
+	  hat to Doug
+
 2012-07-17  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/fastLm.R: Corrections for R^2 in no-intercept case
@@ -7,8 +37,28 @@
 	* DESCRIPTION, R/unit.test.R, inst/include/Eigen/*: Massive
 	changes related to upgrade to Eigen-3.1.0
 
+2012-03-13  Douglas Bates <bates@stat.wisc.edu>
+
+	* inst/include/RcppEigenWrap.h: Change the wrap methods to avoid
+	  creating Rcpp::Dimension objects (which are implicitly created by the
+	  Rcpp::Matrix constructor).
+	* inst/tests/test-solutions.R: Clean up. I defined the results then
+	  reevaluated them.
+
 2012-03-08  Douglas Bates <bates@stat.wisc.edu>
 
+	* inst/include/RcppEigenForward.h: Remove an include of
+	  RcppEigenConfig.h which is no longer needed.
+	* ChangeLog, NEWS, NEWS.org: Update Changelog and NEWS which is
+	  generated from an org-mode file NEWS.org
+	* inst/include/RcppEigenConfig.h,
+	  inst/include/unsupported/Eigen/MoreVectorization,
+	  inst/include/unsupported/Eigen/src/MoreVectorization/CMakeLists.txt:
+	  Delete the unsupported/Eigen/src/MoreVectorization module which we
+	  don't need
+	* inst/include/unsupported/Eigen/src/MoreVectorization/MathFunctions.h:
+	  Delete the unsupported/Eigen/src/MoreVectorization module which we
+	  don't need
 	* inst/tests/test-solutions.R, inst/tests/test-transform.R,
 	  inst/tests/test-wrap.R: Add testthat test files, temporarily disabled
 	  for R CMD check because of an unknown conflict
