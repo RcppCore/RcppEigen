@@ -28,6 +28,7 @@ namespace Rcpp{
 
         template<typename T>
         SEXP Eigen_cholmod_wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj) {
+			typedef T* Tpt;
             const cholmod_factor* f = obj.factor();
             if (f->minor < f->n)
                 throw std::runtime_error("CHOLMOD factorization was unsuccessful");
@@ -49,11 +50,11 @@ namespace Rcpp{
                 ans.slot("pi")    = ::Rcpp::wrap((int*)f->pi, ((int*)f->pi) + f->nsuper + 1);
                 ans.slot("px")    = ::Rcpp::wrap((int*)f->px, ((int*)f->px) + f->nsuper + 1);
                 ans.slot("s")     = ::Rcpp::wrap((int*)f->s, ((int*)f->s) + f->ssize);
-                ans.slot("x")     = ::Rcpp::wrap((T*)f->x, ((T*)f->x) + f->xsize);
+                ans.slot("x")     = ::Rcpp::wrap((Tpt)f->x, ((T*)f->x) + f->xsize);
             } else {
                 ans.slot("i")     = ::Rcpp::wrap((int*)f->i, ((int*)f->i) + f->nzmax);
                 ans.slot("p")     = ::Rcpp::wrap((int*)f->p, ((int*)f->p) + f->n + 1);
-                ans.slot("x")     = ::Rcpp::wrap((T*)f->x, ((T*)f->x) + f->nzmax);
+                ans.slot("x")     = ::Rcpp::wrap((Tpt)f->x, ((T*)f->x) + f->nzmax);
                 ans.slot("nz")    = ::Rcpp::wrap((int*)f->nz, ((int*)f->nz) + f->n);
                 ans.slot("nxt")   = ::Rcpp::wrap((int*)f->next, ((int*)f->next) + f->n + 2);
                 ans.slot("prv")   = ::Rcpp::wrap((int*)f->prev, ((int*)f->prev) + f->n + 2);

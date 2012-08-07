@@ -225,7 +225,7 @@ const VectorXd  Aty(At * as<MapVecd>(yy));
 const SpChol     Ch(At * At.adjoint());
 if (Ch.info() != Eigen::Success) return R_NilValue;
 CholMD           L;
-L.compute(At * At.adjoint());
+L.compute(At);
 if (L.info() != Eigen::Success) return R_NilValue;
 const VectorXd betahat  = Ch.solve(Aty);
 const VectorXd betahatC = L.solve(Aty);
