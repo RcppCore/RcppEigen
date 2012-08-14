@@ -186,13 +186,13 @@ class CholmodBase : internal::noncopyable
     
     inline Index cols() const { return m_cholmodFactor->n; }
     inline Index rows() const { return m_cholmodFactor->n; }
-    inline bool  isInitialized() const {return m_isInitialized;}
-    inline bool        is_ll() const {return m_cholmodFactor->is_ll;}
-    inline bool     is_super() const {return m_cholmodFactor->is_super;}
-    inline bool is_monotonic() const {return m_cholmodFactor->is_monotonic;}
-    inline int         minor() const {return m_cholmodFactor->minor;}
-    inline int      ordering() const {return m_cholmodFactor->ordering;}
-    inline size_t   nonZeros() const {return is_super() ? 0 : m_cholmodFactor->nzmax;}
+//    inline bool  isInitialized() const {return m_isInitialized;}
+//    inline bool        is_ll() const {return m_cholmodFactor->is_ll;}
+//    inline bool     is_super() const {return m_cholmodFactor->is_super;}
+//    inline bool is_monotonic() const {return m_cholmodFactor->is_monotonic;}
+//    inline int         minor() const {return m_cholmodFactor->minor;}
+//    inline int      ordering() const {return m_cholmodFactor->ordering;}
+//    inline size_t   nonZeros() const {return is_super() ? 0 : m_cholmodFactor->nzmax;}
     
     Derived& derived() { return *static_cast<Derived*>(this); }
     const Derived& derived() const { return *static_cast<const Derived*>(this); }
