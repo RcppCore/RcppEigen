@@ -218,20 +218,12 @@ sparseLSCpp <- '
 typedef Eigen::MappedSparseMatrix<double>  MSpMat;
 typedef Eigen::SparseMatrix<double>         SpMat;
 typedef Eigen::SimplicialLDLT<SpMat>       SpChol;
-typedef Eigen::CholmodDecomposition<SpMat> CholMD;
 
 const SpMat      At(as<MSpMat>(AA).adjoint());
 const VectorXd  Aty(At * as<MapVecd>(yy));
 const SpChol     Ch(At * At.adjoint());
 if (Ch.info() != Eigen::Success) return R_NilValue;
-CholMD           L;
-L.compute(At);
-if (L.info() != Eigen::Success) return R_NilValue;
-const VectorXd betahat  = Ch.solve(Aty);
-const VectorXd betahatC = L.solve(Aty);
-return List::create(//Named("L")        = L,
-                    Named("betahat")  = betahat,
-                    Named("betahatC") = betahatC,
+return List::create(Named("betahat")  = Ch.solve(Aty),
                     Named("perm")     = Ch.permutationP().indices());
 '
 
@@ -241,6 +233,5 @@ str(rr <-  sparse2(KNex$mm, KNex$y))
 res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
                        crossprod(KNex$mm, KNex$y)))
 stopifnot(all.equal(rr$betahat, res))
-                                        # factors are different sizes
-#c(nnzL=length(rr$L@x), nnzCh=length(Ch@x))
+
 all(rr$perm == Ch@perm) # fill-reducing permutations are different

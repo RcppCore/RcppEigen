@@ -133,7 +133,14 @@ libraries have been made available. One such \proglang{C++} library is
 KDE (a popular Linux desktop environment), initially focussing on fixed-size
 matrices to represent projections in a visualization application. \pkg{Eigen}
 grew from there and has over the course of about a decade produced three
-major releases with ``Eigen3'' being the current version.
+major releases with ``Eigen3'' being the current major version. To
+check the minor and patch version numbers, load the \pkg{RcppEigen}
+package and call
+\begin{verbatim}
+R> .Call("eigen_version", FALSE)
+major minor patch 
+    3     1     1 
+\end{verbatim}
 
 \pkg{Eigen} is of interest as the \proglang{R} system for statistical
 computation and graphics \citep{R:Main} is itself easily extensible. This is
@@ -213,7 +220,7 @@ The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \code{Eigen::MatrixXd}.  However, if one prefaces the use of these class
 names with a declaration like
 
-%% Alternatively, use 'highlight --enclose-pre --no-doc --latex --style=emacs --syntax=C++'
+%% Alternatively, use 'highlight --enclose-pre --no-doc -O latex --syntax=C++'
 %% as the command invoked from C-u M-|
 %% For version 3.5 of highlight this should be
 %%  highlight --enclose-pre --no-doc --out-format=latex --syntax=C++
@@ -1438,8 +1445,9 @@ is not prepared to handle a row-major matrix and throws an error.
 In the code for the transpose of an integer matrix shown in
 Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi}
 object before applying \code{wrap} to it.  The assignment forces the
-evaluation as a column-major matrix.  If this step is skipped, as in
-Figure~\ref{badtrans}, an error results.
+evaluation as a column-major matrix.  In early versions of the
+\pkg{RcppEigen} package if this step is skipped, as in
+Figure~\ref{badtrans}, the result would have been incorrect.
 
 \begin{figure}[htb]
   %\begin{quote}
@@ -1453,7 +1461,8 @@ Figure~\ref{badtrans}, an error results.
   \normalsize
   %\end{quote}
   \hrule
-  \caption{\code{badtransCpp}: Transpose producing a run-time error.}
+  \caption{\code{badtransCpp}: Transpose producing a run-time error in
+    early versions of \pkg{RcppEigen}.}
   \label{badtrans}
 \end{figure}
 \begin{verbatim}
@@ -1461,11 +1470,14 @@ R> Ai <- matrix(1:6, ncol=2L)
 R> ftrans2 <- cxxfunction(signature(AA = "matrix"),
 +                         badtransCpp, "RcppEigen", incl)
 R> (At <- ftrans2(Ai))
-Error in ftrans2(Ai) : R requires column-major dense matrices
+     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6
 \end{verbatim}
 
-The recommended practice is to first assign objects before wrapping them
-for return to \proglang{R}.
+Although the problem no longer persists for this particular example,
+the recommended practice is to first assign objects before wrapping
+them for return to \proglang{R}.
 
 \section{Sparse matrices}
 \label{sec:sparse}
@@ -1512,23 +1524,34 @@ subclasses of the \code{SimplicialCholesky} templated.  A sample usage
 is shown in Figure~\ref{fig:spLS}.
 
 \begin{figure}[htb]
+% typedef Eigen::MappedSparseMatrix<double>  MSpMat;
+% typedef Eigen::SparseMatrix<double>         SpMat;
+% typedef Eigen::SimplicialLDLT<SpMat>       SpChol;
+
+% const SpMat      At(as<MSpMat>(AA).adjoint());
+% const VectorXd  Aty(At * as<MapVecd>(yy));
+% const SpChol     Ch(At * At.adjoint());
+% if (Ch.info() != Eigen::Success) return R_NilValue;
+% return List::create(Named("betahat")  = Ch.solve(Aty),
+%                     Named("perm")     = Ch.permutationP().indices());
+
   %\begin{quote}
   \hrule \smallskip
-    \noindent
-    \ttfamily
-    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MSpMat}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{SpMat}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SimplicialLDLt}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{SpChol}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hspace*{\fill}\\
-    \hlkwb{const\ }\hlstd{SpMat}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MSpMat}\hlopt{$>$(}\hlstd{AA}\hlopt{).}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ }\hlstd{}\hlkwd{Aty}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{as}\hlopt{$<$}\hlstd{MapVecd}\hlopt{$>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
-    \hlstd{}\hlkwb{const\ }\hlstd{SpChol}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Ch}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{At}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
-    \hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"betahat"}\hlstd{}\hlopt{{)}\ =\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
-    \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{{)}}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
-    \mbox{}
-    \normalfont
-    \normalsize
+\noindent
+\ttfamily
+\hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{MappedSparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{MSpMat}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SparseMatrix}\hlopt{$<$}\hlstd{}\hlkwb{double}\hlstd{}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ \ \ }\hlopt{}\hlstd{SpMat}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{SimplicialLDLT}\hlopt{$<$}\hlstd{SpMat}\hlopt{$>$}\hlstd{\ \ \ \ \ \ \ }\hlopt{}\hlstd{SpChol}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlkwb{const\ }\hlstd{SpMat}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MSpMat}\hlopt{$>$(}\hlstd{AA}\hlopt{).}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+\hlstd{}\hlkwb{const\ }\hlstd{VectorXd}\hlstd{\ \ }\hlstd{}\hlkwd{Aty}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{as}\hlopt{$<$}\hlstd{MapVecd}\hlopt{$>$(}\hlstd{yy}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlkwb{const\ }\hlstd{SpChol}\hlstd{\ \ \ \ \ }\hlstd{}\hlkwd{Ch}\hlstd{}\hlopt{(}\hlstd{At\ }\hlopt{{*}\ }\hlstd{At}\hlopt{.}\hlstd{}\hlkwd{adjoint}\hlstd{}\hlopt{());}\hspace*{\fill}\\
+\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{info}\hlstd{}\hlopt{()\ !=\ }\hlstd{Eigen}\hlopt{::}\hlstd{Success}\hlopt{)\ }\hlstd{}\hlkwa{return\ }\hlstd{R\textunderscore NilValue}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlkwa{return\ }\hlstd{List}\hlopt{::}\hlstd{}\hlkwd{create}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{Named}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"betahat"}\hlstd{}\hlopt{)}\hlstd{\ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{solve}\hlstd{}\hlopt{(}\hlstd{Aty}\hlopt{),}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{Named}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"perm"}\hlstd{}\hlopt{)}\hlstd{\ \ \ \ \ }\hlopt{=\ }\hlstd{Ch}\hlopt{.}\hlstd{}\hlkwd{permutationP}\hlstd{}\hlopt{().}\hlstd{}\hlkwd{indices}\hlstd{}\hlopt{());}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\normalsize
   %\end{quote}
   \hrule
   \caption{\code{sparseLSCpp}: Solving a sparse least squares problem.}
@@ -1537,14 +1560,14 @@ is shown in Figure~\ref{fig:spLS}.
 
 \begin{verbatim}
 R> sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-+                         sparseLSCpp, "RcppEigen", incl)
++                        sparseLSCpp, "RcppEigen", incl)
 R> str(rr <-  sparse2(KNex$mm, KNex$y))
 List of 2
  $ betahat: num [1:712] 823 340 473 349 188 ...
  $ perm   : int [1:712] 572 410 414 580 420 425 417 426 431 445 ...
 R> res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
-+                         crossprod(KNex$mm, KNex$y)))
-R> stopifnot(all.equal(rr$betahatS, res))
++                        crossprod(KNex$mm, KNex$y)))
+R> stopifnot(all.equal(rr$betahat, res))
 R> all(rr$perm == Ch@perm) # fill-reducing permutations are different
 [1] FALSE
 \end{verbatim}
@@ -1571,7 +1594,3 @@ the excellent run-time performance of the \pkg{RcppEigen} package.
 %%% mode: latex
 %%% TeX-master: t
 %%% End:
-
-
-
-
