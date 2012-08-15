@@ -1,3 +1,8 @@
+2012-08-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/flags.R: Add two (unexported) functions CxxFlags() and
+	  RcppEigenCxxFlags() for use in Makefiles etc
+
 2012-07-30  Douglas Bates <bates@stat.wisc.edu>
 
 	* inst/include/RcppEigenWrap.h, inst/unitTests/runit.RcppEigen.R:
@@ -18,14 +23,15 @@
 	* inst/doc/code.R: New version of wrap code provides correct answer to
 	  the badtrans example
 	* DESCRIPTION: Bump the date.
+
 2012-07-27  Douglas Bates <bates@stat.wisc.edu>
 	* inst/include/Eigen/*: Changed to released version of Eigen-3.1.0
 	  using the MPL2 license.
 
 2012-07-19  Dirk Eddelbuettel  <edd@debian.org>
 
-	* R/fastLm.R: o correct residual standard error display
-	* R/fastLm.R: o improved test for intercept once more with a tip of the
+	* R/fastLm.R: correct residual standard error display
+	* R/fastLm.R: improved test for intercept once more with a tip of the
 	  hat to Doug
 
 2012-07-17  Dirk Eddelbuettel  <edd@debian.org>
