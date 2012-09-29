@@ -1,27 +1,26 @@
 \documentclass[shortnames,article,nojss]{jss}
-%]{jss}
+\usepackage{booktabs,bm,amsmath}
 %\VignetteIndexEntry{RcppEigen-intro}
 %\VignetteKeywords{linear algebra, template programming, C++, R, Rcpp}
 %\VignettePackage{RcppEigen}
 
-%\usepackage{booktabs,flafter,bm,amsmath}
-\usepackage{booktabs,bm,amsmath}
-
+%% VIGNETTE
 <<echo=FALSE,print=FALSE>>=
-prettyVersion <- packageDescription("RcppEigen")$Version
-rcppeigen.date <- packageDescription("RcppEigen")$Date
+pkgVersion <- packageDescription("RcppEigen")$Version
+pkgDate <- packageDescription("RcppEigen")$Date
 prettyDate <- format(Sys.Date(), "%B %e, %Y")
 #require("RcppEigen")
 #eigenVersion <- paste(unlist(.Call("eigen_version", FALSE)), collapse=".")
 @
 
-\author{Douglas Bates\\Univ.~of Wisconsin/Madison \And Dirk Eddelbuettel\\Debian Project} % \And Romain Fran\c{c}ois\\R Enthusiasts}
+\author{Douglas Bates\\Univ.~of Wisconsin/Madison \And Dirk Eddelbuettel\\Debian Project}
 \title{Fast and Elegant Numerical Linear Algebra\\ Using the \pkg{RcppEigen} Package}
-\date{\pkg{RcppEigen} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
+\date{\pkg{RcppEigen} version 0.3.1 as of September 26, 2012}
 
-\Plainauthor{Douglas Bates, Dirk Eddelbuettel} %, Romain Fran\c{c}ois}
+\Plainauthor{Douglas Bates, Dirk Eddelbuettel}
 \Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}
 \Shorttitle{Fast and Elegant Numerical Linear Algebra with RcppEigen}
+
 
 \Abstract{
   \noindent
@@ -54,13 +53,6 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   River Forest, IL, USA\\
   E-mail: \email{edd@debian.org}\\
   URL: \url{http://dirk.eddelbuettel.com}\\
-
-  % Romain Fran\c{c}ois\\
-  % Professional R Enthusiast\\
-  % 1 rue du Puits du Temple, 34 000 Montpellier\\
-  % FRANCE \\
-  % E-mail: \email{romain@r-enthusiasts.com}\\
-  % URL: \url{http://romainfrancois.blog.free.fr}
 }
 
 %% need no \usepackage{Sweave.sty}
@@ -93,8 +85,18 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 % ------------------------------------------------------------------------
 
 \begin{document}
+\SweaveOpts{engine=R,eps=FALSE}
 
-%\SweaveOpts{engine=R,eps=FALSE}
+\begin{quote} \footnotesize
+  This vignette corresponds to a paper forthcoming %published
+  in the \textsl{Journal of Statistical Software}. % fill in vol,nb later
+  It is currently still identical to the published paper.  Over time, this
+  vignette version may receive minor
+  updates. %For citations, please use the publication \citep{JSS:RcppEigen}.
+
+  This version corresponds to \pkg{RcppEigen} version \Sexpr{pkgVersion} and was
+  typeset on \Sexpr{prettyDate}.
+\end{quote}
 
 \section{Introduction}
 \label{sec:intro}
@@ -138,8 +140,8 @@ check the minor and patch version numbers, load the \pkg{RcppEigen}
 package and call
 \begin{verbatim}
 R> .Call("eigen_version", FALSE)
-major minor patch 
-    3     1     1 
+major minor patch
+    3     1     1
 \end{verbatim}
 
 \pkg{Eigen} is of interest as the \proglang{R} system for statistical
@@ -406,7 +408,7 @@ conventions in the \pkg{Eigen} documentation the \code{adjoint()}
 method is used in what follows to create the transpose of numeric or
 integer matrices.
 
-
+\pagebreak                      % Achim may hate me
 \subsection{Products and cross-products}
 \label{sec:products}
 
@@ -485,6 +487,7 @@ method is \code{triangularView}.  The triangle can be specified as
 For self-adjoint views the \code{rankUpdate} method adds a scalar multiple
 of $\bm A\bm A^\prime$ to the current symmetric matrix.  The scalar
 multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
+both $\bm A^\prime\bm A$ and $\bm A\bm A^\prime$ from a matrix $\bm A$.
 
 \begin{figure}[htb]
   \hrule \smallskip
@@ -1120,6 +1123,7 @@ method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
 % const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
 % const VectorXd             se(s * VDp.rowwise().norm());
 
+\pagebreak                      % Achim may hate me
 \subsection{Least squares using the column-pivoted QR decomposition}
 \label{sec:colPivQR}
 
@@ -1421,6 +1425,7 @@ SVD implementation of \pkg{Eigen} which is not a particularly fast SVD
 method.
 
 
+\pagebreak                      % Achim may hate me
 \section{Delayed evaluation}
 \label{sec:delayed}
 
@@ -1436,11 +1441,12 @@ instead of rows of $\bm X^\prime$.
 
 As \pkg{Eigen} has developed some of these unevaluated expressions
 have been modified.  In \pkg{Eigen 3.1}, which is incorporated in
-version \Sexpr{prettyVersion} of \pkg{RcppEigen}, the \code{.adjoint()} method applied
+version 0.3.1 of \pkg{RcppEigen}, the \code{.adjoint()} method applied
 to a real dense matrix copies the contents of the original matrix, flags
 it as row-major and interchanges the number of rows and columns.  This
-is indeed the adjoint of the original matrix but the \code{wrap} method
-is not prepared to handle a row-major matrix and throws an error.
+is indeed the adjoint of the original matrix but, at one time, the
+\code{wrap} method for the \pkg{Eigen} dense matrix classes would fail
+on row-major matrices.
 
 In the code for the transpose of an integer matrix shown in
 Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi}
