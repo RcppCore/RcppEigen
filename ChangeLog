@@ -1,3 +1,7 @@
+2012-11-28  Romain Francois  <romain@r-enthusiasts.com>
+
+	* include/RcppEigenWrap.h: compatibility issue with Rcpp 0.10.1
+
 2012-08-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/flags.R: Add two (unexported) functions CxxFlags() and

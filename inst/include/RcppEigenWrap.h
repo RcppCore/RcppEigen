@@ -154,87 +154,95 @@ namespace Rcpp{
 
 
     namespace traits {
-
         /* support for Rcpp::as */
-    
+        
+        template <typename T, int RTYPE>
+        class Eigen_Matrix_Exporter {
+            public:
+            Eigen_Matrix_Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+                if (TYPEOF(x) != RTYPE)
+                    throw std::invalid_argument("Wrong R type for mapped vector");
+                if (::Rf_isMatrix(x)) {
+                    int *dims = vec.dims() ;
+                    d_nrow = dims[0];
+                    d_ncol = dims[1];
+                }
+            }
+            T get() {return T(vec.begin(), d_nrow, d_ncol );}
+            private:
+                Rcpp::Vector<RTYPE> vec ;
+                int d_nrow, d_ncol ;
+        } ;
+       
+        
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > {
+            typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > OUT ;
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Rcpp::Vector<RTYPE> vec ;
+        
         public:
-            typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> >  MVType;
-            Exporter(SEXP x) : d_size(::Rf_length(x)) {
-                const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Exporter(SEXP x) : vec(x) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
-                typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
-                d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
             }
-            MVType get() {return MVType(d_start, d_size);}
-        protected:
-            const int d_size;
-            T*        d_start;
-        };
-
+            OUT get() {return OUT(vec.begin(), vec.size());}
+        } ;
+        
         template<typename T>
-        class Exporter<Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {
+        class Exporter< Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {
+            typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > OUT ;
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Rcpp::Vector<RTYPE> vec ;
+        
         public:
-            typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> >  MAType;
-            Exporter(SEXP x) : d_size(::Rf_length(x)) {
-                const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Exporter(SEXP x) : vec(x) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
-                typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
-                d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
             }
-            MAType get() {return MAType(d_start, d_size);}
-        protected:
-            const int d_size;
-            T*        d_start;
-        };
-
+            OUT get() {return OUT(vec.begin(), vec.size());}
+        } ;
+        
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > > {
-        public:
-            typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >  MMType;
-            Exporter(SEXP x) : d_nrow(::Rf_length(x)), d_ncol(1) {
-                const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > OUT ;
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Rcpp::Vector<RTYPE> vec ;
+            int d_nrow, d_ncol ;
+            
+            public:
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
-                typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
-                d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
                 if (::Rf_isMatrix(x)) {
-                    int *dims = INTEGER(::Rf_getAttrib(x, R_DimSymbol));
+                    int *dims = INTEGER( ::Rf_getAttrib( x, R_DimSymbol ) ) ;
                     d_nrow = dims[0];
                     d_ncol = dims[1];
                 }
             }
-            MMType get() {return MMType(d_start, d_nrow, d_ncol);}
-        protected:
-            int   d_nrow, d_ncol;
-            T*    d_start;
-        };
-
+            OUT get() {return OUT(vec.begin(), d_nrow, d_ncol );}
+        } ;  
+        
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> > > {
-        public:
-            typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >  MAType;
-            Exporter(SEXP x) : d_nrow(::Rf_length(x)), d_ncol(1) {
-                const int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            typedef typename Eigen::Map<Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> > OUT ;
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Rcpp::Vector<RTYPE> vec ;
+            int d_nrow, d_ncol ;
+            
+            public:
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
-                typedef typename ::Rcpp::traits::storage_type<RTYPE>::type STORAGE;
-                d_start         = ::Rcpp::internal::r_vector_start<RTYPE,STORAGE>(x);
                 if (::Rf_isMatrix(x)) {
-                    int *dims = INTEGER(::Rf_getAttrib(x, R_DimSymbol));
+                    int *dims = INTEGER( ::Rf_getAttrib( x, R_DimSymbol ) ) ;
                     d_nrow = dims[0];
                     d_ncol = dims[1];
                 }
             }
-            MAType get() {return MAType(d_start, d_nrow, d_ncol);}
-        protected:
-            int   d_nrow, d_ncol;
-            T*    d_start;
-        };
-
+            OUT get() {return OUT(vec.begin(), d_nrow, d_ncol );}
+        } ;  
+        
         template <typename T> 
         class Exporter<Eigen::Matrix<T, Eigen::Dynamic, 1> >
             : public IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T> {
