@@ -1,4 +1,4 @@
-2012-11-28  Romain Francois  <romain@r-enthusiasts.com>
+2012-11-29  Romain Francois  <romain@r-enthusiasts.com>
 
 	* include/RcppEigenWrap.h: compatibility issue with Rcpp 0.10.1
 
