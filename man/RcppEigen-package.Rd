@@ -20,5 +20,10 @@ Rcpp/Eigen bridge
   \url{http://eigen.tuxfamily.org}, Eigen is a versatile, fast, reliable
   and elegant collection of C++ classes for linear algebra.
 }
-\references{\url{http://eigen.tuxfamily.org}}
+\references{
+  Douglas Bates and Dirk Eddelbuettel (2013). Fast and Elegant Numerical
+  Linear Algebra Using the \pkg{RcppEigen} Package. \emph{Journal of
+    Statistical Software}, \bold{52(5)}, 1-24.
+  URL http://www.jstatsoft.org/v52/i05/.
+}
 \keyword{ package }
