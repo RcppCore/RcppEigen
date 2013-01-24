@@ -83,12 +83,6 @@ fastLm(X, \dots)
   \code{\link[MASS]{rlm}} functions..
 }
 \seealso{\code{\link{lm}}, \code{\link{lm.fit}}} 
-\references{
-  Douglas Bates and Dirk Eddelbuettel (2013). Fast and Elegant Numerical
-  Linear Algebra Using the \pkg{RcppEigen} Package. \emph{Journal of
-    Statistical Software}, \bold{52(5)}, 1-24.
-  URL http://www.jstatsoft.org/v52/i05/.
-}
 \author{
   Eigen is described at \url{http://eigen.tuxfamily.org}. RcppEigen is written by
   Douglas Bates, Dirk Eddelbuettel and Romain Francois.
