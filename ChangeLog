@@ -3,11 +3,6 @@
 	* vignettes/jss835/: Regroup all related files in this directory
 	* .Rbuildignore: Ignore vignettes/jss835
 
-2013-01-24  Douglas Bates  <bates@stat.wisc.edu>
-
-	* man/RcppEigen-package.Rd, man/fastlm.Rd, DESCRIPTION: Remove
-	references to JSS paper
-
 2013-01-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/CITATION: Added as provided by JSS editor
