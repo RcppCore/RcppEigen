@@ -1,12 +1,25 @@
 #+TITLE:     NEWS for RcppEigen-0.3.0
 #+AUTHOR:    Douglas Bates
 #+EMAIL:     bates@stat.wisc.edu
-#+DATE:      2012-06-26 Tue
+#+DATE:      2013-02-02 Sun
 #+DESCRIPTION: News regarding the latest version of RcppEigen
 #+KEYWORDS:
 #+LANGUAGE:  en
 
-* New features visible to users
+* New features visible to users in RcppEigen-0.3.1.2
+  + Upgraded to Eigen 3.1.2
+  + Fixes to RcppEigenWrap.h and adjustment of tests accordingly.
+    The changes allow RowMajor matrices to be wrapped (thanks to Gael
+    Guennebaud) but cannot handle RowVector types. There will need to be
+    more template metaprogramming done to redirect the case of RowVector,
+    which cannot be changed to a ColMajor form.
+  + Because of changes in R, -DNDEBUG is automatic. One must override it with
+    -UNDEBUG in the local ~/.R/Makevars to activate the debugging code.
+  + New (unexported) functions CxxFlags() and RcppEigenCxxFlags() for use in
+    Makefiles
+  + Fixes related to Rcpp 0.10.*
+
+* New features visible to users in RcppEigen-0.3.1
   + Upgraded to Eigen 3.1.0
   + Removed the "unsupported" Eigen module AutoDiff which defined a
     macro "sign" that conflicted with a function in the R API (which

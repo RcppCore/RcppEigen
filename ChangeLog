@@ -1,3 +1,9 @@
+2013-02-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: New minor version 0.3.1.2.1 for upload to CRAN and JSS
+
+	* NEWS.org: Updated
+
 2013-01-26  Dirk Eddelbuettel  <edd@debian.org>
 
 	* vignettes/jss835/: Regroup all related files in this directory
