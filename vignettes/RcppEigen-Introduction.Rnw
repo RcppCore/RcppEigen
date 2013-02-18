@@ -1,5 +1,5 @@
 \documentclass[shortnames,article,nojss]{jss}
-\usepackage{booktabs,bm,amsmath}
+\usepackage{booktabs,bm,amsmath,thumbpdf}
 %\VignetteIndexEntry{RcppEigen-intro}
 %\VignetteKeywords{linear algebra, template programming, C++, R, Rcpp}
 %\VignettePackage{RcppEigen}
@@ -13,21 +13,18 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 #eigenVersion <- paste(unlist(.Call("eigen_version", FALSE)), collapse=".")
 @
 
-\author{Douglas Bates\\Univ.~of Wisconsin/Madison \And Dirk Eddelbuettel\\Debian Project}
-\title{Fast and Elegant Numerical Linear Algebra\\ Using the \pkg{RcppEigen} Package}
-\date{\pkg{RcppEigen} version 0.3.1 as of September 26, 2012}
-
+\author{Douglas Bates\\University of Wisconsin-Madison \And Dirk Eddelbuettel\\Debian Project}
 \Plainauthor{Douglas Bates, Dirk Eddelbuettel}
-\Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}
-\Shorttitle{Fast and Elegant Numerical Linear Algebra with RcppEigen}
 
+\title{Fast and Elegant Numerical Linear Algebra Using the \pkg{RcppEigen} Package}
+\Plaintitle{Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package}
+\Shorttitle{Fast and Elegant Numerical Linear Algebra with \pkg{RcppEigen}}
 
 \Abstract{
-  \noindent
   The \pkg{RcppEigen} package provides access from \proglang{R}
   \citep{R:Main} to the \pkg{Eigen} \citep*{Eigen:Web} \proglang{C++}
   template library for numerical linear algebra. \pkg{Rcpp}
-  \citep{JSS:Rcpp,CRAN:Rcpp} classes and specializations of the
+  \citep{CRAN:Rcpp,Eddelbuettel:2013:Rcpp} classes and specializations of the
   \proglang{C++} templated functions \code{as} and \code{wrap} from
   \pkg{Rcpp} provide the ``glue'' for passing objects from
   \proglang{R} to \proglang{C++} and back.  Several introductory
@@ -37,26 +34,27 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   comparison. Last but not least, sparse matrix methods are discussed.
 }
 
-\Keywords{Linear algebra, template programming, \proglang{R}, \proglang{C++}, \pkg{Rcpp}} %% at least one keyword must be supplied
-\Plainkeywords{Linear algebra, template programmig, R, C++, Rcpp} %% without formatting
+\Keywords{linear algebra, template programming, \proglang{R}, \proglang{C++}, \pkg{Rcpp}}
+\Plainkeywords{linear algebra, template programmig, R, C++, Rcpp}
 
 \Address{
   Douglas Bates \\
   Department of Statistics \\
-  University of Wisconsin - Madison \\
-  Madison, WI, USA \\
+  University of Wisconsin-Madison \\
+  Madison, WI, United States of America \\
   E-mail: \email{bates@stat.wisc.edu} \\
   URL: \url{http://www.stat.wisc.edu/~bates/}\\
 
   Dirk Eddelbuettel \\
   Debian Project \\
-  River Forest, IL, USA\\
+  River Forest, IL, United States of America\\
   E-mail: \email{edd@debian.org}\\
   URL: \url{http://dirk.eddelbuettel.com}\\
 }
 
 %% need no \usepackage{Sweave.sty}
 
+\newcommand{\argmin}{\operatorname{argmin}\displaylimits}
 \newcommand{\rank}{\operatorname{rank}}
 
 %% highlights macros
@@ -66,9 +64,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0,0,0}{#1}}
 \newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
 \newcommand{\hlesc}[1]{\textcolor[rgb]{0.74,0.55,0.55}{#1}}
-%\newcommand{\hlstr}[1]{\textcolor[rgb]{0.74,0.55,0.55}{#1}}
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.90,0.15,0.15}{#1}}
-%green: \newcommand{\hlstr}[1]{\textcolor[rgb]{0.13,0.67,0.13}{#1}} % 0.74 -> % 0.90; 0.55 -> 0.25
 \newcommand{\hldstr}[1]{\textcolor[rgb]{0.74,0.55,0.55}{#1}}
 \newcommand{\hlslc}[1]{\textcolor[rgb]{0.67,0.13,0.13}{\it{#1}}}
 \newcommand{\hlcom}[1]{\textcolor[rgb]{0.67,0.13,0.13}{\it{#1}}}
@@ -88,11 +84,11 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 \SweaveOpts{engine=R,eps=FALSE}
 
 \begin{quote} \footnotesize
-  This vignette corresponds to a paper forthcoming %published
-  in the \textsl{Journal of Statistical Software}. % fill in vol,nb later
-  It is currently still identical to the published paper.  Over time, this
-  vignette version may receive minor
-  updates. %For citations, please use the publication \citep{JSS:RcppEigen}.
+  This vignette corresponds to a
+  \href{http://www.jstatsoft.org/v52/i05/}{paper published} in the
+  \textsl{Journal of Statistical Software}. Currently still identical
+  to the paper, this vignette version may over time receive minor updates.
+  For citations, please use \citet{JSS:RcppEigen} as provided by \code{citation("RcppEigen")}.
 
   This version corresponds to \pkg{RcppEigen} version \Sexpr{pkgVersion} and was
   typeset on \Sexpr{prettyDate}.
@@ -103,7 +99,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 
 Linear algebra is an essential building block of statistical
 computing.  Operations such as matrix decompositions, linear program
-solvers, and eigenvalue / eigenvector computations are used in many
+solvers, and eigenvalue/eigenvector computations are used in many
 estimation and analysis routines. As such, libraries supporting linear
 algebra have long been provided by statistical programmers for
 different programming languages and environments.  Because it is
@@ -112,10 +108,9 @@ for numerical and statistical computing, is particularly effective at
 representing matrices, vectors and decompositions, and numerous class
 libraries providing linear algebra routines have been written over the
 years.
-% Could cite Eddelbuettel (1996) here, but a real survey would be better.
 
 As both the \proglang{C++} language and standards have evolved
-\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++,cpp11},
+\citep{Meyers:2005:EffectiveC++,Meyers:1995:MoreEffectiveC++,Cpp11},
 so have the compilers implementing the language.  Relatively modern
 language constructs such as template meta-programming are particularly
 useful because they provide overloading of operations (allowing
@@ -135,28 +130,30 @@ libraries have been made available. One such \proglang{C++} library is
 KDE (a popular Linux desktop environment), initially focussing on fixed-size
 matrices to represent projections in a visualization application. \pkg{Eigen}
 grew from there and has over the course of about a decade produced three
-major releases with ``Eigen3'' being the current major version. To
+major releases with \pkg{Eigen}3 being the current major version. To
 check the minor and patch version numbers, load the \pkg{RcppEigen}
 package and call
-\begin{verbatim}
+\begin{CodeInput}
 R> .Call("eigen_version", FALSE)
-major minor patch
-    3     1     1
-\end{verbatim}
-
+\end{CodeInput}
+\begin{CodeOutput}
+major minor patch 
+    3     1     1 
+\end{CodeOutput}
 \pkg{Eigen} is of interest as the \proglang{R} system for statistical
 computation and graphics \citep{R:Main} is itself easily extensible. This is
 particular true via the \proglang{C} language that most of \proglang{R}'s
 compiled core parts are written in, but also for the \proglang{C++} language
 which can interface with \proglang{C}-based systems rather easily. The manual
-``Writing R Extensions'' \citep{R:Extensions} is the basic reference for
+``Writing \proglang{R} Extensions'' \citep{R:Extensions} is the basic reference for
 extending \proglang{R} with either \proglang{C} or \proglang{C++}.
 
 The \pkg{Rcpp} package by \citet{JSS:Rcpp,CRAN:Rcpp} facilitates extending
 \proglang{R} with \proglang{C++} code by providing seamless object mapping
 between both languages.
 %
-As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending \pkg{Rcpp}''
+As stated in the \pkg{Rcpp} \citep{CRAN:Rcpp} vignette, ``Extending
+\pkg{Rcpp}'' as well as in \citet{Eddelbuettel:2013:Rcpp}
 \begin{quote}
   \pkg{Rcpp} facilitates data interchange between \proglang{R} and
   \proglang{C++} through the templated functions \code{Rcpp::as} (for
@@ -191,12 +188,13 @@ themselves can be very complicated.  However, \pkg{Eigen} provides
 \code{typedef}s for common classes that correspond to \proglang{R} matrices and
 vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
 \code{typedef}s.
-\begin{table}[tb]
+
+\begin{table}[t!]
   \centering
   \begin{tabular}{l l}
-    \toprule
+    \hline
     \multicolumn{1}{c}{\proglang{R} object type} & \multicolumn{1}{c}{\pkg{Eigen} class typedef}\\
-    \midrule
+    \hline
     numeric matrix                          & \code{MatrixXd}\\
     integer matrix                          & \code{MatrixXi}\\
     complex matrix                          & \code{MatrixXcd}\\
@@ -204,10 +202,10 @@ vectors, as shown in Table~\ref{tab:REigen}, and this paper will use these
     integer vector                          & \code{VectorXi}\\
     complex vector                          & \code{VectorXcd}\\
     \code{Matrix::dgCMatrix} \phantom{XXX}  & \code{SparseMatrix<double>}\\
-    \bottomrule
+    \hline
   \end{tabular}
-  \caption{Correspondence between \proglang{R} matrix and vector types and classes in the \pkg{Eigen} namespace.}
-  \label{tab:REigen}
+  \caption{Correspondence between \proglang{R} matrix and vector types and classes in the \pkg{Eigen} namespace.
+  \label{tab:REigen}}
 \end{table}
 
 Here, \code{Vector} and \code{Matrix} describe the dimension of the
@@ -221,16 +219,6 @@ The \proglang{C++} classes shown in Table~\ref{tab:REigen} are in the
 \pkg{Eigen} namespace, which means that they must be written as
 \code{Eigen::MatrixXd}.  However, if one prefaces the use of these class
 names with a declaration like
-
-%% Alternatively, use 'highlight --enclose-pre --no-doc -O latex --syntax=C++'
-%% as the command invoked from C-u M-|
-%% For version 3.5 of highlight this should be
-%%  highlight --enclose-pre --no-doc --out-format=latex --syntax=C++
-%%
-%% keep one copy to redo later
-%%
-%% using Eigen::MatrixXd;
-%%
 \begin{quote}
   \noindent
   \ttfamily
@@ -239,6 +227,9 @@ names with a declaration like
   \normalfont
   \normalsize
 \end{quote}
+
+\vspace*{-0.4cm}
+
 then one can use these names without the namespace qualifier.
 
 \subsection[Mapped matrices in Eigen]{Mapped matrices in \pkg{Eigen}}
@@ -308,6 +299,9 @@ An idiom for the first step is
   \mbox{}
   \normalfont
 \end{quote}
+
+\vspace*{-0.4cm}
+
 where \code{AA} is the name of the \proglang{R} object (of type \code{SEXP} in
 \proglang{C} and \proglang{C++}) passed to the \proglang{C++} function.
 
@@ -323,6 +317,8 @@ An alternative to the \code{using} declarations is to declare a \code{typedef} a
   \normalfont
   \normalsize
 \end{quote}
+
+\vspace*{-0.4cm}
 
 The \code{cxxfunction} function from the \pkg{inline} package \citep*{CRAN:inline} for
 \proglang{R} and its \pkg{RcppEigen} plugin provide a convenient method of
@@ -348,24 +344,29 @@ Finally, the results from \pkg{Eigen} are compared to those from the direct
 \label{sec:transpose}
 
 The next \proglang{R} code snippet creates a simple matrix of integers
-\begin{verbatim}
-R> (A <- matrix(1:6, ncol=2))
+\begin{CodeInput}
+R> (A <- matrix(1:6, ncol = 2))
+\end{CodeInput}
+\begin{CodeOutput}
      [,1] [,2]
 [1,]    1    4
 [2,]    2    5
 [3,]    3    6
+\end{CodeOutput}
+\begin{CodeInput}
 R> str(A)
+\end{CodeInput}
+\begin{CodeOutput}
  int [1:3, 1:2] 1 2 3 4 5 6
-\end{verbatim}
+\end{CodeOutput}
 and, in Figure~\ref{trans}, the \code{transpose()} method for the
 \code{Eigen::MatrixXi} class is used to return the transpose of the supplied matrix. The \proglang{R}
 matrix in the \code{SEXP} \code{AA} is first mapped to an
 \code{Eigen::MatrixXi} object, and then the matrix \code{At} is constructed
 from its transpose and returned to \proglang{R}.
 
-\begin{figure}[htb]
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlsym{::}\hlstd{Map}\hlsym{;}\hspace*{\fill}\\
@@ -376,10 +377,9 @@ from its transpose and returned to \proglang{R}.
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXi}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlkwd{At}\hlstd{}\hlsym{(}\hlstd{A}\hlsym{.}\hlstd{}\hlkwd{transpose}\hlstd{}\hlsym{());}\hspace*{\fill}\\
     \hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{wrap}\hlstd{}\hlsym{(}\hlstd{At}\hlsym{);}\hlstd{}\hspace*{\fill}
     \normalfont
-  %\end{quote}
   \hrule
-  \caption{\code{transCpp}: Transpose a matrix of integers.}
-  \label{trans}
+  \caption{\code{transCpp}: Transpose a matrix of integers.
+  \label{trans}}
 \end{figure}
 
 The \proglang{R} snippet below compiles and links the \proglang{C++} code
@@ -392,15 +392,19 @@ as a character variable named \code{transCpp}, and \code{cxxfunction} creates
 an executable function which is assigned to \code{ftrans}.  This new function
 is used on the matrix $\bm A$ shown above, and one can check that it works as intended
 by comparing the output to an explicit transpose of the matrix argument.
-\begin{verbatim}
-R> ftrans <- cxxfunction(signature(AA="matrix"), transCpp, plugin="RcppEigen")
+\begin{CodeInput}
+R> ftrans <- cxxfunction(signature(AA = "matrix"), transCpp,
++    plugin = "RcppEigen")
 R> (At <- ftrans(A))
+\end{CodeInput}
+\begin{CodeOutput}
      [,1] [,2] [,3]
 [1,]    1    2    3
 [2,]    4    5    6
+\end{CodeOutput}
+\begin{CodeInput}
 R> stopifnot(all.equal(At, t(A)))
-\end{verbatim}
-
+\end{CodeInput}
 For numeric or integer matrices the \code{adjoint()} method is
 equivalent to the \code{transpose()} method.  For complex matrices,
 the adjoint is the conjugate of the transpose.  In keeping with the
@@ -408,7 +412,6 @@ conventions in the \pkg{Eigen} documentation the \code{adjoint()}
 method is used in what follows to create the transpose of numeric or
 integer matrices.
 
-\pagebreak                      % Achim may hate me
 \subsection{Products and cross-products}
 \label{sec:products}
 
@@ -417,11 +420,10 @@ overloaded as matrix multiplication for the various matrix and vector
 classes in \pkg{Eigen}. The \proglang{C++} code in
 Figure~\ref{prod} produces a list containing both the product and
 cross-product (in the sense of the \proglang{R} function call
-\code{crossproduct(A, B)} evaluating $\bm A^\prime\bm B$) of its two arguments
-
-\begin{figure}[htb]
+\code{crossproduct(A, B)} evaluating $\bm A^\top\bm B$) of its two arguments
+%
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{$<$}\hlstd{Eigen}\hlopt{::}\hlstd{MatrixXi}\hlopt{$>$}\hlstd{\ \ \ }\hlopt{}\hlstd{MapMati}\hlopt{;}\hspace*{\fill}\\
@@ -432,23 +434,27 @@ cross-product (in the sense of the \proglang{R} function call
   \mbox{}
   \normalfont
   \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{prodCpp}: Product and cross-product of two matrices.}
-  \label{prod}
+  \caption{\code{prodCpp}: Product and cross-product of two matrices.
+  \label{prod}}
 \end{figure}
-
-\begin{verbatim}
+%
+\begin{CodeInput}
 R> fprod <- cxxfunction(signature(BB = "matrix", CC = "matrix"),
-+                       prodCpp, "RcppEigen")
-R> B <- matrix(1:4, ncol=2)
-R> C <- matrix(6:1, nrow=2)
++    prodCpp, "RcppEigen")
+R> B <- matrix(1:4, ncol = 2)
+R> C <- matrix(6:1, nrow = 2)
 R> str(fp <- fprod(B, C))
+\end{CodeInput}
+\begin{CodeOutput}
 List of 2
  $ B %*% C        : int [1:2, 1:3] 21 32 13 20 5 8
  $ crossprod(B, C): int [1:2, 1:3] 16 38 10 24 4 10
+\end{CodeOutput}
+\begin{CodeInput}
 R> stopifnot(all.equal(fp[[1]], B %*% C), all.equal(fp[[2]], crossprod(B, C)))
-\end{verbatim}
+\end{CodeInput}
+%
 Note that the \code{create} class method for \code{Rcpp::List}
 implicitly applies \code{Rcpp::wrap} to its arguments.
 
@@ -458,10 +464,10 @@ implicitly applies \code{Rcpp::wrap} to its arguments.
 As shown in the last example, the \proglang{R} function
 \code{crossprod} calculates the product of the transpose of its first
 argument with its second argument.  The single argument form,
-\code{crossprod(X)}, evaluates $\bm X^\prime\bm X$.  One could, of
+\code{crossprod(X)}, evaluates $\bm X^\top\bm X$.  One could, of
 course, calculate this product as
 \begin{verbatim}
-t(X) %*% X
+  t(X) %*% X
 \end{verbatim}
 but \code{crossprod(X)} is roughly twice as fast because the result is
 known to be symmetric and only one triangle needs to be calculated.
@@ -485,13 +491,12 @@ method is \code{triangularView}.  The triangle can be specified as
 \code{UnitUpper} or \code{StrictlyUpper}.
 
 For self-adjoint views the \code{rankUpdate} method adds a scalar multiple
-of $\bm A\bm A^\prime$ to the current symmetric matrix.  The scalar
+of $\bm A\bm A^\top$ to the current symmetric matrix.  The scalar
 multiple defaults to 1.  The code in Figure~\ref{crossprod} produces
-both $\bm A^\prime\bm A$ and $\bm A\bm A^\prime$ from a matrix $\bm A$.
+both $\bm A^\top\bm A$ and $\bm A\bm A^\top$ from a matrix $\bm A$.
 
-\begin{figure}[htb]
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{Map}\hlopt{;}\hspace*{\fill}\\
@@ -509,30 +514,32 @@ both $\bm A^\prime\bm A$ and $\bm A\bm A^\prime$ from a matrix $\bm A$.
     \hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Named}\hlopt{{(}}\hlstd{}\hlstr{"tcrossprod(A)"}\hlstd{}\hlopt{{)}\ =\ }\hlstd{AAt}\hlopt{);}\hlstd{}\hspace*{\fill}
     \normalfont
     \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{crossprodCpp}: Cross-product and transposed cross-product of a single matrix.}
-  \label{crossprod}
+  \caption{\code{crossprodCpp}: Cross-product and transposed cross-product of a single matrix.
+  \label{crossprod}}
 \end{figure}
-\begin{verbatim}
+\begin{CodeInput}
 R> fcprd <- cxxfunction(signature(AA = "matrix"), crossprodCpp, "RcppEigen")
 R> str(crp <- fcprd(A))
+\end{CodeInput}
+\begin{CodeOutput}
 List of 2
  $ crossprod(A) : int [1:2, 1:2] 14 32 32 77
  $ tcrossprod(A): int [1:3, 1:3] 17 22 27 22 29 36 27 36 45
+\end{CodeOutput}
+\begin{CodeInput}
 R> stopifnot(all.equal(crp[[1]], crossprod(A)),
-+            all.equal(crp[[2]], tcrossprod(A)))
-\end{verbatim}
-
++    all.equal(crp[[2]], tcrossprod(A)))
+\end{CodeInput}
 To some, the expressions in Figure~\ref{crossprod} to construct
 \code{AtA} and \code{AAt} are compact and elegant.  To others they are
 hopelessly confusing.  If you find yourself in the latter group, you
 just need to read the expression left to right.  So, for example, we
 construct \code{AAt} by creating a general integer matrix of size
 $m\times m$ (where $\bm A$ is $m\times n$), ensuring that all its
-elements are zero, regarding it as a self-adjoint (\textit{i.e.,} symmetric) matrix
-using the elements in the lower triangle, then adding $\bm A\bm A^\prime$
-to it and converting back to a general matrix form (\textit{i.e.,} the strict lower
+elements are zero, regarding it as a self-adjoint (i.e., symmetric) matrix
+using the elements in the lower triangle, then adding $\bm A\bm A^\top$
+to it and converting back to a general matrix form (i.e., the strict lower
 triangle is copied into the strict upper triangle).
 
 In more detail:
@@ -543,7 +550,7 @@ In more detail:
 \item \code{.selfAdjointView<Lower>()} causes what follows to treat
   the matrix as a symmetric matrix in which only the lower triangle is
   used, the strict upper triangle being inferred by symmetry
-\item \code{.rankUpdate(A)} forms the sum $\bm B+\bm A\bm A^\prime$
+\item \code{.rankUpdate(A)} forms the sum $\bm B+\bm A\bm A^\top$
   where $\bm B$ is the symmetric matrix of zeros created in the
   previous steps.
 \end{enumerate}
@@ -560,9 +567,8 @@ a character variable, \code{incl}, that will be given as the \code{includes} arg
 in the calls to \code{cxxfunction}.  We also define a utility
 function, \code{AtA}, that returns the crossproduct matrix as shown in Figure~\ref{fig:incl}
 
-\begin{figure}[htb]
+\begin{figure}[t!]
   \hrule \smallskip
- %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwa{using}\hlstd{\ \ \ }\hlkwa{}\hlstd{Eigen}\hlopt{::}\hlstd{LLT}\hlopt{;}\hspace*{\fill}\\
@@ -583,10 +589,9 @@ function, \code{AtA}, that returns the crossproduct matrix as shown in Figure~\r
   \mbox{}
   \normalfont
   \normalsize
-%\end{quote}
   \hrule
-  \caption{The contents of the character vector, \code{incl}, that will preface \proglang{C++} code segments that follow.}
-  \label{fig:incl}
+  \caption{The contents of the character vector, \code{incl}, that will preface \proglang{C++} code segments that follow.
+  \label{fig:incl}}
 \end{figure}
 
 \subsection{Cholesky decomposition of the crossprod}
@@ -595,10 +600,10 @@ function, \code{AtA}, that returns the crossproduct matrix as shown in Figure~\r
 The Cholesky decomposition of the positive-definite, symmetric matrix,
 $\bm A$, can be written in several forms.  Numerical analysts define
 the ``LLt'' form as the lower triangular matrix, $\bm L$, such that
-$\bm A=\bm L\bm L^\prime$ and the ``LDLt'' form as a unit lower
+$\bm A=\bm L\bm L^\top$ and the ``LDLt'' form as a unit lower
 triangular matrix $\bm L$ and a diagonal matrix $\bm D$ with positive
-diagonal elements such that $\bm A=\bm L\bm D\bm L^\prime$.
-Statisticians often write the decomposition as $\bm A=\bm R^\prime\bm
+diagonal elements such that $\bm A=\bm L\bm D\bm L^\top$.
+Statisticians often write the decomposition as $\bm A=\bm R^\top\bm
 R$ where $\bm R$ is an upper triangular matrix.  Of course, this $\bm
 R$ is simply the transpose of $\bm L$ from the ``LLt'' form.
 
@@ -607,10 +612,9 @@ called \code{LLT} and \code{LDLT} and the corresponding methods are
 \code{.llt()} and \code{.ldlt()}.
 Because the Cholesky decomposition involves taking square roots, we
 pass a numeric matrix, $\bm A$, not an integer matrix.
-
-\begin{figure}[htb]
+%
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwb{const}\hlstd{\ \ }\hlkwb{}\hlstd{LLT}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{llt}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
@@ -619,16 +623,17 @@ pass a numeric matrix, $\bm A$, not an integer matrix.
   \mbox{}
   \normalfont
   \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{cholCpp}: Cholesky decomposition of a cross-product.}
-  \label{chol}
+  \caption{\code{cholCpp}: Cholesky decomposition of a cross-product.
+  \label{chol}}
 \end{figure}
-
-\begin{verbatim}
+%
+\begin{CodeInput}
 R> storage.mode(A) <- "double"
 R> fchol <- cxxfunction(signature(AA = "matrix"), cholCpp, "RcppEigen", incl)
 R> (ll <- fchol(A))
+\end{CodeInput}
+\begin{CodeOutput}
 $L
         [,1]    [,2]
 [1,] 3.74166 0.00000
@@ -638,9 +643,10 @@ $R
         [,1]    [,2]
 [1,] 3.74166 8.55236
 [2,] 0.00000 1.96396
-
+\end{CodeOutput}
+\begin{CodeInput}
 R> stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
-\end{verbatim}
+\end{CodeInput}
 
 
 
@@ -648,28 +654,27 @@ R> stopifnot(all.equal(ll[[2]], chol(crossprod(A))))
 \label{sec:determinant}
 
 The ``D-optimal'' criterion for experimental design chooses the design
-that maximizes the determinant, $|\bm X^\prime\bm X|$, for the
+that maximizes the determinant, $|\bm X^\top\bm X|$, for the
 $n\times p$ model matrix (or Jacobian matrix), $\bm X$.  The
 determinant, $|\bm L|$, of the $p\times p$ lower Cholesky factor
-$\bm L$, defined so that $\bm L\bm L^\prime=\bm X^\prime\bm X$, is
+$\bm L$, defined so that $\bm L\bm L^\top=\bm X^\top\bm X$, is
 the product of its diagonal elements, as is the case for any
 triangular matrix.  By the properties of determinants,
 \begin{displaymath}
-  |\bm X^\prime\bm X|=|\bm L\bm L^\prime|=|\bm L|\,|\bm L^\prime|=|\bm L|^2
+  |\bm X^\top\bm X|=|\bm L\bm L^\top|=|\bm L|\,|\bm L^\top|=|\bm L|^2
 \end{displaymath}
 
 Alternatively, if using the ``LDLt'' decomposition, $\bm L\bm D\bm
-L^\prime=\bm X^\prime\bm X$ where $\bm L$ is unit lower triangular and
-$\bm D$ is diagonal then $|\bm X^\prime\bm X|$ is the product of the
+L^\top=\bm X^\top\bm X$ where $\bm L$ is unit lower triangular and
+$\bm D$ is diagonal then $|\bm X^\top\bm X|$ is the product of the
 diagonal elements of $\bm D$.  Because it is known that the diagonal
 elements of $\bm D$ must be non-negative, one often evaluates the
 logarithm of the determinant as the sum of the logarithms of the
 diagonal elements of $\bm D$.  Several options are shown in
 Figure~\ref{cholDet}.
-
-\begin{figure}[htb]
+%
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwb{const\ }\hlstd{MatrixXd}\hlstd{\ \ }\hlstd{}\hlkwd{ata}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{AA}\hlopt{)));}\hspace*{\fill}\\
@@ -681,21 +686,22 @@ Figure~\ref{cholDet}.
     \mbox{}
     \normalfont
     \normalsize
-  %\end{quote}
   \hrule
   \caption{\code{cholDetCpp}: Determinant of a cross-product using
     the ``LLt'' and ``LDLt'' forms of the Cholesky decomposition.}
   \label{cholDet}
 \end{figure}
-
-\begin{verbatim}
-R> fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen", incl)
+%
+\begin{CodeInput}
+R> fdet <- cxxfunction(signature(AA = "matrix"), cholDetCpp, "RcppEigen",
++    incl)
 R> unlist(ll <- fdet(A))
+\end{CodeInput}
+\begin{CodeOutput}
       d1       d2       ld
 54.00000 54.00000  3.98898
-\end{verbatim}
-
-
+\end{CodeOutput}
+%
 Note the use of the \code{array()} method in the calculation of the
 log-determinant.  Because the \code{log()} method applies to arrays,
 not to vectors or matrices, an array must be created from \code{Dvec}
@@ -707,7 +713,7 @@ before applying the \code{log()} method.
 A common operation in statistical computing is calculating a least
 squares solution, $\widehat{\bm\beta}$, defined as
 \begin{displaymath}
-  \widehat{\bm\beta}=\arg\min_{\beta}\|\bm y-\bm X\bm\beta\|^2
+  \widehat{\bm\beta}=\argmin_{\bm \beta}\|\bm y-\bm X\bm\beta\|^2
 \end{displaymath}
 where the model matrix, $\bm X$, is $n\times p$ ($n\ge p$) and $\bm y$
 is an $n$-dimensional response vector.  There are several ways, based
@@ -722,15 +728,14 @@ Determining a least squares solution is relatively straightforward.
 However, statistical computing often requires additional information,
 such as the standard errors of the coefficient estimates.  Calculating
 these involves evaluating the diagonal elements of $\left(\bm
-  X^\prime\bm X\right)^{-1}$ and the residual sum of squares, $\|\bm
+  X^\top\bm X\right)^{-1}$ and the residual sum of squares, $\|\bm
 y-\bm X\widehat{\bm\beta}\|^2$.
 
 \subsection{Least squares using the ``LLt'' Cholesky}
 \label{sec:LLtLeastSquares}
 
-\begin{figure}[tbh]
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwb{const\ }\hlstd{MapMatd}\hlstd{\ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{X}\hlstd{}\hlopt{(}\hlstd{as}\hlopt{$<$}\hlstd{MapMatd}\hlopt{$>$(}\hlstd{XX}\hlopt{));}\hspace*{\fill}\\
@@ -754,10 +759,9 @@ y-\bm X\widehat{\bm\beta}\|^2$.
   \mbox{}
   \normalfont
   \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{lltLSCpp}: Least squares using the Cholesky decomposition.}
-  \label{lltLS}
+  \caption{\code{lltLSCpp}: Least squares using the Cholesky decomposition.
+  \label{lltLS}}
 \end{figure}
 Figure~\ref{lltLS} shows a calculation of the least squares coefficient estimates
 (\code{betahat}) and the standard errors (\code{se}) through an
@@ -766,11 +770,13 @@ matrix, $\bm X$.  Next, the results from this calculation are compared
 to those from the \code{lm.fit} function in \proglang{R}
 (\code{lm.fit} is the workhorse function called by \code{lm} once the
 model matrix and response have been evaluated).
-\begin{verbatim}
-R> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"),
-+                       lltLSCpp, "RcppEigen", incl)
-R> data(trees, package="datasets")
+\begin{CodeInput}
+R> lltLS <- cxxfunction(signature(XX = "matrix", yy = "numeric"), lltLSCpp,
++    "RcppEigen", incl)
+R> data("trees", package = "datasets")
 R> str(lltFit <- with(trees, lltLS(cbind(1, log(Girth)), log(Volume))))
+\end{CodeInput}
+\begin{CodeOutput}
 List of 7
  $ coefficients : num [1:2] -2.35 2.2
  $ fitted.values: num [1:31] 2.3 2.38 2.43 2.82 2.86 ...
@@ -797,24 +803,24 @@ List of 8
   ..$ rank : int 2
   ..- attr(*, "class")= chr "qr"
  $ df.residual  : int 29
-R> for (nm in c("coefficients", "residuals", "fitted.values", "rank"))
-+      stopifnot(all.equal(lltFit[[nm]], unname(lmFit[[nm]])))
+\end{CodeOutput}
+\begin{CodeInput}
+R> for(nm in c("coefficients", "residuals", "fitted.values", "rank"))
++    stopifnot(all.equal(lltFit[[nm]], unname(lmFit[[nm]])))
 R> stopifnot(all.equal(lltFit[["Std. Error"]],
-+            unname(coef(summary(lm(log(Volume) ~ log(Girth), trees)))[,2])))
-\end{verbatim}
-
-
++    unname(coef(summary(lm(log(Volume) ~ log(Girth), trees)))[,2])))
+\end{CodeInput}
 There are several aspects of the \proglang{C++} code in
 Figure~\ref{lltLS} worth mentioning.  The \code{solve} method for the
-\code{LLT} object evaluates, in this case, $\left(\bm X^\prime\bm
-  X\right)^{-1}\bm X^\prime\bm y$ but without actually evaluating the
+\code{LLT} object evaluates, in this case, $\left(\bm X^\top\bm
+  X\right)^{-1}\bm X^\top\bm y$ but without actually evaluating the
 inverse.  The calculation of the residuals, $\bm y-\widehat{\bm y}$,
 can be written, as in \proglang{R}, as \code{y - fitted}. (But note
 that \pkg{Eigen} classes do not have a ``recycling rule'' as in
 \proglang{R}.  That is, the two vector operands must have the same
 length.)  The \code{norm()} method evaluates the square root of the
 sum of squares of the elements of a vector.  Although one does not
-explicitly evaluate $\left(\bm X^\prime\bm X\right)^{-1}$ one does
+explicitly evaluate $\left(\bm X^\top\bm X\right)^{-1}$ one does
 evaluate $\bm L^{-1}$ to obtain the standard errors.  Note also the
 use of the \code{colwise()} method in the evaluation of the standard
 errors.  It applies a method to the columns of a matrix, returning a
@@ -841,7 +847,7 @@ A QR decomposition has the form
   \bm X=\bm Q\bm R=\bm Q_1\bm R_1
 \end{displaymath}
 where $\bm Q$ is an $n\times n$ orthogonal matrix, which means that
-$\bm Q^\prime\bm Q=\bm Q\bm Q^\prime=\bm I_n$, and the $n\times p$
+$\bm Q^\top\bm Q=\bm Q\bm Q^\top=\bm I_n$, and the $n\times p$
 matrix $\bm R$ is zero below the main diagonal.  The $n\times p$
 matrix $\bm Q_1$ is the first $p$ columns of $\bm Q$ and the $p\times
 p$ upper triangular matrix $\bm R_1$ is the top $p$ rows of $\bm R$.
@@ -853,17 +859,14 @@ and column pivots.
 
 Figure~\ref{QRLS} shows a least squares solution using the unpivoted
 QR decomposition.
-% using Eigen::HouseholderQR;
+The calculations in Figure~\ref{QRLS} are quite similar to those in
+Figure~\ref{lltLS}.  In fact, if one had extracted the upper
+triangular factor (the \code{matrixU()} method) from the \code{LLT}
+object in Figure~\ref{lltLS}, the rest of the code would be nearly
+identical.
 
-% const HouseholderQR<MatrixXd> QR(X);
-% const VectorXd betahat(QR.solve(y));
-% const VectorXd  fitted(X * betahat);
-% const int           df(n - p);
-% const VectorXd      se(QR.matrixQR().topRows(p).triangularView<Upper>()
-%                        .solve(MatrixXd::Identity(p,p)).rowwise().norm());
-\begin{figure}[htb]
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwa{using\ }\hlstd{Eigen}\hlopt{::}\hlstd{HouseholderQR}\hlopt{;}\hspace*{\fill}\\
@@ -878,16 +881,9 @@ QR decomposition.
     \normalfont
     \normalsize
     \hrule
-    \caption{\code{QRLSCpp}: Least squares using the unpivoted QR decomposition.}
-    \label{QRLS}
-  %\end{quote}
+    \caption{\code{QRLSCpp}: Least squares using the unpivoted QR decomposition.
+    \label{QRLS}}
 \end{figure}
-The calculations in Figure~\ref{QRLS} are quite similar to those in
-Figure~\ref{lltLS}.  In fact, if one had extracted the upper
-triangular factor (the \code{matrixU()} method) from the \code{LLT}
-object in Figure~\ref{lltLS}, the rest of the code would be nearly
-identical.
-
 
 \subsection{Handling the rank-deficient case}
 \label{sec:rankdeficient}
@@ -912,28 +908,48 @@ Other, more subtle, situations will not be detected at this stage,
 however.  A simple example occurs when there is a ``missing cell'' in a
 two-way layout and the interaction of the two factors is included in
 the model.
-
-\begin{verbatim}
+\begin{CodeInput}
 R> dd <- data.frame(f1 = gl(4, 6, labels = LETTERS[1:4]),
-+                   f2 = gl(3, 2, labels = letters[1:3]))[-(7:8), ]
-R> xtabs(~ f2 + f1, dd)                    # one missing cell
++    f2 = gl(3, 2, labels = letters[1:3]))[-(7:8), ]
+R> xtabs(~ f2 + f1, dd)
+\end{CodeInput}
+\begin{CodeOutput}
    f1
 f2  A B C D
   a 2 0 2 2
   b 2 2 2 2
   c 2 2 2 2
+\end{CodeOutput}
+\begin{CodeInput}
 R> mm <- model.matrix(~ f1 * f2, dd)
-R> kappa(mm)        # large condition number, indicating rank deficiency
+R> kappa(mm)
+\end{CodeInput}
+\begin{CodeOutput}
 [1] 4.30923e+16
-R> rcond(mm)        # alternative evaluation, the reciprocal condition number
+\end{CodeOutput}
+This yields a large condition number, indicating rank deficiency. Alternatively,
+the reciprocal condition number can be evaluated.
+\begin{CodeInput}
+R> rcond(mm)
+\end{CodeInput}
+\begin{CodeOutput}
 [1] 2.3206e-17
-R> (c(rank=qr(mm)$rank, p=ncol(mm))) # rank as computed in R's qr function
+\end{CodeOutput}
+\begin{CodeInput}
+R> (c(rank = qr(mm)$rank, p = ncol(mm)))
+\end{CodeInput}
+\begin{CodeOutput}
 rank    p
   11   12
+\end{CodeOutput}
+\begin{CodeInput}
 R> set.seed(1)
 R> dd$y <- mm %*% seq_len(ncol(mm)) + rnorm(nrow(mm), sd = 0.1)
 R> fm1 <- lm(y ~ f1 * f2, dd)
-R> writeLines(capture.output(print(summary(fm1), signif.stars=FALSE))[9:22])
+R> writeLines(capture.output(print(summary(fm1),
++    signif.stars = FALSE))[9:22])
+\end{CodeInput}
+\begin{CodeOutput}
 Coefficients: (1 not defined because of singularities)
             Estimate Std. Error t value Pr(>|t|)
 (Intercept)   0.9779     0.0582    16.8  3.4e-09
@@ -948,8 +964,7 @@ f1D:f2b       8.9643     0.1163    77.1  < 2e-16
 f1B:f2c           NA         NA      NA       NA
 f1C:f2c      10.9613     0.1163    94.2  < 2e-16
 f1D:f2c      12.0411     0.1163   103.5  < 2e-16
-\end{verbatim}
-
+\end{CodeOutput}
 The \code{lm} function for fitting linear models in \proglang{R} uses
 a rank-revealing form of the QR decomposition.  When the model matrix
 is determined to be rank deficient, according to the threshold used in
@@ -962,9 +977,9 @@ columns are flagged as missing.
 
 An alternative approach is to evaluate the ``pseudo-inverse'' of $\bm
 X$ from the singular value decomposition (SVD) of $\bm X$ or the
-eigendecomposition of $\bm X^\prime\bm X$.  The SVD is of the form
+eigendecomposition of $\bm X^\top\bm X$.  The SVD is of the form
 \begin{displaymath}
-  \bm X=\bm U\bm D\bm V^\prime=\bm U_1\bm D_1\bm V^\prime
+  \bm X=\bm U\bm D\bm V^\top=\bm U_1\bm D_1\bm V^\top
 \end{displaymath}
 where $\bm U$ is an orthogonal $n\times n$ matrix and $\bm U_1$ is its
 leftmost $p$ columns, $\bm D$ is $n\times p$ and zero off the main
@@ -976,14 +991,14 @@ diagonal elements are the inverses of the corresponding diagonal
 elements of $\bm D_1$ and whose last $p-r$ diagonal elements are zero.
 The tolerance for determining if an element of the diagonal of $\bm D_1$
 is considered to be (effectively) zero is a multiple of the largest
-singular value (\textit{i.e.,} the $(1,1)$ element of $\bm D$).
+singular value (i.e., the $(1,1)$ element of $\bm D$).
 The pseudo-inverse, $\bm X^+$, of $\bm X$ is defined as
 \begin{displaymath}
-  \bm X^+=\bm V\bm D_1^+\bm U_1^\prime .
+  \bm X^+=\bm V\bm D_1^+\bm U_1^\top .
 \end{displaymath}
-\begin{figure}[htb]
+
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
   \noindent
   \ttfamily
   \hlstd{}\hlkwc{inline\ }\hlstd{ArrayXd\ }\hlkwd{Dplus}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{ArrayXd}\hlopt{\&\ }\hlstd{d}\hlopt{)\ \{}\hspace*{\fill}\\
@@ -995,17 +1010,10 @@ The pseudo-inverse, $\bm X^+$, of $\bm X$ is defined as
   \mbox{}
   \normalfont
   \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{DplusCpp}: Create the diagonal $\bm d^+$ of the pseudo-inverse, $\bm D_1^+$, from the array of singular values, $\bm d$.}
-  \label{Dplus}
+  \caption{\code{DplusCpp}: Create the diagonal $\bm d^+$ of the pseudo-inverse, $\bm D_1^+$, from the array of singular values, $\bm d$.
+  \label{Dplus}}
 \end{figure}
-% inline ArrayXd Dplus(const ArrayXd& d) {
-%     ArrayXd   di(d.size());
-%     double  comp(d.maxCoeff() * threshold());
-%     for (int j = 0; j < d.size(); ++j) di[j] = (d[j] < comp) ? 0. : 1./d[j];
-%     return di;
-% }
 
 In Figure~\ref{Dplus} a utility function, \code{Dplus}, is defined to
 return the diagonal of the pseudo-inverse, $\bm D_1^+$, as an array,
@@ -1013,7 +1021,7 @@ given the singular values (the diagonal of $\bm D_1$) as an array.
 Calculation of the maximum element of $\bm d$ (the method is called
 \code{.maxCoeff()}) and the use of a \code{threshold()} function
 provides greater generality for the function.  It can be used on the
-eigenvalues of $\bm X^\prime\bm X$, as shown in
+eigenvalues of $\bm X^\top\bm X$, as shown in
 Section~\ref{sec:eigendecomp}, even though these are returned in
 increasing order, as opposed to the decreasing order of the singular
 values.
@@ -1021,11 +1029,8 @@ values.
 \subsection{Least squares using the SVD}
 \label{sec:SVDls}
 
-With these definitions the code for least squares using the singular
-value decomposition can be written as in Figure~\ref{SVDLS}.
-\begin{figure}[htb]
+\begin{figure}[b!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlkwb{const\ }\hlstd{Eigen}\hlopt{::}\hlstd{JacobiSVD}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hspace*{\fill}\\
@@ -1038,21 +1043,13 @@ value decomposition can be written as in Figure~\ref{SVDLS}.
     \mbox{}
     \normalfont
     \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{SVDLSCpp}: Least squares using the SVD.}
-  \label{SVDLS}
+  \caption{\code{SVDLSCpp}: Least squares using the SVD.
+  \label{SVDLS}}
 \end{figure}
-% using Eigen::JacobiSVD;
 
-% const JacobiSVD<MatrixXd>
-%                 UDV(X.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
-% const ArrayXd               D(UDV.singularValues());
-% const int                   r((D > D[0] * threshold()).count());
-% const MatrixXd            VDp(UDV.matrixV() * Dplus(D, r));
-% const VectorXd        betahat(VDp * UDV.matrixU().adjoint() * y);
-% const int                  df(n - r);
-% const VectorXd             se(s * VDp.rowwise().norm());
+With these definitions the code for least squares using the singular
+value decomposition can be written as in Figure~\ref{SVDLS}.
 Even in the rank-deficient case this code will produce a complete set
 of coefficients and their standard errors.  The user must be careful
 to check if the computed rank is less than $p$, the number of columns
@@ -1075,26 +1072,28 @@ matrix but the $p$ coefficient estimates and their $p$ standard errors
 don't show this.  They are, in fact, linear combinations of a set of
 $r$ coefficient estimates and their standard errors.
 
+\pagebreak
+
 \subsection{Least squares using the eigendecomposition}
 \label{sec:eigendecomp}
 
-The eigendecomposition of $\bm X^\prime\bm X$ is defined as
+The eigendecomposition of $\bm X^\top\bm X$ is defined as
 \begin{displaymath}
-  \bm X^\prime\bm X=\bm V\bm\Lambda\bm V^\prime
+  \bm X^\top\bm X=\bm V\bm\Lambda\bm V^\top
 \end{displaymath}
 where $\bm V$, the matrix of eigenvectors, is a $p\times p$ orthogonal
 matrix and $\bm\Lambda$ is a $p\times p$ diagonal matrix with
 non-decreasing, non-negative diagonal elements, called the eigenvalues
-of $\bm X^\prime\bm X$.  When the eigenvalues are distinct, this $\bm
+of $\bm X^\top\bm X$.  When the eigenvalues are distinct, this $\bm
 V$ is the same (up to reordering of the columns) as that in the SVD
-and the eigenvalues of $\bm X^\prime\bm X$ are the (reordered) squares
+and the eigenvalues of $\bm X^\top\bm X$ are the (reordered) squares
 of the singular values of $\bm X$.
 
 With these definitions one can adapt much of the code from the SVD
 method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
-\begin{figure}[htb]
+
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlkwb{const\ }\hlstd{Eigen}\hlopt{::}\hlstd{SelfAdjointEigenSolver}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$\ }\hlstd{}\hlkwd{VLV}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{AtA}\hlstd{}\hlopt{(}\hlstd{X}\hlopt{));}\hspace*{\fill}\\
@@ -1106,24 +1105,11 @@ method for the eigendecomposition, as shown in Figure~\ref{SymmEigLS}.
     \mbox{}
     \normalfont
     \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{SymmEigLSCpp}: Least squares using the eigendecomposition.}
-  \label{SymmEigLS}
+  \caption{\code{SymmEigLSCpp}: Least squares using the eigendecomposition.
+  \label{SymmEigLS}}
 \end{figure}
-% using Eigen::SelfAdjointEigenSolver;
 
-% const SelfAdjointEigenSolver<MatrixXd>
-%                           VLV(MatrixXd(p, p).setZero()
-%                                             .selfadjointView<Lower>
-%                                             .rankUpdate(X.adjoint()));
-% const ArrayXd               D(eig.eigenvalues());
-% const int                   r((D > D[p - 1] * threshold()).count());
-% const MatrixXd            VDp(VLV.eigenvectors() * Dplus(D.sqrt(),r,true));
-% const VectorXd        betahat(VDp * VDp.adjoint() * X.adjoint() * y);
-% const VectorXd             se(s * VDp.rowwise().norm());
-
-\pagebreak                      % Achim may hate me
 \subsection{Least squares using the column-pivoted QR decomposition}
 \label{sec:colPivQR}
 
@@ -1155,17 +1141,17 @@ complicated rearrangement of the columns of X and the coefficient
 estimates but it is conceptually (and computationally) easier to
 employ the relationship
 \begin{displaymath}
-  \widehat{\bm y} = \bm Q_1\bm Q_1^\prime\bm y=\bm Q
+  \widehat{\bm y} = \bm Q_1\bm Q_1^\top\bm y=\bm Q
   \begin{bmatrix}
     \bm I_r & \bm 0\\
     \bm 0   & \bm 0
   \end{bmatrix}
-  \bm Q^\prime\bm y
+  \bm Q^\top\bm y
 \end{displaymath}
-The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
-\begin{figure}[htb]
+The vector $\bm Q^\top\bm y$ is called the ``effects'' vector in \proglang{R}.
+
+\begin{figure}[t!]
   \hrule \smallskip
-  %\begin{quote}
     \noindent
     \ttfamily
     \hlstd{}\hlkwc{typedef\ }\hlstd{Eigen}\hlopt{::}\hlstd{ColPivHouseholderQR}\hlopt{$<$}\hlstd{MatrixXd}\hlopt{$>$}\hlstd{\ \ }\hlopt{}\hlstd{CPivQR}\hlopt{;}\hspace*{\fill}\\
@@ -1197,43 +1183,16 @@ The vector $\bm Q^\prime\bm y$ is called the ``effects'' vector in \proglang{R}.
     \mbox{}
     \normalfont
     \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition.}
-  \label{ColPivQRLS}
+  \caption{\code{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition.
+  \label{ColPivQRLS}}
 \end{figure}
-% typedef Eigen::ColPivHouseholderQR<MatrixXd>  CPivQR;
-% typedef CPivQR::PermutationType               Permutation;
-
-% const CPivQR       PQR(X);
-% const Permutation Pmat(PQR.colsPermutation());
-% const int            r(PQR.rank());
-% VectorXd       betahat, fitted, se;
-% if (r == X.cols()) {	// full rank case
-%     betahat = PQR.solve(y);
-%     fitted  = X * betahat;
-%     se      = Pmat * PQR.matrixQR().topRows(p).triangularView<Upper>()
-% 	        .solve(MatrixXd::Identity(p, p)).rowwise().norm();
-% } else {
-%     MatrixXd    Rinv(PQR.matrixQR().topLeftCorner(r, r)
-%          .triangularView<Upper>().solve(MatrixXd::Identity(r, r)));
-%     VectorXd effects(PQR.householderQ().adjoint() * y);
-%     betahat.fill(::NA_REAL);
-%     betahat.head(r)  = Rinv * effects.head(r);
-%     betahat          = Pmat * betahat;
-%     se.fill(::NA_REAL);
-%     se.head(r)       = Rinv.rowwise().norm();
-%     se               = Pmat * se;
-%                       // create fitted values from effects
-%     effects.tail(X.rows() - r).setZero();
-%     fitted           = PQR.householderQ() * effects;
-% }
 
 Just to check that the code in Figure~\ref{ColPivQRLS} does indeed provide the desired answer
-
-\begin{verbatim}
-R> print(summary(fmPQR <- fastLm(y ~ f1*f2, dd)), signif.st=FALSE)
-
+\begin{CodeInput}
+R> print(summary(fmPQR <- fastLm(y ~ f1 * f2, dd)), signif.st = FALSE)
+\end{CodeInput}
+\begin{CodeOutput}
 Call:
 fastLm.formula(formula = y ~ f1 * f2, data = dd)
 
@@ -1253,20 +1212,32 @@ f1D:f2c     12.041081   0.116330 103.508 < 2.2e-16
 
 Residual standard error: 0.2868 on 11 degrees of freedom
 Multiple R-squared: 0.9999,	Adjusted R-squared: 0.9999
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(coef(fm1), coef(fmPQR))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(unname(fitted(fm1)), fitted(fmPQR))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(unname(residuals(fm1)), residuals(fmPQR))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
-\end{verbatim}
-
+\end{CodeOutput}
 The rank-revealing SVD method produces the same fitted
 values but not the same coefficients.
-
-\begin{verbatim}
-R> print(summary(fmSVD <- fastLm(y ~ f1*f2, dd, method=4)), signif.st=FALSE)
-
+\begin{CodeInput}
+R> print(summary(fmSVD <- fastLm(y ~ f1 * f2, dd, method = 4)),
++    signif.st = FALSE)
+\end{CodeInput}
+\begin{CodeOutput}
 Call:
 fastLm.formula(formula = y ~ f1 * f2, data = dd, method = 4)
 
@@ -1286,23 +1257,35 @@ f1D:f2c     12.041081   0.116330 103.508 < 2.2e-16
 
 Residual standard error: 0.2868 on 11 degrees of freedom
 Multiple R-squared: 0.9999,	Adjusted R-squared: 0.9999
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(coef(fm1), coef(fmSVD))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] "'is.NA' value mismatch: 0 in current 1 in target"
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(unname(fitted(fm1)), fitted(fmSVD))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
+\end{CodeOutput}
+\begin{CodeInput}
 R> all.equal(unname(residuals(fm1)), residuals(fmSVD))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
-\end{verbatim}
-
+\end{CodeOutput}
 The coefficients from the symmetric eigendecomposition method are the
 same as those from the SVD, hence the fitted values and residuals must
 be the same for these two methods.
-
-\begin{verbatim}
-R> summary(fmVLV <- fastLm(y ~ f1*f2, dd, method=5))
+\begin{CodeInput}
+R> summary(fmVLV <- fastLm(y ~ f1 * f2, dd, method = 5))
 R> all.equal(coef(fmSVD), coef(fmVLV))
+\end{CodeInput}
+\begin{CodeOutput}
 [1] TRUE
-\end{verbatim}
+\end{CodeOutput}
 
 \subsection{Comparative speed}
 
@@ -1321,49 +1304,21 @@ installed \pkg{RcppEigen} package.
 
 
 It can be run as
-\begin{verbatim}
-R> source(system.file("examples", "lmBenchmark.R", package="RcppEigen"))
-\end{verbatim}
+\begin{CodeInput}
+R> source(system.file("examples", "lmBenchmark.R", package = "RcppEigen"))
+\end{CodeInput}
 Results will vary according to the speed of the processor and the
 implementation of the BLAS (Basic Linear Algebra Subroutines) used.
 (\pkg{Eigen} methods do not use the BLAS but the other methods do.)
-The \pkg{Eigen3} template library does not use multi-threaded code for
+The \pkg{Eigen}3 template library does not use multi-threaded code for
 these operations but does use the graphics pipeline instructions (SSE
 and SSE2, in this case) in some calculations.
 
-Results obtained on a desktop computer, circa 2010, are shown in
-Table~\ref{tab:lmRes}.
-\begin{table}[tb]
+\begin{table}[t!]
   \centering
   \begin{tabular}{r r r r r}
-    \toprule
-    \multicolumn{1}{c}{Method} & \multicolumn{1}{c}{Relative} &
-    \multicolumn{1}{c}{Elapsed} & \multicolumn{1}{c}{User} &
-    \multicolumn{1}{c}{Sys}\\
-    \cmidrule(r){2-5}   % middle rule from cols 2 to 5
- %     LLt &   1.000000 &   1.227 &     1.228 &    0.000 \\
- %    LDLt &   1.037490 &   1.273 &     1.272 &    0.000 \\
- % SymmEig &   2.895681 &   3.553 &     2.972 &    0.572 \\
- %      QR &   7.828036 &   9.605 &     8.968 &    0.620 \\
- %   PivQR &   7.953545 &   9.759 &     9.120 &    0.624 \\
- %    arma &   8.383048 &  10.286 &    10.277 &    0.000 \\
- %  lm.fit &  13.782396 &  16.911 &    15.521 &    1.368 \\
- %     SVD &  54.829666 &  67.276 &    66.321 &    0.912 \\
- %     GSL & 157.531377 & 193.291 &   192.568 &    0.640 \\
- %
- % updated numbers below
- % lm benchmark for n = 100000 and p = 40: nrep = 20
- %       test   relative elapsed user.self sys.self
- % 3     LDLt   1.000000   1.176     1.172    0.000
- % 8      LLt   1.010204   1.188     1.172    0.000
- % 6  SymmEig   2.762755   3.249     2.704    0.516
- % 7       QR   6.350340   7.468     6.932    0.528
- % 9     arma   6.601190   7.763    25.686    4.473
- % 2    PivQR   7.154762   8.414     7.777    0.608
- % 1   lm.fit  11.683673  13.740    21.561   16.789
- % 4    GESDD  12.576531  14.790    44.011   10.960
- % 5      SVD  44.475340  52.303    51.379    0.804
- % 10     GSL 150.456633 176.937   210.517  149.857
+    \hline
+   Method & Relative& Elapsed &      User &     Sys  \\ \hline
      LDLt &    1.00 &    1.18 &      1.17 &     0.00 \\
       LLt &    1.01 &    1.19 &      1.17 &     0.00 \\
   SymmEig &    2.76 &    3.25 &      2.70 &     0.52 \\
@@ -1374,15 +1329,18 @@ Table~\ref{tab:lmRes}.
     GESDD &   12.58 &   14.79 &     44.01 &    10.96 \\
       SVD &   44.48 &   52.30 &     51.38 &     0.80 \\
       GSL &  150.46 &  176.95 &    210.52 &   149.86 \\
-     \bottomrule
+     \hline
   \end{tabular}
   \caption{\code{lmBenchmark} results on a desktop computer for the
     default size, $100,000\times 40$, full-rank model matrix running
-    20 repetitions for each method.  Times (Elapsed, User and Sys) are
+    20 repetitions for each method.  Times (Elapsed, User, and Sys) are
     in seconds.  The BLAS in use is a locally-rebuilt version of the
-    OpenBLAS library included with Ubuntu 11.10.}
-  \label{tab:lmRes}
+    OpenBLAS library included with Ubuntu 11.10.
+  \label{tab:lmRes}}
 \end{table}
+
+Results obtained on a desktop computer, circa 2010, are shown in
+Table~\ref{tab:lmRes}.
 The processor used for these timings is a 4-core processor but almost all the
 methods are single-threaded and not affected by the number of cores.  Only
 the \code{arma}, \code{lm.fit}, \code{GESDD} and \code{GSL} methods benefit from the
@@ -1398,7 +1356,7 @@ gains from running multiple execution threads. % Nonetheless, with the ongoing
 %to a multi-threaded approach to further improve its performance.
 
 These results indicate that methods based on forming and decomposing
-$\bm X^\prime\bm X$ (LDLt, LLt and SymmEig) are considerably
+$\bm X^\top\bm X$ (LDLt, LLt and SymmEig) are considerably
 faster than the others.  The SymmEig method, using a rank-revealing
 decomposition, would be preferred, although the LDLt method could
 probably be modified to be rank-revealing.  However, the
@@ -1407,7 +1365,7 @@ Because there are 100,000 rows in $\bm X$, methods that decompose the
 whole $\bm X$ matrix (all the methods except those named above) will
 be at a disadvantage.
 
-The pivoted QR method is 1.6 times faster than R's \code{lm.fit} on
+The pivoted QR method is 1.6 times faster than \proglang{R}'s \code{lm.fit} on
 this test and provides nearly the same information as \code{lm.fit}.
 Methods based on the singular value decomposition (SVD and GSL) are
 much slower but, as mentioned above, this is caused in part by $\bm X$
@@ -1415,9 +1373,6 @@ having many more rows than columns.  The GSL method from the GNU
 Scientific Library uses an older algorithm for the SVD and is clearly
 out of contention.
 
-%An SVD method using the Lapack SVD subroutine, \code{dgesv}, may be
-%faster than the native \pkg{Eigen} implementation of the SVD, which is
-%not a particularly fast method of evaluating the SVD.
 The \code{GESDD} method provides an interesting hybrid: It uses the
 \pkg{Eigen} classes, but then deploys the LAPACK routine \code{dgesdd} for
 the actual SVD calculation. The resulting time is much faster than using the
@@ -1425,19 +1380,18 @@ SVD implementation of \pkg{Eigen} which is not a particularly fast SVD
 method.
 
 
-\pagebreak                      % Achim may hate me
 \section{Delayed evaluation}
 \label{sec:delayed}
 
 A form of delayed evaluation is used in \pkg{Eigen}.  That is, many
 operators and methods do not evaluate the result but instead return an
 ``expression object'' that is evaluated when needed.  As an example,
-even though one writes the $\bm X^\prime\bm X$ evaluation as
+even though one writes the $\bm X^\top\bm X$ evaluation as
 \code{.rankUpdate(X.adjoint())} the \code{X.adjoint()} part is not
 evaluated immediately.  The \code{rankUpdate} method detects that it
 has been passed a matrix that is to be used in its transposed form and
 evaluates the update by taking inner products of columns of $\bm X$
-instead of rows of $\bm X^\prime$.
+instead of rows of $\bm X^\top$.
 
 As \pkg{Eigen} has developed some of these unevaluated expressions
 have been modified.  In \pkg{Eigen 3.1}, which is incorporated in
@@ -1448,15 +1402,7 @@ is indeed the adjoint of the original matrix but, at one time, the
 \code{wrap} method for the \pkg{Eigen} dense matrix classes would fail
 on row-major matrices.
 
-In the code for the transpose of an integer matrix shown in
-Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi}
-object before applying \code{wrap} to it.  The assignment forces the
-evaluation as a column-major matrix.  In early versions of the
-\pkg{RcppEigen} package if this step is skipped, as in
-Figure~\ref{badtrans}, the result would have been incorrect.
-
-\begin{figure}[htb]
-  %\begin{quote}
+\begin{figure}[t!]
   \hrule \smallskip
   \noindent
   \ttfamily
@@ -1465,22 +1411,29 @@ Figure~\ref{badtrans}, the result would have been incorrect.
   \mbox{}
   \normalfont
   \normalsize
-  %\end{quote}
   \hrule
   \caption{\code{badtransCpp}: Transpose producing a run-time error in
-    early versions of \pkg{RcppEigen}.}
-  \label{badtrans}
+    early versions of \pkg{RcppEigen}.
+  \label{badtrans}}
 \end{figure}
-\begin{verbatim}
-R> Ai <- matrix(1:6, ncol=2L)
-R> ftrans2 <- cxxfunction(signature(AA = "matrix"),
-+                         badtransCpp, "RcppEigen", incl)
+
+In the code for the transpose of an integer matrix shown in
+Figure~\ref{trans} the transpose is assigned to a \code{MatrixXi}
+object before applying \code{wrap} to it.  The assignment forces the
+evaluation as a column-major matrix.  In early versions of the
+\pkg{RcppEigen} package if this step is skipped, as in
+Figure~\ref{badtrans}, the result would have been incorrect.
+\begin{CodeInput}
+R> Ai <- matrix(1:6, ncol = 2L)
+R> ftrans2 <- cxxfunction(signature(AA = "matrix"), badtransCpp,
++    "RcppEigen", incl)
 R> (At <- ftrans2(Ai))
+\end{CodeInput}
+\begin{CodeOutput}
      [,1] [,2] [,3]
 [1,]    1    2    3
 [2,]    4    5    6
-\end{verbatim}
-
+\end{CodeOutput}
 Although the problem no longer persists for this particular example,
 the recommended practice is to first assign objects before wrapping
 them for return to \proglang{R}.
@@ -1488,12 +1441,7 @@ them for return to \proglang{R}.
 \section{Sparse matrices}
 \label{sec:sparse}
 
-\pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
-class \code{dgCMatrix} (from the \pkg{Matrix} package by
-\citet{CRAN:Matrix}) can be mapped as in Figure~\ref{sparseProd}.
-
-\begin{figure}[htb]
-  %\begin{quote}
+\begin{figure}[b!]
   \hrule \smallskip
   \noindent
   \ttfamily
@@ -1509,39 +1457,29 @@ class \code{dgCMatrix} (from the \pkg{Matrix} package by
   \normalfont
   \normalsize
   \hrule
-  \caption{\code{sparseProdCpp}: Transpose and product with sparse matrices.}
-  \label{sparseProd}
-  %\end{quote}
+  \caption{\code{sparseProdCpp}: Transpose and product with sparse matrices.
+  \label{sparseProd}}
 \end{figure}
 
-\begin{verbatim}
+\pkg{Eigen} provides sparse matrix classes.  An \proglang{R} object of
+class \code{dgCMatrix} (from the \pkg{Matrix} package by
+\citet{CRAN:Matrix}) can be mapped as in Figure~\ref{sparseProd}.
+\begin{CodeInput}
 R> sparse1 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-+                         sparseProdCpp, "RcppEigen", incl)
-R> data(KNex, package="Matrix")
++    sparseProdCpp, "RcppEigen", incl)
+R> data("KNex", package = "Matrix")
 R> rr <- sparse1(KNex$mm, KNex$y)
 R> stopifnot(all.equal(rr$At, t(KNex$mm)),
-+            all.equal(rr$Aty, as.vector(crossprod(KNex$mm, KNex$y))))
-\end{verbatim}
-
++    all.equal(rr$Aty, as.vector(crossprod(KNex$mm, KNex$y))))
+\end{CodeInput}
+%
 Sparse Cholesky decompositions are provided by the
 \code{SimplicialLLT} and \code{SimplicialLDLT} classes in the
 \pkg{RcppEigen} package for \proglang{R}.  These are
 subclasses of the \code{SimplicialCholesky} templated.  A sample usage
 is shown in Figure~\ref{fig:spLS}.
-
-\begin{figure}[htb]
-% typedef Eigen::MappedSparseMatrix<double>  MSpMat;
-% typedef Eigen::SparseMatrix<double>         SpMat;
-% typedef Eigen::SimplicialLDLT<SpMat>       SpChol;
-
-% const SpMat      At(as<MSpMat>(AA).adjoint());
-% const VectorXd  Aty(At * as<MapVecd>(yy));
-% const SpChol     Ch(At * At.adjoint());
-% if (Ch.info() != Eigen::Success) return R_NilValue;
-% return List::create(Named("betahat")  = Ch.solve(Aty),
-%                     Named("perm")     = Ch.permutationP().indices());
-
-  %\begin{quote}
+%
+\begin{figure}[t!]
   \hrule \smallskip
 \noindent
 \ttfamily
@@ -1558,26 +1496,32 @@ is shown in Figure~\ref{fig:spLS}.
 \mbox{}
 \normalfont
 \normalsize
-  %\end{quote}
   \hrule
-  \caption{\code{sparseLSCpp}: Solving a sparse least squares problem.}
-  \label{fig:spLS}
+  \caption{\code{sparseLSCpp}: Solving a sparse least squares problem.
+  \label{fig:spLS}}
 \end{figure}
-
-\begin{verbatim}
+%
+\begin{CodeInput}
 R> sparse2 <- cxxfunction(signature(AA = "dgCMatrix", yy = "numeric"),
-+                        sparseLSCpp, "RcppEigen", incl)
++    sparseLSCpp, "RcppEigen", incl)
 R> str(rr <-  sparse2(KNex$mm, KNex$y))
+\end{CodeInput}
+\begin{CodeOutput}
 List of 2
  $ betahat: num [1:712] 823 340 473 349 188 ...
  $ perm   : int [1:712] 572 410 414 580 420 425 417 426 431 445 ...
+\end{CodeOutput}
+\begin{CodeInput}
 R> res <- as.vector(solve(Ch <- Cholesky(crossprod(KNex$mm)),
-+                        crossprod(KNex$mm, KNex$y)))
++    crossprod(KNex$mm, KNex$y)))
 R> stopifnot(all.equal(rr$betahat, res))
-R> all(rr$perm == Ch@perm) # fill-reducing permutations are different
+R> all(rr$perm == Ch@perm)
+\end{CodeInput}
+\begin{CodeOutput}
 [1] FALSE
-\end{verbatim}
-
+\end{CodeOutput}
+The fill-reducing permutations are different.
+ 
 \section{Summary}
 
 This paper introduced the \pkg{RcppEigen} package which provides
@@ -1592,7 +1536,9 @@ rank-revealing approaches. Sparse matrix computations were also
 discussed, and a short example provided an empirical demonstration of
 the excellent run-time performance of the \pkg{RcppEigen} package.
 
-\bibliography{Rcpp}
+\pagebreak
+
+\bibliography{\Sexpr{Rcpp:::bib()}}
 
 \end{document}
 
