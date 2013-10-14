@@ -1,10 +1,16 @@
-#+TITLE:     NEWS for RcppEigen-0.3.0
+#+TITLE:     NEWS for RcppEigen-0.3.1.2.3
 #+AUTHOR:    Douglas Bates
 #+EMAIL:     bates@stat.wisc.edu
-#+DATE:      2013-02-02 Sun
+#+DATE:      2013-10-14 Mon
 #+DESCRIPTION: News regarding the latest version of RcppEigen
 #+KEYWORDS:
 #+LANGUAGE:  en
+
+* New features visible to users in RcppEigen-0.3.1.2.3
+  + Fix to RcppEigenCholmod.h to incorporate changes in the
+    cholmod_factor struct. These changes are necessary if code
+    compiled against RcppEigen that uses CHOLMOD factors is to be run
+    with versions of the Matrix package >= 1.1-0
 
 * New features visible to users in RcppEigen-0.3.1.2
   + Upgraded to Eigen 3.1.2
