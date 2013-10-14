@@ -1,20 +1,28 @@
-                       NEWS for RcppEigen-0.3.0
-                       ========================
+                     NEWS for RcppEigen-0.3.1.2.3
+                     ============================
 
 Author: Douglas Bates
-Date: 2013-02-02 Sun
+Date: 2013-10-14 Mon
 
 
 Table of Contents
 =================
-1 New features visible to users in RcppEigen-0.3.1.2
-2 New features visible to users in RcppEigen-0.3.1
-3 New features visible to users in RcppEigen-0.2.0
-4 New features not visible to users in RcppEigen-0.2.0
+1 New features visible to users in RcppEigen-0.3.1.2.3
+2 New features visible to users in RcppEigen-0.3.1.2
+3 New features visible to users in RcppEigen-0.3.1
+4 New features visible to users in RcppEigen-0.2.0
+5 New features not visible to users in RcppEigen-0.2.0
 
 
-1 New features visible to users in RcppEigen-0.3.1.2 
------------------------------------------------------
+1 New features visible to users in RcppEigen-0.3.1.2.3 
+=======================================================
+  + Fix to RcppEigenCholmod.h to incorporate changes in the
+    cholmod_factor struct. These changes are necessary if code
+    compiled against RcppEigen that uses CHOLMOD factors is to be run
+    with versions of the Matrix package >= 1.1-0
+
+2 New features visible to users in RcppEigen-0.3.1.2 
+=====================================================
   + Upgraded to Eigen 3.1.2
   + Fixes to RcppEigenWrap.h and adjustment of tests accordingly.
     The changes allow RowMajor matrices to be wrapped (thanks to Gael
@@ -27,8 +35,8 @@ Table of Contents
     Makefiles
   + Fixes related to Rcpp 0.10.*
 
-2 New features visible to users in RcppEigen-0.3.1 
----------------------------------------------------
+3 New features visible to users in RcppEigen-0.3.1 
+===================================================
   + Upgraded to Eigen 3.1.0
   + Removed the "unsupported" Eigen module AutoDiff which defined a
     macro "sign" that conflicted with a function in the R API (which
@@ -39,8 +47,8 @@ Table of Contents
     conflicting definitions in the std:: namespace and the R API and
     Eigen, which I don't have time to investigate.
 
-3 New features visible to users in RcppEigen-0.2.0 
----------------------------------------------------
+4 New features visible to users in RcppEigen-0.2.0 
+===================================================
   + Upgraded the version of Eigen to 3.1.0-alpha2, in which the sparse
     matrix modules are now in the "supported" tree.
   + Added several "unsupported" Eigen modules including
@@ -66,8 +74,8 @@ Table of Contents
   + The ability to wrap RowMajor sparse matrices and to use
     as<Eigen::ArrayXd> etc.
 
-4 New features not visible to users in RcppEigen-0.2.0 
--------------------------------------------------------
+5 New features not visible to users in RcppEigen-0.2.0 
+=======================================================
   + Migrated some tests to the testthat package.  Currently there is
     some difficulty with combining testthat, inline and R CMD check.
     These checks are available as

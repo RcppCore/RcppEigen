@@ -52,7 +52,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   URL: \url{http://dirk.eddelbuettel.com}\\
 }
 
-%% need no \usepackage{Sweave.sty}
+\usepackage{Sweave}
 
 \newcommand{\argmin}{\operatorname{argmin}\displaylimits}
 \newcommand{\rank}{\operatorname{rank}}
