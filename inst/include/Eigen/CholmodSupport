@@ -6,7 +6,7 @@
 #include "src/Core/util/DisableStupidWarnings.h"
 
 extern "C" {
-  #include <RcppEigenCholmod.h>
+  #include <cholmod.h>
 }
 
 /** \ingroup Support_modules
