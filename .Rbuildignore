@@ -2,3 +2,4 @@ vignettes/jss835/
 vignettes/RcppEigen-intro-nojss.*
 NEWS.org
 vignettes/jss.bst
+.travis.yml
