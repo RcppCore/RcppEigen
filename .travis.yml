@@ -12,7 +12,7 @@ before_install:
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
 install:
-  - ./travis-tool.sh r_install RUnit inline rbenchmark highlight Rcpp testthat
+  - ./travis-tool.sh r_install RUnit inline Rcpp testthat
 after_script:
   - ./travis-tool.sh dump_logs
 notifications:
