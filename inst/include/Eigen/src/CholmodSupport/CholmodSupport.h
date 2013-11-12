@@ -77,9 +77,13 @@ cholmod_sparse viewAsCholmod(SparseMatrix<_Scalar,_Options,_Index>& mat)
   {
     res.itype = CHOLMOD_INT;
   }
+  else if (internal::is_same<_Index,UF_long>::value)
+  {
+    res.itype = CHOLMOD_LONG;
+  }
   else
   {
-    eigen_assert(false && "Index type different than int is not supported yet");
+    eigen_assert(false && "Index type not supported yet");
   }
 
   // setup res.xtype
@@ -123,7 +127,7 @@ cholmod_dense viewAsCholmod(MatrixBase<Derived>& mat)
   res.ncol   = mat.cols();
   res.nzmax  = res.nrow * res.ncol;
   res.d      = Derived::IsVectorAtCompileTime ? mat.derived().size() : mat.derived().outerStride();
-  res.x      = mat.derived().data();
+  res.x      = (void*)(mat.derived().data());
   res.z      = 0;
 
   internal::cholmod_configure_matrix<Scalar>(res);
@@ -137,8 +141,8 @@ template<typename Scalar, int Flags, typename Index>
 MappedSparseMatrix<Scalar,Flags,Index> viewAsEigen(cholmod_sparse& cm)
 {
   return MappedSparseMatrix<Scalar,Flags,Index>
-         (cm.nrow, cm.ncol, reinterpret_cast<Index*>(cm.p)[cm.ncol],
-          reinterpret_cast<Index*>(cm.p), reinterpret_cast<Index*>(cm.i),reinterpret_cast<Scalar*>(cm.x) );
+         (cm.nrow, cm.ncol, static_cast<Index*>(cm.p)[cm.ncol],
+          static_cast<Index*>(cm.p), static_cast<Index*>(cm.i),static_cast<Scalar*>(cm.x) );
 }
 
 enum CholmodMode {
@@ -173,6 +177,7 @@ class CholmodBase : internal::noncopyable
     CholmodBase(const MatrixType& matrix)
       : m_cholmodFactor(0), m_info(Success), m_isInitialized(false)
     {
+      m_shiftOffset[0] = m_shiftOffset[1] = RealScalar(0.0);
       cholmod_start(&m_cholmod);
       compute(matrix);
     }
@@ -186,13 +191,6 @@ class CholmodBase : internal::noncopyable
     
     inline Index cols() const { return m_cholmodFactor->n; }
     inline Index rows() const { return m_cholmodFactor->n; }
-//    inline bool  isInitialized() const {return m_isInitialized;}
-//    inline bool        is_ll() const {return m_cholmodFactor->is_ll;}
-//    inline bool     is_super() const {return m_cholmodFactor->is_super;}
-//    inline bool is_monotonic() const {return m_cholmodFactor->is_monotonic;}
-//    inline int         minor() const {return m_cholmodFactor->minor;}
-//    inline int      ordering() const {return m_cholmodFactor->ordering;}
-//    inline size_t   nonZeros() const {return is_super() ? 0 : m_cholmodFactor->nzmax;}
     
     Derived& derived() { return *static_cast<Derived*>(this); }
     const Derived& derived() const { return *static_cast<const Derived*>(this); }
@@ -305,7 +303,8 @@ class CholmodBase : internal::noncopyable
       viewAsCholmod(matrix);
       cholmod_factorize(&A, m_cholmodFactor, &m_cholmod);
       
-      this->m_info = Success;
+      // If the factorization failed, minor is the column at which it did. On success minor == n.
+      this->m_info = (m_cholmodFactor->minor == m_cholmodFactor->n ? Success : NumericalIssue);
       m_factorizationIsOk = true;
     }
     
@@ -357,10 +356,12 @@ class CholmodBase : internal::noncopyable
     {
       eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
       const Index size = m_cholmodFactor->n;
+      EIGEN_UNUSED_VARIABLE(size);
       eigen_assert(size==b.rows());
 
       // note: cd stands for Cholmod Dense
-      cholmod_dense b_cd = viewAsCholmod(b.const_cast_derived());
+      Rhs& b_ref(b.const_cast_derived());
+      cholmod_dense b_cd = viewAsCholmod(b_ref);
       cholmod_dense* x_cd = cholmod_solve(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
       if(!x_cd)
       {
@@ -377,6 +378,7 @@ class CholmodBase : internal::noncopyable
     {
       eigen_assert(m_factorizationIsOk && "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
       const Index size = m_cholmodFactor->n;
+      EIGEN_UNUSED_VARIABLE(size);
       eigen_assert(size==b.rows());
 
       // note: cs stands for Cholmod Sparse
@@ -392,13 +394,30 @@ class CholmodBase : internal::noncopyable
     }
     #endif // EIGEN_PARSED_BY_DOXYGEN
     
+    
+    /** Sets the shift parameter that will be used to adjust the diagonal coefficients during the numerical factorization.
+      *
+      * During the numerical factorization, an offset term is added to the diagonal coefficients:\n
+      * \c d_ii = \a offset + \c d_ii
+      *
+      * The default is \a offset=0.
+      *
+      * \returns a reference to \c *this.
+      */
+    Derived& setShift(const RealScalar& offset)
+    {
+      m_shiftOffset[0] = offset;
+      return derived();
+    }
+    
     template<typename Stream>
-    void dumpMemory(Stream& s)
+    void dumpMemory(Stream& /*s*/)
     {}
     
   protected:
     mutable cholmod_common m_cholmod;
     cholmod_factor* m_cholmodFactor;
+    RealScalar m_shiftOffset[2];
     mutable ComputationInfo m_info;
     bool m_isInitialized;
     int m_factorizationIsOk;
@@ -582,7 +601,6 @@ class CholmodDecomposition : public CholmodBase<_MatrixType, _UpLo, CholmodDecom
 
     ~CholmodDecomposition() {}
     
-// FIXME: This should be removed and inheriting classes used
     void setMode(CholmodMode mode)
     {
       switch(mode)
