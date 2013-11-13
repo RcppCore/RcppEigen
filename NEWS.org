@@ -1,10 +1,13 @@
-#+TITLE:     NEWS for RcppEigen-0.3.1.2.3
+#+TITLE:     NEWS for RcppEigen-0.3.2.0
 #+AUTHOR:    Douglas Bates
 #+EMAIL:     bates@stat.wisc.edu
-#+DATE:      2013-10-14 Mon
+#+DATE:      2013-11-12 Wed
 #+DESCRIPTION: News regarding the latest version of RcppEigen
 #+KEYWORDS:
 #+LANGUAGE:  en
+
+* New features visible to users in RcppEigen-0.3.2.0
+  + Update to version 3.2.0 of Eigen
 
 * New features visible to users in RcppEigen-0.3.1.2.3
   + Fix to RcppEigenCholmod.h to incorporate changes in the

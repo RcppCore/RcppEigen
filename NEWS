@@ -1,60 +1,84 @@
-                     NEWS for RcppEigen-0.3.1.2.3
-                     ============================
+		      ____________________________
 
-Author: Douglas Bates
-Date: 2013-10-14 Mon
+		       NEWS FOR RCPPEIGEN-0.3.2.0
+
+			     Douglas Bates
+		      ____________________________
+
+
+			     2013-11-12 Wed
 
 
 Table of Contents
-=================
-1 New features visible to users in RcppEigen-0.3.1.2.3
-2 New features visible to users in RcppEigen-0.3.1.2
-3 New features visible to users in RcppEigen-0.3.1
-4 New features visible to users in RcppEigen-0.2.0
-5 New features not visible to users in RcppEigen-0.2.0
+_________________
+
+1 New features visible to users in RcppEigen-0.3.2.0
+2 New features visible to users in RcppEigen-0.3.1.2.3
+3 New features visible to users in RcppEigen-0.3.1.2
+4 New features visible to users in RcppEigen-0.3.1
+5 New features visible to users in RcppEigen-0.2.0
+6 New features not visible to users in RcppEigen-0.2.0
 
 
-1 New features visible to users in RcppEigen-0.3.1.2.3 
-=======================================================
+
+
+
+1 New features visible to users in RcppEigen-0.3.2.0
+====================================================
+
+  + Update to version 3.2.0 of Eigen
+
+
+2 New features visible to users in RcppEigen-0.3.1.2.3
+======================================================
+
   + Fix to RcppEigenCholmod.h to incorporate changes in the
-    cholmod_factor struct. These changes are necessary if code
-    compiled against RcppEigen that uses CHOLMOD factors is to be run
-    with versions of the Matrix package >= 1.1-0
+    cholmod_factor struct. These changes are necessary if code compiled
+    against RcppEigen that uses CHOLMOD factors is to be run with
+    versions of the Matrix package >= 1.1-0
 
-2 New features visible to users in RcppEigen-0.3.1.2 
-=====================================================
+
+3 New features visible to users in RcppEigen-0.3.1.2
+====================================================
+
   + Upgraded to Eigen 3.1.2
-  + Fixes to RcppEigenWrap.h and adjustment of tests accordingly.
-    The changes allow RowMajor matrices to be wrapped (thanks to Gael
+  + Fixes to RcppEigenWrap.h and adjustment of tests accordingly.  The
+    changes allow RowMajor matrices to be wrapped (thanks to Gael
     Guennebaud) but cannot handle RowVector types. There will need to be
-    more template metaprogramming done to redirect the case of RowVector,
-    which cannot be changed to a ColMajor form.
-  + Because of changes in R, -DNDEBUG is automatic. One must override it with
-    -UNDEBUG in the local ~/.R/Makevars to activate the debugging code.
-  + New (unexported) functions CxxFlags() and RcppEigenCxxFlags() for use in
-    Makefiles
+    more template metaprogramming done to redirect the case of
+    RowVector, which cannot be changed to a ColMajor form.
+  + Because of changes in R, -DNDEBUG is automatic. One must override it
+    with -UNDEBUG in the local ~/.R/Makevars to activate the debugging
+    code.
+  + New (unexported) functions CxxFlags() and RcppEigenCxxFlags() for
+    use in Makefiles
   + Fixes related to Rcpp 0.10.*
 
-3 New features visible to users in RcppEigen-0.3.1 
-===================================================
+
+4 New features visible to users in RcppEigen-0.3.1
+==================================================
+
   + Upgraded to Eigen 3.1.0
   + Removed the "unsupported" Eigen module AutoDiff which defined a
     macro "sign" that conflicted with a function in the R API (which
     really should be visible as "Rf_sign", not sure why it shows up as
     "sign" and don't have time to investigate)
-  + Commented out several tests involving complex vectors and
-    matrices.  Again there are compilation problems related to
-    conflicting definitions in the std:: namespace and the R API and
-    Eigen, which I don't have time to investigate.
+  + Commented out several tests involving complex vectors and matrices.
+    Again there are compilation problems related to conflicting
+    definitions in the std:: namespace and the R API and Eigen, which I
+    don't have time to investigate.
 
-4 New features visible to users in RcppEigen-0.2.0 
-===================================================
+
+5 New features visible to users in RcppEigen-0.2.0
+==================================================
+
   + Upgraded the version of Eigen to 3.1.0-alpha2, in which the sparse
     matrix modules are now in the "supported" tree.
   + Added several "unsupported" Eigen modules including
     - AutoDiff (a small automatic differentiation package adapted to
       vectors and matrices)
-    - IterativeSolvers (iterative linear and nonlinear solver algorithms)
+    - IterativeSolvers (iterative linear and nonlinear solver
+      algorithms)
     - KroneckerProduct (as the name implies)
     - MatrixFunctions (matrix cos, exp, log, sin, sinh, etc.)
     - NonlinearOptimization (based on minpack but uses reverse
@@ -68,22 +92,20 @@ Table of Contents
       Market I/O functions)
     - Splines (multidimensional spline representations and spline
       interpolation)
-  + At present all these modules, including the MatrixFunctions
-    module, are included with RcppEigen.h but that may change if too
-    many people get unexpected results from A.exp()
+  + At present all these modules, including the MatrixFunctions module,
+    are included with RcppEigen.h but that may change if too many people
+    get unexpected results from A.exp()
   + The ability to wrap RowMajor sparse matrices and to use
     as<Eigen::ArrayXd> etc.
 
-5 New features not visible to users in RcppEigen-0.2.0 
-=======================================================
+
+6 New features not visible to users in RcppEigen-0.2.0
+======================================================
+
   + Migrated some tests to the testthat package.  Currently there is
     some difficulty with combining testthat, inline and R CMD check.
     These checks are available as
-
-
-  library(testthat)
-  test_package(RcppEigen)
-
-
- 
-  
+  ,----
+  | library(testthat)
+  | test_package(RcppEigen)
+  `----
