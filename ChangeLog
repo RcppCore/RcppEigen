@@ -1,3 +1,9 @@
+2013-11-13  Douglas Bates  <bates@stat.wisc.edu>
+
+	* DESCRIPTION: New version, release date and dependencies
+
+	* inst/include/Eigen: Update to release 3.2.0 of Eigen
+
 2013-02-03  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New minor version 0.3.1.2.1 for upload to CRAN and JSS
