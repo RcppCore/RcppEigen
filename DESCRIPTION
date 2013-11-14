@@ -26,6 +26,6 @@ License: GPL (>= 2)
 Depends: R(>= 2.15.1)
 LazyLoad: yes
 LinkingTo: Rcpp
-Imports: Matrix (>= 1.1-0), Rcpp (>= 0.10.5)
+Imports: Matrix (>= 1.1-0), Rcpp (>= 0.10.6.2)
 Suggests: inline, RUnit, testthat
 URL: http://eigen.tuxfamily.org

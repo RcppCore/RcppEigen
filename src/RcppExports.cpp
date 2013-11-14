@@ -7,16 +7,16 @@
 using namespace Rcpp;
 
 // fastLm
-List fastLm(Map<MatrixXd> X, Map<VectorXd> y, int type);
-RcppExport SEXP RcppEigen_fastLm(SEXP XSEXP, SEXP ySEXP, SEXP typeSEXP) {
+List fastLm(NumericMatrix Xs, Eigen::Map<Eigen::VectorXd> y, int type);
+RcppExport SEXP RcppEigen_fastLm(SEXP XsSEXP, SEXP ySEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< Map<MatrixXd> >::type X(XSEXP );
-        Rcpp::traits::input_parameter< Map<VectorXd> >::type y(ySEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type Xs(XsSEXP );
+        Rcpp::traits::input_parameter< Eigen::Map<Eigen::VectorXd> >::type y(ySEXP );
         Rcpp::traits::input_parameter< int >::type type(typeSEXP );
-        List __result = fastLm(X, y, type);
+        List __result = fastLm(Xs, y, type);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

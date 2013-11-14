@@ -22,7 +22,7 @@
 
 #include "fastLm.h"
 #include <R_ext/Lapack.h>
-
+  
 namespace lmsol {
     using Rcpp::_;
     using Rcpp::as;
@@ -201,38 +201,46 @@ namespace lmsol {
 	throw invalid_argument("invalid type");
 	return ColPivQR(X, y);	// -Wall
     }
-
-    // [[Rcpp::export]]
-    List fastLm(Map<MatrixXd>  X, Map<VectorXd>  y, int type) {
-	    Index n = X.rows();
-	    if ((Index)y.size() != n) throw invalid_argument("size mismatch");
-
-		// Select and apply the least squares method
-	    lm ans(do_lm(X, y, type));
-
-				// Copy coefficients and install names, if any
-	    NumericVector     coef(wrap(ans.coef()));
-	    List          dimnames = NumericMatrix(Xs).attr("dimnames");
-	    if (dimnames.size() > 1) {
-            RObject   colnames = dimnames[1];
-            if (!(colnames).isNULL())
-                coef.attr("names") = clone(CharacterVector(colnames));
-	    }
-	    
-	    VectorXd         resid = y - ans.fitted();
-	    int               rank = ans.rank();
-	    int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
-	    double               s = resid.norm() / std::sqrt(double(df));
-				// Create the standard errors
-	    VectorXd            se = s * ans.se();
-
-	    return List::create(
-            _["coefficients"]  = coef,
-            _["se"]            = se,
-            _["rank"]          = rank,
-            _["df.residual"]   = df,
-            _["residuals"]     = resid,
-            _["s"]             = s,
-            _["fitted.values"] = ans.fitted()
-        );
+ 
 }
+
+using namespace Rcpp ;
+using namespace Eigen; 
+using namespace lmsol ;
+
+// [[Rcpp::export]]
+List fastLm(NumericMatrix Xs, Eigen::Map<Eigen::VectorXd>  y, int type) {
+    Map<MatrixXd>  X = as< Map<MatrixXd> >( Xs ) ;
+    Index n = X.rows();
+    if ((Index)y.size() != n) throw invalid_argument("size mismatch");
+    
+    // Select and apply the least squares method
+    lm ans(do_lm(X, y, type));
+    
+    		// Copy coefficients and install names, if any
+    NumericVector     coef(wrap(ans.coef()));
+    List          dimnames = Xs.attr("dimnames");
+    if (dimnames.size() > 1) {
+        RObject   colnames = dimnames[1];
+        if (!(colnames).isNULL())
+            coef.attr("names") = clone(CharacterVector(colnames));
+    }
+    
+    VectorXd         resid = y - ans.fitted();
+    int               rank = ans.rank();
+    int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
+    double               s = resid.norm() / std::sqrt(double(df));
+    		// Create the standard errors
+    VectorXd            se = s * ans.se();
+    
+    return List::create(
+        _["coefficients"]  = coef,
+        _["se"]            = se,
+        _["rank"]          = rank,
+        _["df.residual"]   = df,
+        _["residuals"]     = resid,
+        _["s"]             = s,
+        _["fitted.values"] = ans.fitted()
+    );
+}
+
