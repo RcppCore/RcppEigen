@@ -24,30 +24,30 @@
 
 test.fastLm <- function() {
     data(trees, package="datasets")
-    flm0 <- .Call("fastLm",
+    flm0 <- fastLm(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 0L,
-                  PACKAGE="RcppEigen")
-    flm1 <- .Call("fastLm",
+                  log(trees$Volume), 0L
+                  )
+    flm1 <- fastLm(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 1L,
-                  PACKAGE="RcppEigen")
-    flm2 <- .Call("fastLm",
+                  )
+    flm2 <- fastLm(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 2L,
-                  PACKAGE="RcppEigen")
-    flm3 <- .Call("fastLm",
+                  log(trees$Volume), 2L
+                  )
+    flm3 <- fastLm(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 3L,
-                  PACKAGE="RcppEigen")
-    flm4 <- .Call("fastLm",
+                  )
+    flm4 <- fastLm(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 4L,
-                  PACKAGE="RcppEigen")
-    flm5 <- .Call("fastLm",
+                  log(trees$Volume), 4L
+                  )
+    flm5 <- fastLm(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 5L,
-                  PACKAGE="RcppEigen")
+                  log(trees$Volume), 5L
+                  )
     fit <- lm(log(Volume) ~ log(Girth), data=trees)
     fitCoef <- unname(coef(fit))
     fitStdErr <- unname(coef(summary(fit))[, "Std. Error", drop = TRUE])

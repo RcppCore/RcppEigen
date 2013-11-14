@@ -21,7 +21,7 @@ fastLmPure <- function(X, y, method = 0L) {
 
     stopifnot(is.matrix(X), is.numeric(y), NROW(y)==nrow(X))
 
-    .Call("fastLm", X, y, as.integer(method[1]), PACKAGE="RcppEigen")
+    fastLm( X, y, as.integer(method[1]) )
 }
 
 fastLm <- function(X, ...) UseMethod("fastLm")
