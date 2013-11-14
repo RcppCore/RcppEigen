@@ -112,7 +112,7 @@ namespace lmsol {
     };
 }
 
-extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP types);
+// extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP types);
 
 #endif
 

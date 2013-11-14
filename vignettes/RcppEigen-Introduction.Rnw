@@ -134,7 +134,7 @@ major releases with \pkg{Eigen}3 being the current major version. To
 check the minor and patch version numbers, load the \pkg{RcppEigen}
 package and call
 \begin{CodeInput}
-R> .Call("eigen_version", FALSE)
+R> RcppEigen:::eigen_version(FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 major minor patch 

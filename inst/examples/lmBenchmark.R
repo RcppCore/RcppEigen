@@ -60,6 +60,6 @@ print(do_bench())
 
 sessionInfo()
 
-.Call("eigen_version", FALSE, PACKAGE="RcppEigen")
+RcppEigen:::eigen_version()
 
 .Call("Eigen_SSE", FALSE, PACKAGE="RcppEigen")
