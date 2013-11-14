@@ -209,7 +209,7 @@ using namespace Eigen;
 using namespace lmsol ;
 
 // [[Rcpp::export]]
-List fastLm(NumericMatrix Xs, Eigen::Map<Eigen::VectorXd>  y, int type) {
+List fastLm_impl(NumericMatrix Xs, Eigen::Map<Eigen::VectorXd>  y, int type) {
     Map<MatrixXd>  X = as< Map<MatrixXd> >( Xs ) ;
     Index n = X.rows();
     if ((Index)y.size() != n) throw invalid_argument("size mismatch");

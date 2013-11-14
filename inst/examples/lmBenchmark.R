@@ -18,23 +18,23 @@ exprs <- list()
 exprs$lm.fit <- expression(stats::lm.fit(mm, y))
                                         # versions from RcppEigen
 ## column-pivoted QR decomposition - similar to lm.fit
-exprs$PivQR <- expression(fastLm(mm, y, 0L))
+exprs$PivQR <- expression(RcppEigen:::fastLm_impl(mm, y, 0L))
 ## LDLt Cholesky decomposition with rank detection
-exprs$LDLt <- expression(fastLm( mm, y, 2L))
+exprs$LDLt <- expression(RcppEigen:::fastLm_impl( mm, y, 2L))
 ## SVD using the Lapack subroutine dgesdd and Eigen support
-exprs$GESDD <- expression(fastLm( mm, y, 6L))
+exprs$GESDD <- expression(RcppEigen:::fastLm_impl( mm, y, 6L))
 ## SVD (the JacobiSVD class from Eigen)
-exprs$SVD <- expression(fastLm( mm, y, 4L)))
+exprs$SVD <- expression(RcppEigen:::fastLm_impl( mm, y, 4L)))
 ## eigenvalues and eigenvectors of X'X
-exprs$SymmEig <- expression(fastLm( mm, y, 5L))
+exprs$SymmEig <- expression(RcppEigen:::fastLm_impl( mm, y, 5L))
 
 ## Non-rank-revealing decompositions.  These work fine except when
 ## they don't.
 
 ## Unpivoted  QR decomposition
-exprs$QR <- expression(fastLm( mm, y, 1L))
+exprs$QR <- expression(RcppEigen:::fastLm_impl( mm, y, 1L))
 ## LLt Cholesky decomposition
-exprs$LLt <- expression(fastLm( mm, y, 3L ))
+exprs$LLt <- expression(RcppEigen:::fastLm_impl( mm, y, 3L ))
 
 if (suppressMessages(require("RcppArmadillo", character=TRUE, quietly=TRUE))) {
     exprs$arma <- expression(.Call("fastLm", mm, y, PACKAGE="RcppArmadillo"))
