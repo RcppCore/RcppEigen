@@ -30,7 +30,7 @@ test.fastLm <- function() {
                   )
     flm1 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 1L,
+                  log(trees$Volume), 1L
                   )
     flm2 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
@@ -38,7 +38,7 @@ test.fastLm <- function() {
                   )
     flm3 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
-                  log(trees$Volume), 3L,
+                  log(trees$Volume), 3L
                   )
     flm4 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
