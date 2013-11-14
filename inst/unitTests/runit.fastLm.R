@@ -24,27 +24,27 @@
 
 test.fastLm <- function() {
     data(trees, package="datasets")
-    flm0 <- RcppEigen:::fastlm_impl(
+    flm0 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 0L
                   )
-    flm1 <- RcppEigen:::fastlm_impl(
+    flm1 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 1L,
                   )
-    flm2 <- RcppEigen:::fastlm_impl(
+    flm2 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 2L
                   )
-    flm3 <- RcppEigen:::fastlm_impl(
+    flm3 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 3L,
                   )
-    flm4 <- RcppEigen:::fastlm_impl(
+    flm4 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 4L
                   )
-    flm5 <- RcppEigen:::fastlm_impl(
+    flm5 <- RcppEigen:::fastLm_impl(
                   cbind(1, log(trees$Girth)),
                   log(trees$Volume), 5L
                   )
