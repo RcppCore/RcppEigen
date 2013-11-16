@@ -1,8 +1,8 @@
 Package: RcppEigen
 Type: Package
 Title: Rcpp integration for the Eigen templated linear algebra library.
-Version: 0.3.2.0
-Date: 2013-11-13
+Version: 0.3.2.1
+Date: 2013-11-15
 Author: Douglas Bates, Romain Francois and Dirk Eddelbuettel
 Maintainer: Douglas Bates <bates@stat.wisc.edu>
 Description: R and Eigen integration using Rcpp.
@@ -25,7 +25,7 @@ Description: R and Eigen integration using Rcpp.
 License: GPL (>= 2)
 Depends: R(>= 2.15.1), Rcpp (>= 0.10.5)
 LazyLoad: yes
-LinkingTo: Rcpp
-Imports: Matrix (>= 1.1-0), Rcpp (>= 0.10.5)
+LinkingTo: Rcpp (>= 0.10.6.1)
+Imports: Matrix (>= 1.1-0)
 Suggests: inline, RUnit, testthat
 URL: http://eigen.tuxfamily.org
