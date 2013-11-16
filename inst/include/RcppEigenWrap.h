@@ -284,7 +284,7 @@ namespace Rcpp{
         class Exporter<Eigen::MappedSparseMatrix<T> > {
         public:
             const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
-            Exporter(SEXP x) : d_x(x),  {
+            Exporter(SEXP x) : d_x(x) {
                 d_dims = d_x.slot("Dim") ;
                 d_i    = d_x.slot("i") ;
                 d_p    = d_x.slot("p") ;
