@@ -3,3 +3,4 @@ vignettes/RcppEigen-intro-nojss.*
 NEWS.org
 vignettes/jss.bst
 .travis.yml
+debian/

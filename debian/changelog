@@ -1,0 +1,30 @@
+r-cran-rcppeigen (0.3.2.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Wed, 13 Nov 2013 15:06:56 -0600
+
+r-cran-rcppeigen (0.3.1.2.3-2) unstable; urgency=low
+
+  * debian/control: Correcting Depends: on r-cran-rcppeigen
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Tue, 29 Oct 2013 16:43:18 -0500
+
+r-cran-rcppeigen (0.3.1.2.3-1) unstable; urgency=low
+
+  * New upstream release
+
+  * debian/control: Set Build-Depends: to current R version
+  * debian/control: Set Standards-Version: to current version 
+  
+  * debian/control: Update Build-Depends: to r-cran-matrix (>= 1.1-0)
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Tue, 29 Oct 2013 06:30:00 -0500
+
+r-cran-rcppeigen (0.3.1.2.1-1) unstable; urgency=low
+
+  * Initial Debian release 				(Closes: #722652)
+  
+ -- Dirk Eddelbuettel <edd@debian.org>  Thu, 12 Sep 2013 20:59:34 -0500
+
+
