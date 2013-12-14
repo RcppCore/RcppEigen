@@ -1,6 +1,6 @@
-vignettes/jss835/
+vignettes/jss835
 vignettes/RcppEigen-intro-nojss.*
 NEWS.org
 vignettes/jss.bst
 .travis.yml
-debian/
+debian
