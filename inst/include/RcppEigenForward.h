@@ -22,6 +22,7 @@
 #ifndef RcppEigen__RcppEigenForward__h
 #define RcppEigen__RcppEigenForward__h
 
+#include <iterator>
 #include <RcppCommon.h>
 #include <Rconfig.h>
 #include <RcppEigenCholmod.h>
