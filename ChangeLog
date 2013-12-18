@@ -1,13 +1,12 @@
 2013-12-18  Dirk Eddelbuettel  <edd@debian.org>
 
-
-	* DESCRIPTION: Minor version 3.2.0.1
+	* DESCRIPTION: New minor version 3.2.0.1
 	* DESCRIPTION: New maintainer
 	* DESCRIPTION: Added Copyright: reference to new COPYRIGHTS file
 	* DESCRIPTION: Added reference to new LICENSE file
 
 	* inst/COPYRIGHTS: Added, based on existing debian/copyright file
-	* inst/LICENSE: Added, states MPL-2 for Eigen,GPL (>=2) for RcppEigen
+	* LICENSE: Added to state MPL-2 for Eigen, GPL (>=2) for RcppEigen
 
 	* inst/include/Eigen/src/SparseLU/SparseLU.h: Applied Solaris patch
 	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h:
