@@ -133,7 +133,7 @@ License: MPL-2
 
 Files: *
 Copyright: 2011 - 2013  Douglas Bates, Romain Francois and Dirk Eddelbuettel
-License: GPL-2
+License: GPL-2 
 
 Files: debian/*
 Copyright: 2013  Dirk Eddelbuettel <edd@debian.org>
