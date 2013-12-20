@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012	Douglas Bates, Dirk Eddelbuettel and Romain Francois
+# Copyright (C) 2012 - 2013  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 #
 # This file is part of RcppEigen.
 #
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Rcpp.  If not, see <http://www.gnu.org/licenses/>.
 
-library("inline")
-library("RcppEigen")
 incl <- '
 typedef Eigen::ArrayXd                   Ar1;
 typedef Eigen::Map<Ar1>                 MAr1;
@@ -53,9 +51,10 @@ typedef Eigen::VectorXcd               cdVec;
 typedef Eigen::Map<cdVec>             McdVec;
 '
 
-definitions <-
-    list("wrap_vectors" = list(signature(), '
-List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
+definitions <- list(
+    "wrap_vectors" = list(signature(),
+    '
+    List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
 			 Named("Vec<double>",    Vec::Zero(5)),
 			 Named("Vec<float>",    fVec::Zero(5)),
 			 Named("Vec<int>",      iVec::Zero(5))
@@ -74,12 +73,12 @@ List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
 			 Named("Col<int>",      iMat::Zero(5, 1))
     );
 
-//    List rows = List::create(
-//        _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
-//        _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
-//        _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
-//        _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
-//    );
+    // List rows = List::create(
+    //      _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
+    //      _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
+    //      _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
+    //      _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
+    //  );
 
     List matrices = List::create(
         _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
@@ -126,8 +125,11 @@ List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
         _["operations : ArrayXd"]   = operations
         );
     return output;
-'),
-         "as_Vec" = list(signature(input_ = "list"), '
+    '),
+
+
+    "as_Vec" = list(signature(input_ = "list"),
+    '
     List input(input_) ;
     Eigen::VectorXi                                m1 = input[0] ; /* implicit as */
     Eigen::VectorXd                                m2 = input[1] ; /* implicit as */
@@ -139,70 +141,68 @@ List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
     return res ;
 
     ')
-         )
-
-cxxargs <- ifelse(Rcpp:::capabilities()[["initializer lists"]],"-std=c++0x","")
+    )
 
 .setUp <- function() {
+    suppressMessages(require(inline))
+    suppressMessages(require(RcppEigen))
+    cxxargs <- ifelse(Rcpp:::capabilities()[["initializer lists"]],
+                      "-std=c++0x","")
     tests <- ".rcppeigen.wrap"
     if( ! exists( tests, globalenv() )) {
         fun <- RcppEigen:::compile_unit_tests(definitions,
                                               includes=incl,
                                               cxxargs = cxxargs)
         names(fun) <- names(definitions)
-        assign( tests, fun, globalenv() )
+        assign(tests, fun, globalenv())
     }
 }
 
-.setUp()
 
-res <- .rcppeigen.wrap$wrap_vectors()
+test.wrapVectors <- function() {
+    res <- .rcppeigen.wrap$wrap_vectors()
 
-context("wrap")
-test_that("array", {
-    expect_that(res[[1]][[1]], equals(complex(5)))
-    expect_that(res[[1]][[2]], equals(double(5)))
-    expect_that(res[[1]][[3]], equals(double(5)))
-    expect_that(res[[1]][[4]], equals(integer(5)))
+    checkEquals(res[[1]][[1]], complex(5))
+    checkEquals(res[[1]][[2]], double(5))
+    checkEquals(res[[1]][[3]], double(5))
+    checkEquals(res[[1]][[4]], integer(5))
 
-    expect_that(res[[2]][[1]], equals((1+0i) * diag(nr=3L)))
-    expect_that(res[[2]][[2]], equals(diag(nr=3L)))
-    expect_that(res[[2]][[3]], equals(diag(nr=3L)))
-    expect_that(res[[2]][[4]], equals(matrix(as.integer((diag(nr=3L))),nr=3L)))
+    checkEquals(res[[2]][[1]], (1+0i) * diag(nr=3L))
+    checkEquals(res[[2]][[2]], diag(nr=3L))
+    checkEquals(res[[2]][[3]], diag(nr=3L))
+    checkEquals(res[[2]][[4]], matrix(as.integer((diag(nr=3L))),nr=3L))
 
-#    expect_that(res[[3]][[1]], equals(matrix(complex(5), nr=1L)))
-#    expect_that(res[[3]][[1]], equals(matrix(numeric(5), nr=1L)))
-#    expect_that(res[[3]][[2]], equals(matrix(numeric(5), nr=1L)))
-#    expect_that(res[[3]][[3]], equals(matrix(integer(5), nr=1L)))
+    ## checkEquals(res[[3]][[1]], matrix(complex(5), nr=1L))
+    ## checkEquals(res[[3]][[1]], matrix(numeric(5), nr=1L))
+    ## checkEquals(res[[3]][[2]], matrix(numeric(5), nr=1L))
+    ## checkEquals(res[[3]][[3]], matrix(integer(5), nr=1L))
 
-    expect_that(res[[3]][[1]], equals(as.matrix(complex(5))))
-    expect_that(res[[3]][[2]], equals(as.matrix(numeric(5))))
-    expect_that(res[[3]][[3]], equals(as.matrix(numeric(5))))
-    expect_that(res[[3]][[4]], equals(as.matrix(integer(5))))
+    checkEquals(res[[3]][[1]], as.matrix(complex(5)))
+    checkEquals(res[[3]][[2]], as.matrix(numeric(5)))
+    checkEquals(res[[3]][[3]], as.matrix(numeric(5)))
+    checkEquals(res[[3]][[4]], as.matrix(integer(5)))
 
-    expect_that(res[[4]][[1]], equals(matrix(complex(9L), nc=3L)))
-    expect_that(res[[4]][[2]], equals(matrix(numeric(9L), nc=3L)))
-    expect_that(res[[4]][[3]], equals(matrix(numeric(9L), nc=3L)))
-    expect_that(res[[4]][[4]], equals(matrix(integer(9L), nc=3L)))
+    checkEquals(res[[4]][[1]], matrix(complex(9L), nc=3L))
+    checkEquals(res[[4]][[2]], matrix(numeric(9L), nc=3L))
+    checkEquals(res[[4]][[3]], matrix(numeric(9L), nc=3L))
+    checkEquals(res[[4]][[4]], matrix(integer(9L), nc=3L))
 
-    expect_that(res[[5]][[1]], equals(complex(5)))
-    expect_that(res[[5]][[2]], equals(double(5)))
-    expect_that(res[[5]][[3]], equals(double(5)))
-    expect_that(res[[5]][[4]], equals(integer(5)))
+    checkEquals(res[[5]][[1]], complex(5))
+    checkEquals(res[[5]][[2]], double(5))
+    checkEquals(res[[5]][[3]], double(5))
+    checkEquals(res[[5]][[4]], integer(5))
 
     oneTen <- seq(1, 10, length.out=6L)
 
-    expect_that(res[[6]][[1]], equals(oneTen))
-    expect_that(res[[6]][[2]], equals(log(oneTen)))
-    expect_that(res[[6]][[3]], equals(exp(oneTen)))
-    expect_that(res[[6]][[4]], equals(sqrt(oneTen)))
-    expect_that(res[[6]][[5]], equals(cos(oneTen)))
-})
+    checkEquals(res[[6]][[1]], oneTen)
+    checkEquals(res[[6]][[2]], log(oneTen))
+    checkEquals(res[[6]][[3]], exp(oneTen))
+    checkEquals(res[[6]][[4]], sqrt(oneTen))
+    checkEquals(res[[6]][[5]], cos(oneTen))
+}
 
-res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
+test.wrapAsVec <- function() {
+    res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
 
-context("as_Vec")
-test_that("asVec",
-    expect_that(unlist(.rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))),
-                equals(rep.int(55, 4L)))
-          )
+    checkEquals(unlist(res), rep.int(55, 4L))
+}
