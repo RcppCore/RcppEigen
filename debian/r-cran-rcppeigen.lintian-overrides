@@ -4,3 +4,4 @@ r-cran-rcppeigen: hardening-no-fortify-functions usr/lib/R/site-library/RcppEige
 r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.RcppEigen.R
 r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.fastLm.R
 r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.sparse.R
+r-cran-rcppeigen: extra-license-file usr/lib/R/site-library/RcppEigen/LICENSE
