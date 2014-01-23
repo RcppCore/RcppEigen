@@ -7,6 +7,8 @@ importClassesFrom("Matrix"
                   , dtCMatrix
                   )
 
+importFrom(Rcpp, evalCpp)
+
 #exportPattern("^[[:alpha:]]+")
 export(fastLm,
        fastLmPure,

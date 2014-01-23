@@ -6,6 +6,7 @@
   \itemize{
     \item Converted three unused unit test files to \cpkg{RUnit} and
     removed \code{Suggests:} of \cpkg{testthat}
+    \item Minor updates to reflect some changes at the \cpkg{Rcpp} side
   }
 }
 
@@ -93,8 +94,7 @@
     many people get unexpected results from A.exp()
     \item The ability to wrap RowMajor sparse matrices and to use
     as<Eigen::ArrayXd> etc.
-  }
-  \item Migrated some tests to the testthat package.  Currently there is
+    \item Migrated some tests to the testthat package.  Currently there is
     some difficulty with combining testthat, inline and R CMD check.
   }
 }

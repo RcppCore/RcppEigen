@@ -15,8 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with RcppEigen.  If not, see <http://www.gnu.org/licenses/>.
 
-SHLIB <- Rcpp:::SHLIB.maker( 
-    env = list( 
-        PKG_LIBS = Rcpp:::RcppLdFlags(),
-   )
-)
+#SHLIB <- Rcpp:::SHLIB.maker( 
+#    env = list( 
+#        PKG_LIBS = Rcpp:::RcppLdFlags(),
+#   )
+#)
