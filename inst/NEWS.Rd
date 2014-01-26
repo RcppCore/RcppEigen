@@ -2,11 +2,14 @@
 \title{News for Package 'RcppEigen}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in UNRELEASED RcppEigen version 0.3.2.0.2 (2013-12-19)}{
+\section{Changes in RcppEigen version 0.3.2.0.2 (2014-01-26)}{
   \itemize{
     \item Converted three unused unit test files to \cpkg{RUnit} and
     removed \code{Suggests:} of \cpkg{testthat}
-    \item Minor updates to reflect some changes at the \cpkg{Rcpp} side
+    \item Add declaration to import a symbol from \cpkg{Rcpp} to
+    \code{NAMESPACE} to ensure proper instantiation with the upcoming
+    \cpkg{Rcpp} version
+    \item Retire \code{SHLIB.maker} function
   }
 }
 
