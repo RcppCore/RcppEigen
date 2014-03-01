@@ -12,6 +12,10 @@
 
 	* man/RcppEigen.package.skeleton.Rd: Removed 'namespace' for current R
 
+	* inst/skeleton/rcppeigen_hello_world.cpp: Rewritten / extended
+	similar to the RcppArmadillo variant; now contains four functions
+	exported by Rcpp Attributes
+
 	* inst/skeleton/Makevars: Updated for Rcpp 0.11.0, also noted C++11 option
 	via setting of 'USE_CXX1X=' with R 3.1.0 or later
 	* inst/skeleton/Makevars.win: Ditto

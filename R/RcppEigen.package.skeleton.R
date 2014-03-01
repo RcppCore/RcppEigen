@@ -96,18 +96,11 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     }
 		
     if (example_code) {
-        header <- readLines(file.path(skeleton, "rcppeigen_hello_world.h"))
-        header <- gsub("@PKG@", name, header, fixed = TRUE)
-        writeLines(header , file.path(src, "rcppeigen_hello_world.h"))
-        message(" >> added example header file using RcppEigen")
-		
         file.copy(file.path(skeleton, "rcppeigen_hello_world.cpp"), src)
         message(" >> added example src file using Eigen classes")
-        
-        rcode <- readLines(file.path(skeleton, "rcppeigen_hello_world.R"))
-        rcode <- gsub("@PKG@", name, rcode, fixed = TRUE)
-        writeLines(rcode , file.path(root, "R", "rcppeigen_hello_world.R"))
-        message(" >> added example R file calling the C++ example")
+
+	Rcpp::compileAttributes(root)
+        message(" >> invoked Rcpp::compileAttributes to create wrappers")
     }
     
     if (fake) {

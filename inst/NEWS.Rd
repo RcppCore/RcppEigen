@@ -2,6 +2,18 @@
 \title{News for Package 'RcppEigen}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in RcppEigen version 0.3.2.0.3 (2014-03-01)}{
+  \itemize{
+    \item Updated and extended \code{RcppEigen.package.skeleton()} to
+    use several examples via \cpkg{Rcpp} Attributes; also removed the
+    deprecated \code{namespace} argument 
+    \item Updated skeleton package example for \cpkg{Rcpp} 0.11.0 or
+    later by removing needed for linking with user library
+    \item Updated files \code{DESCRIPTION}, \code{NAMESPACE},
+    \code{src/Makevars} and \code{src/Makevars.win} similarly
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.0.2 (2014-01-26)}{
   \itemize{
     \item Converted three unused unit test files to \cpkg{RUnit} and
