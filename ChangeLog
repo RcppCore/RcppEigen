@@ -1,5 +1,12 @@
 2014-03-01  Dirk Eddelbuettel  <edd@debian.org>
 
+	* DESCRIPTION: New minor version 3.2.0.3
+
+	* DESCRIPTION: Switched to 'Imports: Rcpp (>= 0.11.0)'
+
+	* src/Makevars: Updated for Rcpp 0.11.0
+	* src/Makevars.win: Ditto
+
 	* R/RcppEigen.package.skeleton.R: Updated for Rcpp 0.11.0, also
 	updated for current R versions by removing deprecated 'namespace' arg
 
