@@ -27,7 +27,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
 	
     if (!length(list)) {
         fake <- TRUE
-        assign("Rcpp.fake.fun", function(){}, envir = env)
+        assign("Rcpp.fake.fun", function() {}, envir = env)
     } else {
         fake <- FALSE
     }
@@ -84,22 +84,22 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     }
     skeleton <- system.file("skeleton", package = "RcppEigen")
     Makevars <- file.path(src, "Makevars")
-    if (!file.exists(Makevars)){
+    if (!file.exists(Makevars)) {
         file.copy(file.path(skeleton, "Makevars"), Makevars)
-        message(" >> added Makevars file with Rcpp settings")
+        message(" >> added Makevars file")
     }
 	
     Makevars.win <- file.path(src, "Makevars.win")
-    if (!file.exists(Makevars.win)){
+    if (!file.exists(Makevars.win)) {
         file.copy(file.path(skeleton, "Makevars.win"), Makevars.win)
-        message(" >> added Makevars.win file with RcppEigen settings")
+        message(" >> added Makevars.win file")
     }
 		
-    if (example_code){
+    if (example_code) {
         header <- readLines(file.path(skeleton, "rcppeigen_hello_world.h"))
         header <- gsub("@PKG@", name, header, fixed = TRUE)
         writeLines(header , file.path(src, "rcppeigen_hello_world.h"))
-        message(" >> added example header file using Rcpp/RcppEigen")
+        message(" >> added example header file using RcppEigen")
 		
         file.copy(file.path(skeleton, "rcppeigen_hello_world.cpp"), src)
         message(" >> added example src file using Eigen classes")
@@ -110,7 +110,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
         message(" >> added example R file calling the C++ example")
     }
     
-    if (fake){
+    if (fake) {
         rm("Rcpp.fake.fun", envir = env)
         unlink(file.path(root, "R"  , "Rcpp.fake.fun.R"))
         unlink(file.path(root, "man", "Rcpp.fake.fun.Rd"))
