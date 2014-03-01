@@ -1,8 +1,11 @@
 2014-03-01  Dirk Eddelbuettel  <edd@debian.org>
 
-	* R/RcppEigen.package.skeleton.R: Updated for R 0.11.0
+	* R/RcppEigen.package.skeleton.R: Updated for Rcpp 0.11.0, also
+	updated for current R versions by removing deprecated 'namespace' arg
 
-	* inst/skeleton/Makevars: Updated for R 0.11.0, also noted C++11 option
+	* man/RcppEigen.package.skeleton.Rd: Removed 'namespace' for current R
+
+	* inst/skeleton/Makevars: Updated for Rcpp 0.11.0, also noted C++11 option
 	via setting of 'USE_CXX1X=' with R 3.1.0 or later
 	* inst/skeleton/Makevars.win: Ditto
 
