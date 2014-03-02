@@ -1,3 +1,16 @@
+r-cran-rcppeigen (0.3.2.0.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Sat, 01 Mar 2014 19:09:07 -0600
+
+r-cran-rcppeigen (0.3.2.0.2-2) unstable; urgency=low
+
+  * Rebuilt as required for Rcpp 0.11.0
+  * debian/control: Added (Build-)Depends: on r-cran-rcpp (>= 0.11.0-1)
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Mon, 03 Feb 2014 20:27:49 -0600
+
 r-cran-rcppeigen (0.3.2.0.2-1) unstable; urgency=low
 
   * New upstream release
