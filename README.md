@@ -13,5 +13,5 @@ performance on many algorithms is comparable with some of the best
 implementations based on `Lapack` and level-3 `BLAS`.
 
 The `RcppEigen` package includes the header files from the Eigen C++
-template library (currently version 3.2.0). Thus users do not need to
+template library (currently version 3.2.1). Thus users do not need to
 install `Eigen` itself in order to use `RcppEigen`.
