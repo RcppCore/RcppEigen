@@ -1,3 +1,11 @@
+2014-03-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: New release version 0.3.2.1.0
+
+2014-03-03  Douglas Bates  <bates@stat.wisc.edu>
+
+	* inst/include/Eigen: Update to release 3.2.1 of Eigen
+
 2014-03-01  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New minor version 3.2.0.3
