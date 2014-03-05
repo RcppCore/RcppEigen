@@ -1,3 +1,12 @@
+2014-03-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: New version 0.3.2.1.1
+
+2014-03-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h:
+	(re-)add another #ifndef excluding a line on Solaris
+
 2014-03-03  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New release version 0.3.2.1.0
