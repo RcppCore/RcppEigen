@@ -1,7 +1,9 @@
-2014-03-05  Dirk Eddelbuettel  <edd@debian.org>
+2014-03-06  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New version 0.3.2.1.1
-	
+
+2014-03-05  Dirk Eddelbuettel  <edd@debian.org>
+
 	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h:
 	Better, more general test for DIRENT feature thanks to Brian Ripley
 
