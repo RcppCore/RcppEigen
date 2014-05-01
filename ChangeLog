@@ -1,3 +1,9 @@
+2014-05-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/Core/util/Memory.h: Applied patch by Gael
+	Guennebaud created in response to Doug's bug report (#803) which in
+	turn is based on the UBSAN report at CRAN by Brian Ripley
+
 2014-03-06  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New version 0.3.2.1.1
