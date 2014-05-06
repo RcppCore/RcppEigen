@@ -2,6 +2,13 @@
 \title{News for Package 'RcppEigen}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in RcppEigen version 0.3.2.1.2 (2014-05-05)}{
+  \itemize{
+    \item Applied upstream patch to not trigger g++ UBSAN warning on
+    the cpu id comparison, with thanks to Gael Guennebaud for the patch
+  }
+}
+    
 \section{Changes in RcppEigen version 0.3.2.1.1 (2014-03-06)}{
   \itemize{
     \item Better \code{ifdef} on one directory entry feature, with
