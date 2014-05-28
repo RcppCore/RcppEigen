@@ -320,8 +320,8 @@ namespace Rcpp{
         public:
             const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
             Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
-                if (!d_x.is("CsparseMatrix")) 
-                    throw std::invalid_argument("Need S4 class CsparseMatrix for an mapped sparse matrix");
+                if (!d_x.is("dgCMatrix")) 
+                    throw std::invalid_argument("Need S4 class dgCMatrix for a mapped sparse matrix");
             }
             Eigen::MappedSparseMatrix<T> get() {
                 return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
@@ -338,8 +338,8 @@ namespace Rcpp{
         public:
             const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
             Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx(d_x.slot("x")) {
-                if (!d_x.is("CsparseMatrix"))
-                    throw std::invalid_argument("Need S4 class CsparseMatrix for an mapped sparse matrix");
+                if (!d_x.is("dgCMatrix"))
+                    throw std::invalid_argument("Need S4 class dgCMatrix for a sparse matrix");
             }
             Eigen::SparseMatrix<T> get() {
                 Eigen::SparseMatrix<T>  ans(d_dims[0], d_dims[1]);
