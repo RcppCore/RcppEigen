@@ -173,8 +173,36 @@ namespace Rcpp{
                 Rcpp::Vector<RTYPE> vec ;
                 int d_nrow, d_ncol ;
         } ;
-       
+
+        // modified from "class MatrixExporter" in <Rcpp>/include/Rcpp/internal/Exporter.h
+        // MatrixExporter uses brackets [] to index the destination matrix,
+        // which is not supported by MatrixXd.
+        // Here we copy data to MatrixXd.data() rather than MatrixXd
+        template <typename T, typename value_type>
+        class MatrixExporterForEigen {
+        public:
+            typedef value_type r_export_type;
+
+            MatrixExporterForEigen(SEXP x) : object(x){}
+            ~MatrixExporterForEigen(){}
+
+            T get() {
+                Shield<SEXP> dims( ::Rf_getAttrib( object, R_DimSymbol ) );
+                if( Rf_isNull(dims) || ::Rf_length(dims) != 2 ){
+                    throw ::Rcpp::not_a_matrix();
+                }
+                int* dims_ = INTEGER(dims);
+                T result( dims_[0], dims_[1] );
+                value_type *data = result.data();
+                ::Rcpp::internal::export_indexing<value_type*, value_type>( object, data );
+                return result ;
+            }
+
+        private:
+            SEXP object;
+        };
         
+
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > {
             typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > OUT ;
@@ -273,18 +301,18 @@ namespace Rcpp{
         
         template <typename T> 
         class Exporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
-            : public MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
+            : public MatrixExporterForEigen< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
         public:
             Exporter(SEXP x) :
-                MatrixExporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
+                MatrixExporterForEigen< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
         }; 
 
         template <typename T> 
         class Exporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >
-            : public MatrixExporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
+            : public MatrixExporterForEigen< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T > {
         public:
             Exporter(SEXP x) :
-                MatrixExporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
+                MatrixExporterForEigen< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic>, T >(x){}
         }; 
 
         template<typename T>
