@@ -263,6 +263,13 @@ namespace Rcpp{
         public:
             Exporter(SEXP x) : IndexingExporter< Eigen::Matrix<T, 1, Eigen::Dynamic>, T >(x){}
         }; 
+
+        template <typename T> 
+        class Exporter< Eigen::Array<T, 1, Eigen::Dynamic> >
+            : public IndexingExporter< Eigen::Array<T, 1, Eigen::Dynamic>, T > {
+        public:
+            Exporter(SEXP x) : IndexingExporter< Eigen::Array<T, 1, Eigen::Dynamic>, T >(x){}
+        }; 
         
         template <typename T> 
         class Exporter< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >
