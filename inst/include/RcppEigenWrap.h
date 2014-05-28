@@ -334,6 +334,24 @@ namespace Rcpp{
         };
 
         template<typename T>
+        class Exporter<Eigen::MappedSparseMatrix<T, Eigen::RowMajor> > {
+        public:
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_j(d_x.slot("j")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
+                if (!d_x.is("dgRMatrix")) 
+                    throw std::invalid_argument("Need S4 class dgRMatrix for a mapped sparse matrix");
+            }
+            Eigen::MappedSparseMatrix<T, Eigen::RowMajor> get() {
+                return Eigen::MappedSparseMatrix<T, Eigen::RowMajor>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+                                                                     d_p.begin(), d_j.begin(), xx.begin() );
+            }
+        protected:
+            S4            d_x;
+            IntegerVector d_dims, d_j, d_p;
+            Vector<RTYPE> xx ;
+        };
+
+        template<typename T>
         class Exporter<Eigen::SparseMatrix<T> > {
         public:
             const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
