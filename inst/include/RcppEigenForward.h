@@ -62,6 +62,8 @@ namespace Rcpp {
 	template<typename T> class Exporter< Eigen::Array<T, 1, Eigen::Dynamic> >;
 	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;
 	template<typename T> class Exporter< Eigen::SparseMatrix<T> >;
+	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T, Eigen::RowMajor> >;
+	template<typename T> class Exporter< Eigen::SparseMatrix<T, Eigen::RowMajor> >;
 
     } // namespace traits 
 
