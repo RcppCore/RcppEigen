@@ -1,6 +1,8 @@
 2014-08-19  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen: Updated to release 3.2.2 of Eigen
+	* inst/unitTests/runit.wrap.R: More unit tests to reflect changes in
+	as() exporters
 
 2014-05-29  Yixuan Qiu  <yixuan.qiu@cos.name>
 
