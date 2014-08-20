@@ -4,14 +4,14 @@
 
 2014-05-29  Yixuan Qiu  <yixuan.qiu@cos.name>
 
-	* inst/include/RcppEigenWrap.h: Added wrap() to
+	* inst/include/RcppEigenWrap.h: Added as() conversion from R vector to
 	Eigen::Array<T, 1, Eigen::Dynamic>
-	* inst/include/RcppEigenWrap.h: Fixed incorrect exporters
+	* inst/include/RcppEigenWrap.h: Fixed incorrect as() exporters
 	* inst/include/RcppEigenWrap.h: Check matrix type of "dgCMatrix"
 	instead of "CsparseMatrix"
-	
 	* inst/include/RcppEigenWrap.h, inst/include/RcppEigenForward.h:
-	Added wrap() for "dgRMatrix"
+	Added as() conversion from "dgRMatrix" to
+	Eigen::MappedSparseMatrix<T, Eigen::RowMajor>
 
 2014-05-01  Dirk Eddelbuettel  <edd@debian.org>
 
