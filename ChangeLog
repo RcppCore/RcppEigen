@@ -1,3 +1,7 @@
+2014-08-19  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.2 of Eigen
+
 2014-05-29  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/RcppEigenWrap.h: Added wrap() to
