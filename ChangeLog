@@ -1,3 +1,14 @@
+2014-05-29  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/RcppEigenWrap.h: Added wrap() to
+	Eigen::Array<T, 1, Eigen::Dynamic>
+	* inst/include/RcppEigenWrap.h: Fixed incorrect exporters
+	* inst/include/RcppEigenWrap.h: Check matrix type of "dgCMatrix"
+	instead of "CsparseMatrix"
+	
+	* inst/include/RcppEigenWrap.h, inst/include/RcppEigenForward.h:
+	Added wrap() for "dgRMatrix"
+
 2014-05-01  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/include/Eigen/src/Core/util/Memory.h: Applied patch by Gael
