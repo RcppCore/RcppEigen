@@ -17,6 +17,7 @@
 # along with Rcpp.  If not, see <http://www.gnu.org/licenses/>.
 
 incl <- '
+// double
 typedef Eigen::ArrayXd                   Ar1;
 typedef Eigen::Map<Ar1>                 MAr1;
 typedef Eigen::ArrayXXd                  Ar2;
@@ -25,6 +26,7 @@ typedef Eigen::MatrixXd                  Mat;
 typedef Eigen::Map<Mat>                 MMat;
 typedef Eigen::VectorXd                  Vec;
 typedef Eigen::Map<Vec>                 MVec;
+// integer
 typedef Eigen::ArrayXi                  iAr1;
 typedef Eigen::Map<iAr1>               MiAr1;
 typedef Eigen::ArrayXXi                 iAr2;
@@ -33,6 +35,16 @@ typedef Eigen::MatrixXi                 iMat;
 typedef Eigen::Map<iMat>               MiMat;
 typedef Eigen::VectorXi                 iVec;
 typedef Eigen::Map<iVec>               MiVec;
+// unsigned integer
+typedef Eigen::Array<unsigned int, Eigen::Dynamic, 1>                   uiAr1;
+typedef Eigen::Map<uiAr1>                                              MuiAr1;
+typedef Eigen::Array<unsigned int, Eigen::Dynamic, Eigen::Dynamic>      uiAr2;
+typedef Eigen::Map<uiAr2>                                              MuiAr2;
+typedef Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic>     uiMat;
+typedef Eigen::Map<uiMat>                                              MuiMat;
+typedef Eigen::Matrix<unsigned int, Eigen::Dynamic, 1>                  uiVec;
+typedef Eigen::Map<uiVec>                                              MuiVec;
+// float
 typedef Eigen::ArrayXf                  fAr1;
 typedef Eigen::Map<fAr1>               MfAr1;
 typedef Eigen::ArrayXXf                 fAr2;
@@ -41,6 +53,7 @@ typedef Eigen::MatrixXf                 fMat;
 typedef Eigen::Map<fMat>               MfMat;
 typedef Eigen::VectorXf                 fVec;
 typedef Eigen::Map<fVec>               MfVec;
+// complex double
 typedef Eigen::ArrayXcd                cdAr1;
 typedef Eigen::Map<cdAr1>             McdAr1;
 typedef Eigen::ArrayXXcd               cdAr2;
@@ -131,10 +144,10 @@ definitions <- list(
     "as_Vec" = list(signature(input_ = "list"),
     '
     List input(input_) ;
-    Eigen::VectorXi                                m1 = input[0] ; /* implicit as */
-    Eigen::VectorXd                                m2 = input[1] ; /* implicit as */
-    Eigen::Matrix<unsigned int, Eigen::Dynamic, 1> m3 = input[0] ; /* implicit as */
-    Eigen::VectorXf                                m4 = input[1] ; /* implicit as */
+    iVec       m1 = input[0] ; /* implicit as */
+    Vec        m2 = input[1] ; /* implicit as */
+    uiVec      m3 = input[0] ; /* implicit as */
+    fVec       m4 = input[1] ; /* implicit as */
 
     List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
 
@@ -161,10 +174,10 @@ definitions <- list(
     "as_Array" = list(signature(input_ = "list"),
     '
     List input(input_) ;
-    Eigen::ArrayXi                                 m1 = input[0] ; /* implicit as */
-    Eigen::ArrayXd                                 m2 = input[1] ; /* implicit as */
-    Eigen::Array<unsigned int, Eigen::Dynamic, 1>  m3 = input[0] ; /* implicit as */
-    Eigen::ArrayXf                                 m4 = input[1] ; /* implicit as */
+    iAr1       m1 = input[0] ; /* implicit as */
+    Ar1        m2 = input[1] ; /* implicit as */
+    uiAr1      m3 = input[0] ; /* implicit as */
+    fAr1       m4 = input[1] ; /* implicit as */
 
     List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
 
