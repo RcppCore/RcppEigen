@@ -157,8 +157,13 @@ definitions <- list(
     Eigen::Matrix<unsigned int, 1, Eigen::Dynamic> m7 = input[0] ; /* implicit as */
     Eigen::Matrix<float, 1, Eigen::Dynamic>        m8 = input[1] ; /* implicit as */
 
+    // Mapped vector
+    MiVec      m9 = input[0] ; /* implicit as */
+    MVec      m10 = input[1] ; /* implicit as */
+
     List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
-                            m5.sum(), m6.sum(), m7.sum(), m8.sum());
+                            m5.sum(), m6.sum(), m7.sum(), m8.sum(),
+                            m9.sum(), m10.sum());
 
     return res ;
 
@@ -181,8 +186,57 @@ definitions <- list(
     Eigen::Array<unsigned int, 1, Eigen::Dynamic>  m7 = input[0] ; /* implicit as */
     Eigen::Array<float, 1, Eigen::Dynamic>         m8 = input[1] ; /* implicit as */
 
+    // Mapped array
+    MiAr1      m9 = input[0] ; /* implicit as */
+    MAr1      m10 = input[1] ; /* implicit as */
+
     List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
-                            m5.sum(), m6.sum(), m7.sum(), m8.sum());
+                            m5.sum(), m6.sum(), m7.sum(), m8.sum(),
+                            m9.sum(), m10.sum());
+
+    return res ;
+
+    '),
+
+
+    "as_Mat" = list(signature(input_ = "list"),
+    '
+    List input(input_) ;
+
+    // Copy to matrix
+    iMat       m1 = input[0] ; /* implicit as */
+    Mat        m2 = input[1] ; /* implicit as */
+    uiMat      m3 = input[0] ; /* implicit as */
+    fMat       m4 = input[1] ; /* implicit as */
+
+    // Mapped matrix
+    MiMat      m5 = input[0] ; /* implicit as */
+    MMat       m6 = input[1] ; /* implicit as */
+
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
+                            m5.sum(), m6.sum());
+
+    return res ;
+
+    '),
+
+
+    "as_Array2D" = list(signature(input_ = "list"),
+    '
+    List input(input_) ;
+
+    // Copy to 2D array
+    iAr2       m1 = input[0] ; /* implicit as */
+    Ar2        m2 = input[1] ; /* implicit as */
+    uiAr2      m3 = input[0] ; /* implicit as */
+    fAr2       m4 = input[1] ; /* implicit as */
+
+    // Mapped 2D array
+    MiAr2      m5 = input[0] ; /* implicit as */
+    MAr2       m6 = input[1] ; /* implicit as */
+
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
+                            m5.sum(), m6.sum());
 
     return res ;
 
@@ -250,11 +304,27 @@ test.wrapVectors <- function() {
 test.asVec <- function() {
     res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
 
-    checkEquals(unlist(res), rep.int(55, 8L))
+    checkEquals(unlist(res), rep.int(55, 10L))
 }
 
 test.asArray <- function() {
     res <- .rcppeigen.wrap$as_Array(list(1:10, as.numeric(1:10)))
 
-    checkEquals(unlist(res), rep.int(55, 8L))
+    checkEquals(unlist(res), rep.int(55, 10L))
+}
+
+test.asMat <- function() {
+    integer_mat <- matrix(as.integer(diag(nrow = 5L)))
+    numeric_mat <- diag(nrow = 5L)
+    res <- .rcppeigen.wrap$as_Mat(list(integer_mat, numeric_mat))
+
+    checkEquals(unlist(res), rep.int(5, 6L))
+}
+
+test.asArray2D <- function() {
+    integer_mat <- matrix(as.integer(diag(nrow = 5L)))
+    numeric_mat <- diag(nrow = 5L)
+    res <- .rcppeigen.wrap$as_Array2D(list(integer_mat, numeric_mat))
+
+    checkEquals(unlist(res), rep.int(5, 6L))
 }
