@@ -1,6 +1,21 @@
 \name{NEWS}
-\title{News for Package 'RcppEigen}
+\title{News for Package 'RcppEigen'}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+
+\section{Changes in RcppEigen version 0.3.2.2.0 (2014-08-19)}{
+  \itemize{
+    \item Updated to version 3.2.2 of Eigen
+    \item \code{Rcpp::as()} now supports the conversion from R vector to
+    \dQuote{row array}, i.e., \code{Eigen::Array<T, 1, Eigen::Dynamic>}
+    \item \code{Rcpp::as()} now supports the conversion from
+    \code{dgRMatrix} (row oriented sparse matrices, defined in
+    \pkg{Matrix} package) to
+    \code{Eigen::MappedSparseMatrix<T, Eigen::RowMajor>}
+    \item Conversion from R matrix to \code{Eigen::MatrixXd} and
+    \code{Eigen::ArrayXXd} using \code{Rcpp::as()} no longer gives
+    compilation errors
+  }
+}
 
 \section{Changes in RcppEigen version 0.3.2.1.2 (2014-05-05)}{
   \itemize{
@@ -18,7 +33,7 @@
 
 \section{Changes in RcppEigen version 0.3.2.1.0 (2014-03-03)}{
   \itemize{
-    \item Updated to version 3.2.0 of Eigen
+    \item Updated to version 3.2.1 of Eigen
   }
 }
 

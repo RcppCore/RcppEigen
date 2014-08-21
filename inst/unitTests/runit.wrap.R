@@ -140,6 +140,51 @@ definitions <- list(
 
     return res ;
 
+    '),
+
+
+    "as_rowVec" = list(signature(input_ = "list"),
+    '
+    List input(input_) ;
+    Eigen::Matrix<int, 1, Eigen::Dynamic>          m1 = input[0] ; /* implicit as */
+    Eigen::Matrix<double, 1, Eigen::Dynamic>       m2 = input[1] ; /* implicit as */
+    Eigen::Matrix<unsigned int, 1, Eigen::Dynamic> m3 = input[0] ; /* implicit as */
+    Eigen::Matrix<float, 1, Eigen::Dynamic>        m4 = input[1] ; /* implicit as */
+
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+
+    return res ;
+
+    '),
+
+
+    "as_Array" = list(signature(input_ = "list"),
+    '
+    List input(input_) ;
+    Eigen::ArrayXi                                 m1 = input[0] ; /* implicit as */
+    Eigen::ArrayXd                                 m2 = input[1] ; /* implicit as */
+    Eigen::Array<unsigned int, Eigen::Dynamic, 1>  m3 = input[0] ; /* implicit as */
+    Eigen::ArrayXf                                 m4 = input[1] ; /* implicit as */
+
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+
+    return res ;
+
+    '),
+
+
+    "as_rowArray" = list(signature(input_ = "list"),
+    '
+    List input(input_) ;
+    Eigen::Array<int, 1, Eigen::Dynamic>           m1 = input[0] ; /* implicit as */
+    Eigen::Array<double, 1, Eigen::Dynamic>        m2 = input[1] ; /* implicit as */
+    Eigen::Array<unsigned int, 1, Eigen::Dynamic>  m3 = input[0] ; /* implicit as */
+    Eigen::Array<float, 1, Eigen::Dynamic>         m4 = input[1] ; /* implicit as */
+
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+
+    return res ;
+
     ')
     )
 
@@ -203,6 +248,24 @@ test.wrapVectors <- function() {
 
 test.wrapAsVec <- function() {
     res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
+
+    checkEquals(unlist(res), rep.int(55, 4L))
+}
+
+test.wrapAsRowVec <- function() {
+    res <- .rcppeigen.wrap$as_rowVec(list(1:10, as.numeric(1:10)))
+
+    checkEquals(unlist(res), rep.int(55, 4L))
+}
+
+test.wrapAsArray <- function() {
+    res <- .rcppeigen.wrap$as_Array(list(1:10, as.numeric(1:10)))
+
+    checkEquals(unlist(res), rep.int(55, 4L))
+}
+
+test.wrapAsRowArray <- function() {
+    res <- .rcppeigen.wrap$as_rowArray(list(1:10, as.numeric(1:10)))
 
     checkEquals(unlist(res), rep.int(55, 4L))
 }
