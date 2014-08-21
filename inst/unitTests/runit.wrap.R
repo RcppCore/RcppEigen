@@ -144,27 +144,21 @@ definitions <- list(
     "as_Vec" = list(signature(input_ = "list"),
     '
     List input(input_) ;
+
+    // Column vector
     iVec       m1 = input[0] ; /* implicit as */
     Vec        m2 = input[1] ; /* implicit as */
     uiVec      m3 = input[0] ; /* implicit as */
     fVec       m4 = input[1] ; /* implicit as */
 
-    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+    // Row vector
+    Eigen::Matrix<int, 1, Eigen::Dynamic>          m5 = input[0] ; /* implicit as */
+    Eigen::Matrix<double, 1, Eigen::Dynamic>       m6 = input[1] ; /* implicit as */
+    Eigen::Matrix<unsigned int, 1, Eigen::Dynamic> m7 = input[0] ; /* implicit as */
+    Eigen::Matrix<float, 1, Eigen::Dynamic>        m8 = input[1] ; /* implicit as */
 
-    return res ;
-
-    '),
-
-
-    "as_rowVec" = list(signature(input_ = "list"),
-    '
-    List input(input_) ;
-    Eigen::Matrix<int, 1, Eigen::Dynamic>          m1 = input[0] ; /* implicit as */
-    Eigen::Matrix<double, 1, Eigen::Dynamic>       m2 = input[1] ; /* implicit as */
-    Eigen::Matrix<unsigned int, 1, Eigen::Dynamic> m3 = input[0] ; /* implicit as */
-    Eigen::Matrix<float, 1, Eigen::Dynamic>        m4 = input[1] ; /* implicit as */
-
-    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
+                            m5.sum(), m6.sum(), m7.sum(), m8.sum());
 
     return res ;
 
@@ -174,27 +168,21 @@ definitions <- list(
     "as_Array" = list(signature(input_ = "list"),
     '
     List input(input_) ;
+
+    // Column array
     iAr1       m1 = input[0] ; /* implicit as */
     Ar1        m2 = input[1] ; /* implicit as */
     uiAr1      m3 = input[0] ; /* implicit as */
     fAr1       m4 = input[1] ; /* implicit as */
 
-    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+    // Row array
+    Eigen::Array<int, 1, Eigen::Dynamic>           m5 = input[0] ; /* implicit as */
+    Eigen::Array<double, 1, Eigen::Dynamic>        m6 = input[1] ; /* implicit as */
+    Eigen::Array<unsigned int, 1, Eigen::Dynamic>  m7 = input[0] ; /* implicit as */
+    Eigen::Array<float, 1, Eigen::Dynamic>         m8 = input[1] ; /* implicit as */
 
-    return res ;
-
-    '),
-
-
-    "as_rowArray" = list(signature(input_ = "list"),
-    '
-    List input(input_) ;
-    Eigen::Array<int, 1, Eigen::Dynamic>           m1 = input[0] ; /* implicit as */
-    Eigen::Array<double, 1, Eigen::Dynamic>        m2 = input[1] ; /* implicit as */
-    Eigen::Array<unsigned int, 1, Eigen::Dynamic>  m3 = input[0] ; /* implicit as */
-    Eigen::Array<float, 1, Eigen::Dynamic>         m4 = input[1] ; /* implicit as */
-
-    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum());
+    List res = List::create(m1.sum(), m2.sum(), m3.sum(), m4.sum(),
+                            m5.sum(), m6.sum(), m7.sum(), m8.sum());
 
     return res ;
 
@@ -259,26 +247,14 @@ test.wrapVectors <- function() {
     checkEquals(res[[6]][[5]], cos(oneTen))
 }
 
-test.wrapAsVec <- function() {
+test.asVec <- function() {
     res <- .rcppeigen.wrap$as_Vec(list(1:10, as.numeric(1:10)))
 
-    checkEquals(unlist(res), rep.int(55, 4L))
+    checkEquals(unlist(res), rep.int(55, 8L))
 }
 
-test.wrapAsRowVec <- function() {
-    res <- .rcppeigen.wrap$as_rowVec(list(1:10, as.numeric(1:10)))
-
-    checkEquals(unlist(res), rep.int(55, 4L))
-}
-
-test.wrapAsArray <- function() {
+test.asArray <- function() {
     res <- .rcppeigen.wrap$as_Array(list(1:10, as.numeric(1:10)))
 
-    checkEquals(unlist(res), rep.int(55, 4L))
-}
-
-test.wrapAsRowArray <- function() {
-    res <- .rcppeigen.wrap$as_rowArray(list(1:10, as.numeric(1:10)))
-
-    checkEquals(unlist(res), rep.int(55, 4L))
+    checkEquals(unlist(res), rep.int(55, 8L))
 }
