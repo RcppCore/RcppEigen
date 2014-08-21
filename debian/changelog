@@ -1,3 +1,11 @@
+r-cran-rcppeigen (0.3.2.2.0-1) unstable; urgency=low
+
+  * New upstream release
+  
+  * debian/control: Set Build-Depends: to current R version 
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Thu, 21 Aug 2014 07:10:31 -0500
+
 r-cran-rcppeigen (0.3.2.1.2-1) unstable; urgency=low
 
   * New upstream release
