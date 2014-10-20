@@ -1,3 +1,7 @@
+2014-10-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/examples/lmBenchmark.R: Updated RcppArmadillo .Call in example
+
 2014-08-21  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: New version 0.3.2.2.0 which was prepared expertly by
