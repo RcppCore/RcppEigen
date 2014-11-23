@@ -67,10 +67,12 @@ typedef Eigen::Map<cdVec>             McdVec;
 definitions <- list(
     "wrap_vectors" = list(signature(),
     '
-    List vecs = List::create(Named("Vec<complex>", cdVec::Zero(5)),
-			 Named("Vec<double>",    Vec::Zero(5)),
-			 Named("Vec<float>",    fVec::Zero(5)),
-			 Named("Vec<int>",      iVec::Zero(5))
+    List vecs = List::create(
+        _["Vec<complex>"]       = cdVec::Zero(5),
+        _["Vec<double>"]        = Vec::Zero(5),
+        _["Vec<float>"]         = fVec::Zero(5),
+        _["Vec<int>"]           = iVec::Zero(5),
+        _["Vec<unsigned int>"]  = uiVec::Zero(5)
     );
 
     // A VectorX<T> behaves as a matrix with one column but is converted to
@@ -80,44 +82,50 @@ definitions <- list(
     // during execution of the code.  A MatrixX<T> object can be resized to have
     // a different number of columns.  A VectorX<T> object cannot.
 
-    List cols = List::create(Named("Col<complex>", cdMat::Zero(5, 1)),
-			 Named("Col<double>",    Mat::Zero(5, 1)),
-			 Named("Col<float>",    fMat::Zero(5, 1)),
-			 Named("Col<int>",      iMat::Zero(5, 1))
+    List cols = List::create(
+        _["Col<complex>"]       = cdMat::Zero(5, 1),
+        _["Col<double>"]        = Mat::Zero(5, 1),
+        _["Col<float>"]         = fMat::Zero(5, 1),
+        _["Col<int>"]           = iMat::Zero(5, 1),
+        _["Col<unsigned int>"]  = uiMat::Zero(5, 1)
     );
 
-    // List rows = List::create(
-    //      _["Row<complex>"] = Eigen::RowVectorXcd::Zero(5),
-    //      _["Row<double>"]  = Eigen::RowVectorXd::Zero(5),
-    //      _["Row<float>"]   = Eigen::RowVectorXf::Zero(5),
-    //      _["Row<int>"]     = Eigen::RowVectorXi::Zero(5)
-    //  );
+    List rows = List::create(
+        _["Row<complex>"]       = Eigen::RowVectorXcd::Zero(5),
+        _["Row<double>"]        = Eigen::RowVectorXd::Zero(5),
+        _["Row<float>"]         = Eigen::RowVectorXf::Zero(5),
+        _["Row<int>"]           = Eigen::RowVectorXi::Zero(5),
+        _["Row<unsigned int>"]  = Eigen::Matrix<unsigned int, 1, Eigen::Dynamic>::Zero(5)
+    );
 
     List matrices = List::create(
-        _["Mat<complex>"] = Eigen::MatrixXcd::Identity(3, 3),
-        _["Mat<double>"]  = Eigen::MatrixXd::Identity(3, 3),
-        _["Mat<float>"]   = Eigen::MatrixXf::Identity(3, 3),
-        _["Mat<int>"]     = Eigen::MatrixXi::Identity(3, 3)
+        _["Mat<complex>"]       = cdMat::Identity(3, 3),
+        _["Mat<double>"]        = Mat::Identity(3, 3),
+        _["Mat<float>"]         = fMat::Identity(3, 3),
+        _["Mat<int>"]           = iMat::Identity(3, 3),
+        _["Mat<unsigned int>"]  = uiMat::Identity(3, 3)
     );
 
     // ArrayXX<t> objects have the same structure as matrices but allow
     // componentwise arithmetic.  A * B is matrix multiplication for
     // matrices and componentwise multiplication for arrays.
     List arrays2 = List::create(
-        _["Arr2<complex>"] = Eigen::ArrayXXcd::Zero(3, 3),
-        _["Arr2<double>"]  = Eigen::ArrayXXd::Zero(3, 3),
-        _["Arr2<float>"]   = Eigen::ArrayXXf::Zero(3, 3),
-        _["Arr2<int>"]     = Eigen::ArrayXXi::Zero(3, 3)
+        _["Arr2<complex>"]      = cdAr2::Zero(3, 3),
+        _["Arr2<double>"]       = Ar2::Zero(3, 3),
+        _["Arr2<float>"]        = fAr2::Zero(3, 3),
+        _["Arr2<int>"]          = iAr2::Zero(3, 3),
+        _["Arr2<unsigned int>"] = uiAr2::Zero(3, 3)
     );
 
     // ArrayX<t> objects have the same structure as VectorX<T> objects
     // but allow componentwise arithmetic, including functions like exp, log,
     // sqrt, ...
     List arrays1 = List::create(
-        _["Arr1<complex>"] = Eigen::ArrayXcd::Zero(5),
-        _["Arr1<double>"]  = Eigen::ArrayXd::Zero(5),
-        _["Arr1<float>"]   = Eigen::ArrayXf::Zero(5),
-        _["Arr1<int>"]     = Eigen::ArrayXi::Zero(5)
+        _["Arr1<complex>"]      = cdAr1::Zero(5),
+        _["Arr1<double>"]       = Ar1::Zero(5),
+        _["Arr1<float>"]        = fAr1::Zero(5),
+        _["Arr1<int>"]          = iAr1::Zero(5),
+        _["Arr1<unsigned int>"] = uiAr1::Zero(5)
     );
 
     List operations = List::create(
@@ -129,10 +137,10 @@ definitions <- list(
     );
 
     List output = List::create(
-    	_["vectors : VectorX<T>"]   = vecs,
-    	_["matrices : MatrixX<T>"]  = matrices,
-//    	_["rows : RowVectorX<T>"]   = rows,
-    	_["columns : MatrixX<T>"]   = cols,
+        _["vectors : VectorX<T>"]   = vecs,
+        _["matrices : MatrixX<T>"]  = matrices,
+        _["rows : RowVectorX<T>"]   = rows,
+        _["columns : MatrixX<T>"]   = cols,
         _["arrays2d : ArrayXX<T>"]  = arrays2,
         _["arrays1d : ArrayX<T>"]   = arrays1,
         _["operations : ArrayXd"]   = operations
@@ -266,39 +274,45 @@ test.wrapVectors <- function() {
     checkEquals(res[[1]][[2]], double(5))
     checkEquals(res[[1]][[3]], double(5))
     checkEquals(res[[1]][[4]], integer(5))
+    checkEquals(res[[1]][[5]], integer(5))
 
     checkEquals(res[[2]][[1]], (1+0i) * diag(nr=3L))
     checkEquals(res[[2]][[2]], diag(nr=3L))
     checkEquals(res[[2]][[3]], diag(nr=3L))
     checkEquals(res[[2]][[4]], matrix(as.integer((diag(nr=3L))),nr=3L))
+    checkEquals(res[[2]][[5]], matrix(as.integer((diag(nr=3L))),nr=3L))
 
-    ## checkEquals(res[[3]][[1]], matrix(complex(5), nr=1L))
-    ## checkEquals(res[[3]][[1]], matrix(numeric(5), nr=1L))
-    ## checkEquals(res[[3]][[2]], matrix(numeric(5), nr=1L))
-    ## checkEquals(res[[3]][[3]], matrix(integer(5), nr=1L))
+    checkEquals(res[[3]][[1]], matrix(complex(5), nr=1L))
+    checkEquals(res[[3]][[2]], matrix(numeric(5), nr=1L))
+    checkEquals(res[[3]][[3]], matrix(numeric(5), nr=1L))
+    checkEquals(res[[3]][[4]], matrix(integer(5), nr=1L))
+    checkEquals(res[[3]][[5]], matrix(integer(5), nr=1L))
 
-    checkEquals(res[[3]][[1]], as.matrix(complex(5)))
-    checkEquals(res[[3]][[2]], as.matrix(numeric(5)))
-    checkEquals(res[[3]][[3]], as.matrix(numeric(5)))
-    checkEquals(res[[3]][[4]], as.matrix(integer(5)))
+    checkEquals(res[[4]][[1]], as.matrix(complex(5)))
+    checkEquals(res[[4]][[2]], as.matrix(numeric(5)))
+    checkEquals(res[[4]][[3]], as.matrix(numeric(5)))
+    checkEquals(res[[4]][[4]], as.matrix(integer(5)))
+    checkEquals(res[[4]][[5]], as.matrix(integer(5)))
 
-    checkEquals(res[[4]][[1]], matrix(complex(9L), nc=3L))
-    checkEquals(res[[4]][[2]], matrix(numeric(9L), nc=3L))
-    checkEquals(res[[4]][[3]], matrix(numeric(9L), nc=3L))
-    checkEquals(res[[4]][[4]], matrix(integer(9L), nc=3L))
+    checkEquals(res[[5]][[1]], matrix(complex(9L), nc=3L))
+    checkEquals(res[[5]][[2]], matrix(numeric(9L), nc=3L))
+    checkEquals(res[[5]][[3]], matrix(numeric(9L), nc=3L))
+    checkEquals(res[[5]][[4]], matrix(integer(9L), nc=3L))
+    checkEquals(res[[5]][[5]], matrix(integer(9L), nc=3L))
 
-    checkEquals(res[[5]][[1]], complex(5))
-    checkEquals(res[[5]][[2]], double(5))
-    checkEquals(res[[5]][[3]], double(5))
-    checkEquals(res[[5]][[4]], integer(5))
+    checkEquals(res[[6]][[1]], complex(5))
+    checkEquals(res[[6]][[2]], double(5))
+    checkEquals(res[[6]][[3]], double(5))
+    checkEquals(res[[6]][[4]], integer(5))
+    checkEquals(res[[6]][[5]], integer(5))
 
     oneTen <- seq(1, 10, length.out=6L)
 
-    checkEquals(res[[6]][[1]], oneTen)
-    checkEquals(res[[6]][[2]], log(oneTen))
-    checkEquals(res[[6]][[3]], exp(oneTen))
-    checkEquals(res[[6]][[4]], sqrt(oneTen))
-    checkEquals(res[[6]][[5]], cos(oneTen))
+    checkEquals(res[[7]][[1]], oneTen)
+    checkEquals(res[[7]][[2]], log(oneTen))
+    checkEquals(res[[7]][[3]], exp(oneTen))
+    checkEquals(res[[7]][[4]], sqrt(oneTen))
+    checkEquals(res[[7]][[5]], cos(oneTen))
 }
 
 test.asVec <- function() {
