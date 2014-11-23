@@ -152,7 +152,7 @@ test.asMappedSparse.double.ColMajor.R <- function(){
     rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
     colnames(rr) <- NULL
     res <- fx( R_mm = rr )
-    checkEquals( res, rr, msg = "as<Map<SparseMatrix<double, Eigen::ColMajor> > >")
+    checkEquals( res, rr, msg = "as<MappedSparseMatrix<double, Eigen::ColMajor> >")
 }
 
 test.asSparse.double.RowMajor.R <- function(){
@@ -179,7 +179,7 @@ test.asMappedSparse.double.RowMajor.R <- function(){
     rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=as.numeric(9:1), Dim=c(9L,3L) )
     colnames(rr) <- NULL
     res <- fx( R_mm = rr )
-    checkEquals( res, rr, msg = "as<Map<SparseMatrix<double, Eigen::RowMajor> > >")
+    checkEquals( res, rr, msg = "as<MappedSparseMatrix<double, Eigen::RowMajor> >")
 }
 
 
