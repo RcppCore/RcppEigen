@@ -30,12 +30,12 @@ typedef Eigen::Map<Vec>                 MVec;
 definitions <- list(
     "ar1_unbounded" = list(signature(x_="numeric"),
     '
-     MAr1           x(as<MAr1>(x_));
+    MAr1           x(as<MAr1>(x_));
 
-     return List::create(Named("abs",    x.abs()),
-                         Named("abs2",   x.abs2()),
-                         Named("exp",    x.exp()),
-                         Named("cos",    x.cos()));
+    return List::create(Named("abs",    x.abs()),
+                        Named("abs2",   x.abs2()),
+                        Named("exp",    x.exp()),
+                        Named("cos",    x.cos()));
     '),
     "ar2_unbounded" = list(signature(X_="matrix"),
     '
@@ -73,3 +73,15 @@ test.transformationAr1 <- function() {
     checkEquals(res$exp,  exp(x))
     checkEquals(res$cos,  cos(x))
 }
+
+test.transformationAr2 <- function() {
+    set.seed(1234321)
+    X <- matrix(rnorm(100L), nrow = 10, ncol = 10)
+
+    res <- .rcppeigen.trans$ar2_unbounded(X)
+    checkEquals(res$abs,  abs(X))
+    checkEquals(res$abs2, X * X)
+    checkEquals(res$exp,  exp(X))
+    checkEquals(res$cos,  cos(X))
+}
+
