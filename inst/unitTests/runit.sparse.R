@@ -137,7 +137,22 @@ test.asSparse.double.ColMajor.R <- function(){
     rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
     colnames(rr) <- NULL
     res <- fx( R_mm = rr )
-    checkEquals( res, rr, msg = "as<SparseMatrix<double, Eigen::ColMajor> >")  
+    checkEquals( res, rr, msg = "as<SparseMatrix<double, Eigen::ColMajor> >")
+}
+
+test.asMappedSparse.double.ColMajor.R <- function(){
+
+    fx <- cxxfunction( sig=signature(R_mm="dgCMatrix"), '
+
+    typedef Eigen::MappedSparseMatrix<double, Eigen::ColMajor> MapMat;
+    MapMat mm = Rcpp::as<MapMat>( R_mm );
+    return wrap(mm);
+' , plugin = "RcppEigen" )
+
+    rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
+    colnames(rr) <- NULL
+    res <- fx( R_mm = rr )
+    checkEquals( res, rr, msg = "as<MappedSparseMatrix<double, Eigen::ColMajor> >")
 }
 
 test.asSparse.double.RowMajor.R <- function(){
@@ -150,8 +165,23 @@ test.asSparse.double.RowMajor.R <- function(){
     rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=as.numeric(9:1), Dim=c(9L,3L) )
     colnames(rr) <- NULL
     res <- fx( R_mm = rr )
-    checkEquals( res, rr, msg = "as<SparseMatrix<double, Eigen::RowMajor> >")  
+    checkEquals( res, rr, msg = "as<SparseMatrix<double, Eigen::RowMajor> >")
 }
+
+test.asMappedSparse.double.RowMajor.R <- function(){
+    fx <- cxxfunction( sig=signature(R_mm="dgRMatrix"), '
+
+    typedef Eigen::MappedSparseMatrix<double, Eigen::RowMajor> MapMat;
+    MapMat mm = Rcpp::as<MapMat>( R_mm );
+    return wrap(mm);
+' , plugin = "RcppEigen" )
+
+    rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=as.numeric(9:1), Dim=c(9L,3L) )
+    colnames(rr) <- NULL
+    res <- fx( R_mm = rr )
+    checkEquals( res, rr, msg = "as<MappedSparseMatrix<double, Eigen::RowMajor> >")
+}
+
 
 test.sparseCholesky.R <- function() {
     suppressMessages(require("Matrix", character.only=TRUE))
