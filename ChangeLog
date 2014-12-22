@@ -1,3 +1,9 @@
+2014-12-22  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.3 of Eigen
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
 2014-11-23  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/unitTests/runit.wrap.R: Added a number of unit tests
