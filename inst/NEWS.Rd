@@ -2,6 +2,12 @@
 \title{News for Package 'RcppEigen'}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in RcppEigen version 0.3.2.3.0 (2014-12-22)}{
+  \itemize{
+    \item Updated to version 3.2.3 of Eigen
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.2.0 (2014-08-19)}{
   \itemize{
     \item Updated to version 3.2.2 of Eigen
