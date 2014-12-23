@@ -5,6 +5,9 @@
 \section{Changes in RcppEigen version 0.3.2.3.0 (2014-12-22)}{
   \itemize{
     \item Updated to version 3.2.3 of Eigen
+    \item Added a number of additional unit tests for \code{wrap},
+      \code{transform} and \code{sparse}
+    \item Updated on of the examples
   }
 }
 
