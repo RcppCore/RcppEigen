@@ -5,6 +5,8 @@
 	* DESCRIPTION: Updated Version: and Date:
 	* README.md: Idem
 
+	* .travis.yml (install): Switch to ppa:edd/misc for binaries
+
 2014-12-22  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen: Updated to release 3.2.3 of Eigen
