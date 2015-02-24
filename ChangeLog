@@ -1,5 +1,12 @@
 2015-02-23  Dirk Eddelbuettel  <edd@debian.org>
 
+	* inst/include/Eigen: Updated to release 3.2.4 of Eigen
+
+	* DESCRIPTION: Updated Version: and Date:
+	* README.md: Idem
+
+	* .travis.yml: Switch to ppa:edd/misc for binaries
+
 	* R/RcppEigen.package.skeleton.R: Use pkgKitten::kitten, if installed
 	* inst/skeleton/rcppeigen_hello_world.Rd: Added new page
 
