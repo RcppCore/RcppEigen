@@ -216,25 +216,6 @@ class CholmodBase : internal::noncopyable
       return derived();
     }
     
-  template<typename OtherDerived>
-  void solveInPlace(const MatrixBase<OtherDerived>& _other, int type) const {
-      OtherDerived& other = _other.const_cast_derived();
-      eigen_assert(m_factorizationIsOk && 
-		   "The decomposition is not in a valid state for solving, you must first call either compute() or symbolic()/numeric()");
-      eigen_assert((Index)(m_cholmodFactor->n) == other.rows());
-      
-      // note: cd stands for Cholmod Dense
-      cholmod_dense b_cd = viewAsCholmod(other.const_cast_derived());
-      cholmod_dense* x_cd = cholmod_solve(type, m_cholmodFactor, &b_cd, &m_cholmod);
-      if(!x_cd) {
-	  this->m_info = NumericalIssue;
-      }
-      Scalar* xpt=reinterpret_cast<Scalar*>(x_cd->x);
-      std::copy(xpt, xpt + other.rows() * other.cols(), other.data());
-      cholmod_free_dense(&x_cd, &m_cholmod);
-    }
-
-
     /** \returns the solution x of \f$ A x = b \f$ using the current decomposition of A.
       *
       * \sa compute()
@@ -276,10 +257,7 @@ class CholmodBase : internal::noncopyable
         cholmod_free_factor(&m_cholmodFactor, &m_cholmod);
         m_cholmodFactor = 0;
       }
-      cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
-      viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
-      viewAsCholmod(matrix);
-
+      cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
       m_cholmodFactor = cholmod_analyze(&A, &m_cholmod);
       
       this->m_isInitialized = true;
@@ -288,9 +266,6 @@ class CholmodBase : internal::noncopyable
       m_factorizationIsOk = false;
     }
     
-	
-  const cholmod_factor* factor() const {return m_cholmodFactor;}
-
     /** Performs a numeric decomposition of \a matrix
       *
       * The given matrix must have the same sparsity pattern as the matrix on which the symbolic decomposition has been performed.
@@ -300,53 +275,14 @@ class CholmodBase : internal::noncopyable
     void factorize(const MatrixType& matrix)
     {
       eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
-      cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
-      viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
-      viewAsCholmod(matrix);
-      cholmod_factorize(&A, m_cholmodFactor, &m_cholmod);
+      cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
+      cholmod_factorize_p(&A, m_shiftOffset, 0, 0, m_cholmodFactor, &m_cholmod);
       
       // If the factorization failed, minor is the column at which it did. On success minor == n.
       this->m_info = (m_cholmodFactor->minor == m_cholmodFactor->n ? Success : NumericalIssue);
       m_factorizationIsOk = true;
     }
     
-  /** Performs a numeric decomposition of \a matrix with greater
-   * control.  \a beta times the identity is added to A or A*A'
-   * during the factorization.  If \a fset is present it
-   * describes the columns (rectangular \a matrix) or rows and
-   * columns (square \a matrix) used in the factorization.
-   * 
-   * The given matrix must have the same sparcity pattern as the
-   * matrix on which the symbolic decomposition has been
-   * performed. 
-   *
-   * \sa analyzePattern()
-   */
-  void factorize_p(const MatrixType& matrix, ArrayXi fset, double beta=0.)
-  {
-      eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
-      cholmod_sparse    A = (matrix.rows() == matrix.cols()) ?
-      viewAsCholmod(matrix.template selfadjointView<UpLo>()) :
-      viewAsCholmod(matrix);
-
-      cholmod_factorize_p(&A, &beta, fset.data(), fset.size(),
-			    m_cholmodFactor, &m_cholmod);
-	    
-      this->m_info = Success;
-      m_factorizationIsOk = true;
-  }
-
-  void factorize_p(const cholmod_sparse* chm, ArrayXi fset, double beta=0.)
-  {
-      eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
-      cholmod_factorize_p(chm, &beta, fset.data(), fset.size(),
-			    m_cholmodFactor, &m_cholmod);
-	    
-      this->m_info = Success;
-      m_factorizationIsOk = true;
-  }
-    
-
     /** Returns a reference to the Cholmod's configuration structure to get a full control over the performed operations.
      *  See the Cholmod user guide for details. */
     cholmod_common& cholmod() { return m_cholmod; }
