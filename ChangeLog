@@ -5,7 +5,16 @@
 	* DESCRIPTION: Updated Version: and Date:
 	* README.md: Idem
 
-	* .travis.yml (install): Switch to ppa:edd/misc for binaries
+	* .travis.yml: Switch to ppa:edd/misc for binaries
+
+	* R/RcppEigen.package.skeleton.R: Use pkgKitten::kitten, if installed
+	* inst/skeleton/rcppeigen_hello_world.Rd: Added new page
+
+	* inst/skeleton/Makevars: Minor edits
+	* inst/skeleton/Makevars.win: Idem
+
+	* DESCRIPTION: Added Suggests: for pkgKitten
+	* .travis.yml: Also install pkgKitten
 
 2014-12-22  Yixuan Qiu  <yixuan.qiu@cos.name>
 

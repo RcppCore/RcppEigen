@@ -20,8 +20,7 @@ before_install:
   - sudo apt-get update -q
 
 install:
-  - ./travis-tool.sh install_aptget r-cran-rcpp r-cran-matrix r-cran-inline r-cran-runit 
-# - ./travis-tool.sh install_r inline Rcpp
+  - ./travis-tool.sh install_aptget r-cran-rcpp r-cran-matrix r-cran-inline r-cran-runit r-cran-pkgkitten
 # Note: if Rcpp from Github is needed, use following line and remove Rcpp from previous line
 #  - ./travis-tool.sh install_github RcppCore/Rcpp
 

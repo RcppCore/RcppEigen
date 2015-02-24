@@ -2,12 +2,20 @@
 \title{News for Package 'RcppEigen'}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in RcppEigen version 0.3.2.4.0 (2015-02-23)}{
+  \itemize{
+    \item Updated to version 3.2.4 of Eigen
+    \item Update \code{RcppEigen.package.skeleton()} to use
+    \cpkg{pkgKitten} if available
+  }
+}
+    
 \section{Changes in RcppEigen version 0.3.2.3.0 (2014-12-22)}{
   \itemize{
     \item Updated to version 3.2.3 of Eigen
     \item Added a number of additional unit tests for \code{wrap},
       \code{transform} and \code{sparse}
-    \item Updated on of the examples
+    \item Updated one of the examples
   }
 }
 
