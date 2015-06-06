@@ -1,3 +1,7 @@
+2015-06-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/RcppEigen.package.skeleton.R: Correct use of requireNamespace()
+
 2015-02-26  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Version 0.3.2.4.0
