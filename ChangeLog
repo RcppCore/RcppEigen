@@ -1,3 +1,11 @@
+2015-07-11  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.5 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+	* inst/include/RcppEigenWrap.h: Fixed three incorrect error messages
+
 2015-06-06  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/RcppEigen.package.skeleton.R: Correct use of requireNamespace()
