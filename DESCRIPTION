@@ -2,7 +2,7 @@ Package: RcppEigen
 Type: Package
 Title: 'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
 Version: 0.3.2.5.0
-Date: 2015-07-11
+Date: 2015-07-12
 Author: Douglas Bates, Romain Francois and Dirk Eddelbuettel; 
  the authors of Eigen for the included version of Eigen
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
