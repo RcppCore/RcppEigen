@@ -27,6 +27,6 @@ License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.15.1)
 LazyLoad: yes
 LinkingTo: Rcpp
-Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0)
+Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils
 Suggests: inline, RUnit, pkgKitten
 URL: http://eigen.tuxfamily.org

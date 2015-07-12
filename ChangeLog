@@ -1,3 +1,7 @@
+2015-07-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* NAMESPACE: Explicitly importFrom() stats and utils packages
+
 2015-07-11  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen: Updated to release 3.2.5 of Eigen

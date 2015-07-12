@@ -1,13 +1,9 @@
 useDynLib(RcppEigen)
 
-importClassesFrom("Matrix"
-                  , dgCMatrix
-                  , dgeMatrix
-                  , dsCMatrix
-                  , dtCMatrix
-                  )
-
-importFrom(Rcpp, evalCpp)
+importClassesFrom("Matrix", "dgCMatrix", "dgeMatrix", "dsCMatrix", "dtCMatrix")
+importFrom(Rcpp, "evalCpp")
+importFrom(utils, "packageDescription")
+importFrom(stats, "model.frame", "model.matrix", "model.response", "fitted", "coef", "printCoefmat", "pt")
 
 #exportPattern("^[[:alpha:]]+")
 export(fastLm,
