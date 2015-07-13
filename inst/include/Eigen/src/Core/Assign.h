@@ -449,12 +449,8 @@ struct assign_impl<Derived1, Derived2, SliceVectorizedTraversal, NoUnrolling, Ve
       srcAlignment = assign_traits<Derived1,Derived2>::JointAlignment
     };
     const Scalar *dst_ptr = &dst.coeffRef(0,0);
-#ifdef _OpenMx_Compilation_
-    if((!bool(dstIsAligned)) && ((long unsigned int)(dst_ptr) % sizeof(Scalar))>0)
-#else
-    if((!bool(dstIsAligned)) && ((Index)(dst_ptr) % sizeof(Scalar))>0)
-#endif      
-      {
+    if((!bool(dstIsAligned)) && (size_t(dst_ptr) % sizeof(Scalar))>0)
+    {
       // the pointer is not aligend-on scalar, so alignment is not possible
       return assign_impl<Derived1,Derived2,DefaultTraversal,NoUnrolling>::run(dst, src);
     }
