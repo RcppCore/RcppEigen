@@ -5,7 +5,8 @@
 \section{Changes in RcppEigen version 0.3.2.5.0 (2015-07-11)}{
   \itemize{
     \item Updated to version 3.2.5 of Eigen
-    \item Fixed some incorrect error messages
+    \item Fixed some incorrect error messages stemming from Eigen code.
+    \item Updated package to current \code{R CMD check} standards.
   }
 }
 

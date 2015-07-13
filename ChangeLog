@@ -1,19 +1,17 @@
+2015-07-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Version 0.3.2.5.0
+
 2015-07-13  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen/src/Core/Assign.h: Applied patch from upstream Eigen
 	that will appear in the next release
 
-
 2015-07-12  Dirk Eddelbuettel  <edd@debian.org>
-
-	* DESCRIPTION: Version 0.3.2.5.0
 
 	* DESCRIPTION: Added more explicitly quoting per R CMD check
 
 	* NAMESPACE: Explicitly importFrom() stats and utils packages
-
-	* inst/include/Eigen/src/Core/Assign.h: Make change made solely for
-	OpenMx more explicit; intent is to not do this time
 
 2015-07-11  Yixuan Qiu  <yixuan.qiu@cos.name>
 
