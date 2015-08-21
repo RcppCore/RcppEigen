@@ -1,4 +1,6 @@
-## RcppEigen [![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](http://cran.rstudio.com/package=RcppEigen) [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
+## RcppEigen
+
+[![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](http://cran.rstudio.com/package=RcppEigen) [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
 
 [Rcpp](http://dirk.eddelbuettel.com/code/rcpp.html) Integration for the [Eigen](http://eigen.tuxfamily.org) Templated Linear Algebra Library
 
