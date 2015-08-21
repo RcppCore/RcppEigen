@@ -2,7 +2,7 @@
 //
 // fastLm.h: Rcpp/Eigen example of a simple lm() alternative
 //
-// Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -112,7 +112,7 @@ namespace lmsol {
     };
 }
 
-extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP types);
+// extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP types);
 
 #endif
 

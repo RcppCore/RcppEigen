@@ -2,7 +2,7 @@
 //
 // RcppEigen.cpp: Rcpp/Eigen glue
 //
-// Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -21,32 +21,23 @@
 
 #include <RcppEigen.h>
 
-extern "C" {
-    SEXP eigen_version(SEXP single_){
-	using Rcpp::_;
-	using Rcpp::IntegerVector;
+// [[Rcpp::export]]
+Rcpp::IntegerVector eigen_version(bool single) {
+    using Rcpp::_;
+    using Rcpp::IntegerVector;
 	
-	BEGIN_RCPP;
-	bool single = Rcpp::as<bool>(single_) ;
-	if( single ){
-	    return Rcpp::wrap( 10000 * EIGEN_WORLD_VERSION +
-			       100 * EIGEN_MAJOR_VERSION + 
-			       EIGEN_MINOR_VERSION ) ;
-	}
+    if (single) {
+        return Rcpp::wrap( 10000 * EIGEN_WORLD_VERSION +
+                           100 * EIGEN_MAJOR_VERSION + 
+                           EIGEN_MINOR_VERSION ) ;
+    }
 	
-	return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
-				     _["minor"] = EIGEN_MAJOR_VERSION,
-				     _["patch"] = EIGEN_MINOR_VERSION);
-	END_RCPP;
-    }
-
-    SEXP Eigen_SSE() {
-	BEGIN_RCPP;
-	return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
-	END_RCPP;
-    }
+    return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
+                                 _["minor"] = EIGEN_MAJOR_VERSION,
+                                 _["patch"] = EIGEN_MINOR_VERSION);
 }
 
-
-
-
+// [[Rcpp::export]]
+bool Eigen_SSE() {
+    return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
+}

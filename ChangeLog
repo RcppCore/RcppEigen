@@ -1,3 +1,11 @@
+2015-08-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/RcppEigen.cpp: Updated code to use Rcpp Attributes
+	* src/fastLm.cpp: Ditto
+	* src/fastLm.h: Ditto
+	* R/fastLm.R: Ditto
+	* inst/unitTests/runit.fastLm.R: Ditto
+
 2015-08-04  Dirk Eddelbuettel  <edd@debian.org>
 
 	* R/RcppEigen.package.skeleton.R: Correct kitten() use based on patch

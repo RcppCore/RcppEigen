@@ -2,7 +2,7 @@
 //
 // fastLm.cpp: Rcpp/Eigen example of a simple lm() alternative
 //
-// Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -202,45 +202,45 @@ namespace lmsol {
 	return ColPivQR(X, y);	// -Wall
     }
 
-    extern "C" SEXP fastLm(SEXP Xs, SEXP ys, SEXP type) {
-	try {
-	    const Map<MatrixXd>  X(as<Map<MatrixXd> >(Xs));
-	    const Map<VectorXd>  y(as<Map<VectorXd> >(ys));
-	    Index                n = X.rows();
-	    if ((Index)y.size() != n) throw invalid_argument("size mismatch");
+    List fastLm(Rcpp::NumericMatrix Xs, Rcpp::NumericVector ys, int type) {
+        const Map<MatrixXd>  X(as<Map<MatrixXd> >(Xs));
+        const Map<VectorXd>  y(as<Map<VectorXd> >(ys));
+        Index                n = X.rows();
+        if ((Index)y.size() != n) throw invalid_argument("size mismatch");
 
-				// Select and apply the least squares method
-	    lm                 ans(do_lm(X, y, ::Rf_asInteger(type)));
+			    // Select and apply the least squares method
+        lm                 ans(do_lm(X, y, type));
 
-				// Copy coefficients and install names, if any
-	    NumericVector     coef(wrap(ans.coef()));
-	    List          dimnames(NumericMatrix(Xs).attr("dimnames"));
-	    if (dimnames.size() > 1) {
-		RObject   colnames = dimnames[1];
-		if (!(colnames).isNULL())
-		    coef.attr("names") = clone(CharacterVector(colnames));
-	    }
+			    // Copy coefficients and install names, if any
+        NumericVector     coef(wrap(ans.coef()));
+
+        List          dimnames(NumericMatrix(Xs).attr("dimnames"));
+        if (dimnames.size() > 1) {
+            RObject   colnames = dimnames[1];
+            if (!(colnames).isNULL())
+                coef.attr("names") = clone(CharacterVector(colnames));
+        }
 	    
-	    VectorXd         resid = y - ans.fitted();
-	    int               rank = ans.rank();
-	    int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
-	    double               s = resid.norm() / std::sqrt(double(df));
-				// Create the standard errors
-	    VectorXd            se = s * ans.se();
+        VectorXd         resid = y - ans.fitted();
+        int               rank = ans.rank();
+        int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
+        double               s = resid.norm() / std::sqrt(double(df));
+			    // Create the standard errors
+        VectorXd            se = s * ans.se();
 
-	    return List::create(_["coefficients"]  = coef,
-				_["se"]            = se,
-				_["rank"]          = rank,
-				_["df.residual"]   = df,
-				_["residuals"]     = resid,
-				_["s"]             = s,
-				_["fitted.values"] = ans.fitted());
-
-	} catch( std::exception &ex ) {
-	    forward_exception_to_r( ex );
-	} catch(...) { 
-	    ::Rf_error( "c++ exception (unknown reason)" ); 
-	}
-	return R_NilValue; // -Wall
+        return List::create(_["coefficients"]  = coef,
+                            _["se"]            = se,
+                            _["rank"]          = rank,
+                            _["df.residual"]   = df,
+                            _["residuals"]     = resid,
+                            _["s"]             = s,
+                            _["fitted.values"] = ans.fitted());
     }
 }
+
+// This defines the R-callable function 'fastLm' 
+// [[Rcpp::export]]
+Rcpp::List fastLm_Impl(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type) {
+    return lmsol::fastLm(X, y, type); 
+}
+
