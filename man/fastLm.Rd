@@ -65,18 +65,14 @@ fastLm(X, \dots)
   conventional linear algebra software.
 }
 \value{
-  \code{fastLmPure} returns a list with three components:
+  \code{fastLmPure} returns a list with several components:
   \item{coefficients}{a vector of coefficients}
+  \item{se}{a vector of the standard errors of the coefficient estimates}
   \item{rank}{a scalar denoting the computed rank of the model matrix}
   \item{df.residual}{a scalar denoting the degrees of freedom in the model}
-  \item{stderr}{a vector of the standard errors of the coefficient estimates}
-  \item{s}{a numeric scalar - the root mean square for residuals}
   \item{residuals}{the vector of residuals}
+  \item{s}{a numeric scalar - the root mean square for residuals}
   \item{fitted.values}{the vector of fitted value}
-  \item{perm}{the 0-based permutation vector from the QR decomposition}
-  \item{unsc}{the unscaled variance-covariance matrix.  This is the
-  inverse (or pseudo-inverse in the rank-deficient case when using a
-  rank-revealing decomposition) of \eqn{\mathbf{X}^\prime\mathbf{X}}{X'X}.}
 
   \code{fastLm} returns a richer object which also includes the
      call argument similar to the \code{\link{lm}} or
