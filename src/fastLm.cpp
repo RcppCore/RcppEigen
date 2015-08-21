@@ -240,7 +240,7 @@ namespace lmsol {
 
 // This defines the R-callable function 'fastLm' 
 // [[Rcpp::export]]
-Rcpp::List fastLm(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type) {
+Rcpp::List fastLm_Impl(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type) {
     return lmsol::fastLm(X, y, type); 
 }
 

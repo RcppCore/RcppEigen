@@ -6,16 +6,16 @@
 
 using namespace Rcpp;
 
-// fastLm
-Rcpp::List fastLm(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type);
-RcppExport SEXP RcppEigen_fastLm(SEXP XSEXP, SEXP ySEXP, SEXP typeSEXP) {
+// fastLm_Impl
+Rcpp::List fastLm_Impl(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type);
+RcppExport SEXP RcppEigen_fastLm_Impl(SEXP XSEXP, SEXP ySEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type type(typeSEXP);
-    __result = Rcpp::wrap(fastLm(X, y, type));
+    __result = Rcpp::wrap(fastLm_Impl(X, y, type));
     return __result;
 END_RCPP
 }
