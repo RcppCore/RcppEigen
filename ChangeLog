@@ -1,3 +1,8 @@
+2015-09-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/SparseCore/CompressedStorage.h: Added
+	somewhat adapted code from upstream PR #118 to address UBSAN
+
 2015-08-21  Dirk Eddelbuettel  <edd@debian.org>
 
 	* src/RcppEigen.cpp: Updated code to use Rcpp Attributes
