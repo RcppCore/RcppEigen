@@ -2,7 +2,7 @@
 \title{News for Package 'RcppEigen'}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in RcppEigen version 0.3.2.5.1 (2015-10-01)}{
+\section{Changes in RcppEigen version 0.3.2.5.1 (2015-09-23)}{
   \itemize{
     \item Corrected use of \code{kitten()} thanks to Grant Brown (#21)
     \item Applied upstream change to protect against undefined behaviour

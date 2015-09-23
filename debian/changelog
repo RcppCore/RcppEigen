@@ -1,3 +1,15 @@
+r-cran-rcppeigen (0.3.2.5.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Wed, 23 Sep 2015 06:15:08 -0500
+
+r-cran-rcppeigen (0.3.2.5.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Tue, 14 Jul 2015 17:57:58 -0500
+
 r-cran-rcppeigen (0.3.2.4.0-1) unstable; urgency=low
 
   * New upstream release
