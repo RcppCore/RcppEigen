@@ -1,6 +1,14 @@
 \name{NEWS}
 \title{News for Package 'RcppEigen'}
-\newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+\newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
+\newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
+
+\section{Changes in RcppEigen version 0.x.y.z (2015-12-31)}{
+  \itemize{
+    \item The fastLm example will not include the Lapack header if MKL
+    is defined (thanks to PR \ghpr{25} by Alexey Stukalow)
+  }
+}
 
 \section{Changes in RcppEigen version 0.3.2.5.1 (2015-09-23)}{
   \itemize{
@@ -22,7 +30,7 @@
   \itemize{
     \item Updated to version 3.2.4 of Eigen
     \item Update \code{RcppEigen.package.skeleton()} to use
-    \cpkg{pkgKitten} if available
+    \CRANpkg{pkgKitten} if available
   }
 }
     
@@ -73,9 +81,9 @@
 \section{Changes in RcppEigen version 0.3.2.0.3 (2014-03-01)}{
   \itemize{
     \item Updated and extended \code{RcppEigen.package.skeleton()} to
-    use several examples via \cpkg{Rcpp} Attributes; also removed the
+    use several examples via \CRANpkg{Rcpp} Attributes; also removed the
     deprecated \code{namespace} argument 
-    \item Updated skeleton package example for \cpkg{Rcpp} 0.11.0 or
+    \item Updated skeleton package example for \CRANpkg{Rcpp} 0.11.0 or
     later by removing needed for linking with user library
     \item Updated files \code{DESCRIPTION}, \code{NAMESPACE},
     \code{src/Makevars} and \code{src/Makevars.win} similarly
@@ -84,11 +92,11 @@
 
 \section{Changes in RcppEigen version 0.3.2.0.2 (2014-01-26)}{
   \itemize{
-    \item Converted three unused unit test files to \cpkg{RUnit} and
-    removed \code{Suggests:} of \cpkg{testthat}
-    \item Add declaration to import a symbol from \cpkg{Rcpp} to
+    \item Converted three unused unit test files to \CRANpkg{RUnit} and
+    removed \code{Suggests:} of \CRANpkg{testthat}
+    \item Add declaration to import a symbol from \CRANpkg{Rcpp} to
     \code{NAMESPACE} to ensure proper instantiation with the upcoming
-    \cpkg{Rcpp} version
+    \CRANpkg{Rcpp} version
     \item Retire \code{SHLIB.maker} function
   }
 }

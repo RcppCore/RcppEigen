@@ -1,3 +1,7 @@
+2015-11-01  Alexey Stukalov <alyst@users.noreply.github.com>
+
+	* src/fastLm.cpp: Do not include R's LAPACK header if MKL defined
+
 2015-09-23  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.3.2.5.1
