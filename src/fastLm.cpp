@@ -21,7 +21,9 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "fastLm.h"
+#if !defined(EIGEN_USE_MKL) // don't use R Lapack.h if MKL is enabled
 #include <R_ext/Lapack.h>
+#endif
 
 namespace lmsol {
     using Rcpp::_;
