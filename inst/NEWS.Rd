@@ -3,8 +3,9 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.x.y.z (2015-12-31)}{
+\section{Changes in RcppEigen version 0.3.2.7.0 (2016-01-18)}{
   \itemize{
+    \item Updated to version 3.2.7 of Eigen
     \item The fastLm example will not include the Lapack header if MKL
     is defined (thanks to PR \ghpr{25} by Alexey Stukalow)
   }
