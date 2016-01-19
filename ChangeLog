@@ -1,3 +1,10 @@
+2016-01-18  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.7 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
 2015-11-01  Alexey Stukalov <alyst@users.noreply.github.com>
 
 	* src/fastLm.cpp: Do not include R's LAPACK header if MKL defined
@@ -6,7 +13,7 @@
 
 	* DESCRIPTION: Release 0.3.2.5.1
 
-        * debian/*: Changes for Debian release of 0.3.2.5.1
+	* debian/*: Changes for Debian release of 0.3.2.5.1
 
 2015-09-21  Dirk Eddelbuettel  <edd@debian.org>
 
