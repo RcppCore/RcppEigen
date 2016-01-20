@@ -214,7 +214,8 @@ test.sparseCholesky.R <- function() {
 
     rr <- fx(KNex)
     checkEquals(rr[[1]], as.vector(solve(crossprod(KNex[[1]]),
-                                         crossprod(KNex[[1]], KNex[[2]]))),
-                                       "Cholmod solution")
+                                         crossprod(KNex[[1]], KNex[[2]])),
+                                   mode="numeric"),
+                "Cholmod solution")
 }
 
