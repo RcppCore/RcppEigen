@@ -1,8 +1,8 @@
 Package: RcppEigen
 Type: Package
 Title: 'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
-Version: 0.3.2.7.0
-Date: 2016-01-19
+Version: 0.3.2.8.0
+Date: 2016-02-23
 Author: Douglas Bates, Dirk Eddelbuettel and Romain Francois;
  the authors of Eigen for the included version of Eigen
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
@@ -16,7 +16,7 @@ Description: R and 'Eigen' integration using 'Rcpp'.
  implementations based on 'Lapack' and level-3 'BLAS'.
  .
  The 'RcppEigen' package includes the header files from the 'Eigen' C++
- template library (currently version 3.2.7). Thus users do not need to
+ template library (currently version 3.2.8). Thus users do not need to
  install 'Eigen' itself in order to use 'RcppEigen'.
  .
  Since version 3.1.1, 'Eigen' is licensed under the Mozilla Public License

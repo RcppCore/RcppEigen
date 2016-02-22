@@ -1,3 +1,14 @@
+2016-02-22  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.8 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/include/Eigen/src/SparseCore/CompressedStorage.h,
+	  inst/include/Eigen/src/Core/util/Memory.h: Applied patch from upstream
+	to fix UBSAN errors
+
 2016-01-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.3.2.7.0
