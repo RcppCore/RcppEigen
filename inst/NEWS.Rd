@@ -3,9 +3,15 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.2.8.0 (2016-02-23)}{
+  \itemize{
+    \item Updated to version 3.2.8 of Eigen (\ghpr{29} by Yixuan)
+  }
+}
 \section{Changes in RcppEigen version 0.3.2.7.0 (2016-01-18)}{
   \itemize{
     \item Updated to version 3.2.7 of Eigen
+    \item One unit test file tightened to please R-devel CMD check
     \item The fastLm example will not include the Lapack header if MKL
     is defined (thanks to PR \ghpr{25} by Alexey Stukalow)
   }

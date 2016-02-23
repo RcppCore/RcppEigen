@@ -1,3 +1,10 @@
+2016-02-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version): Release 0.3.2.8.0
+	* DESCRIPTION (Author): Added Yixuan Qiu
+
+	* inst/NEWS.Rd: Release 0.3.2.8.0
+
 2016-02-22  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen: Updated to release 3.2.8 of Eigen
