@@ -507,14 +507,18 @@ template<typename T> void smart_copy(const T* start, const T* end, T* target)
 
 template<typename T> struct smart_copy_helper<T,true> {
   static inline void run(const T* start, const T* end, T* target)
-  { memcpy(target, start, std::ptrdiff_t(end)-std::ptrdiff_t(start)); }
+  {
+    std::ptrdiff_t size = std::ptrdiff_t(end)-std::ptrdiff_t(start);
+    if(size==0) return;
+    eigen_internal_assert(start!=0 && end!=0 && target!=0);
+    memcpy(target, start, size);
+  }
 };
 
 template<typename T> struct smart_copy_helper<T,false> {
   static inline void run(const T* start, const T* end, T* target)
   { std::copy(start, end, target); }
 };
-
 
 /*****************************************************************************
 *** Implementation of runtime stack allocation (falling back to malloc)    ***
@@ -630,6 +634,8 @@ template<typename T> class aligned_stack_memory_handler
       } \
       void operator delete(void * ptr) throw() { Eigen::internal::conditional_aligned_free<NeedsToAlign>(ptr); } \
       void operator delete[](void * ptr) throw() { Eigen::internal::conditional_aligned_free<NeedsToAlign>(ptr); } \
+      void operator delete(void * ptr, std::size_t /* sz */) throw() { Eigen::internal::conditional_aligned_free<NeedsToAlign>(ptr); } \
+      void operator delete[](void * ptr, std::size_t /* sz */) throw() { Eigen::internal::conditional_aligned_free<NeedsToAlign>(ptr); } \
       /* in-place new and delete. since (at least afaik) there is no actual   */ \
       /* memory allocated we can safely let the default implementation handle */ \
       /* this particular case. */ \
