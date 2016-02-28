@@ -1,3 +1,9 @@
+r-cran-rcppeigen (0.3.2.8.0-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Dirk Eddelbuettel <edd@debian.org>  Tue, 23 Feb 2016 11:08:16 -0600
+
 r-cran-rcppeigen (0.3.2.7.0-1) unstable; urgency=low
 
   * New upstream release
