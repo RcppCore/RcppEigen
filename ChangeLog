@@ -1,3 +1,12 @@
+2016-02-28  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen/src/SparseCore/CompressedStorage.h,
+	  inst/include/Eigen/src/SparseCore/SparseBlock.h,
+	  inst/include/Eigen/src/SparseCore/SparseMatrix.h,
+	  inst/include/Eigen/src/SparseCore/SparseRedux.h,
+	  inst/include/Eigen/src/SparseCore/SparseVector.h:
+	Another patch from upstream to fix UBSAN null pointer errors
+
 2016-02-23  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version): Release 0.3.2.8.0
