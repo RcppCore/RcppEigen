@@ -5,7 +5,7 @@
 
 \section{Changes in RcppEigen version 0.3.2.8.1 (2016-02-29)}{
   \itemize{
-    \item Applied another upstream UBSAN fix (PR \ghpr{31} by Yixuan)
+    \item Applied another upstream UBSAN fix (PR \ghpr{30} by Yixuan)
   }
 }
 
