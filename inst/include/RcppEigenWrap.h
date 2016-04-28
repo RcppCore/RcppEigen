@@ -286,21 +286,12 @@ namespace Rcpp{
             OUT get() {return OUT(vec.begin(), d_nrow, d_ncol );}
         } ;
 
-		// Exportation for VectorXt
         template <typename T>
         class Exporter<Eigen::Matrix<T, Eigen::Dynamic, 1> >
             : public IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T> {
         public:
             Exporter(SEXP x) : IndexingExporter<Eigen::Matrix<T, Eigen::Dynamic, 1>, T >(x){}
         };
-
-		// Exportation for RowVectorXt
-		template <typename T>
-		class Exporter<Eigen::Matrix<T, 1, Eigen::Dynamic> >
-			: public IndexingExporter<Eigen::Matrix<T, 1, Eigen::Dynamic>, T>{
-		public:
-			Exporter(SEXP x) : IndexingExporter<Eigen::Matrix<T, 1, Eigen::Dynamic>, T >(x){}
-		};
 
         template <typename T>
         class Exporter<Eigen::Array<T, Eigen::Dynamic, 1> >
