@@ -178,6 +178,20 @@ test.as.MVec <- function(){
     checkEquals( unlist( res ), rep(55.0, 2 ), msg = "as<MVec>" )
 }
 
+test.as.MRowVec <- function(){
+  fx <- cxxfunction( signature(input_ = "list" ) , '
+    List input(input_) ;
+    const Eigen::Map<Eigen::RowVectorXi>   m1 = input[0] ; // maps share storage and do not allow conversion
+    const Eigen::Map<Eigen::RowVectorXd>   m2 = input[1] ; 
+    List res = List::create(m1.sum(), m2.sum());
+    return res ;
+    ', plugin = "RcppEigen" )
+  
+  res <- fx( list( 1:10, as.numeric(1:10) ) )
+  checkEquals( unlist( res ), rep(55.0, 2 ), msg = "as<MRowVec>" )
+}
+
+
 test.as.MMat <- function(){
     fx <- cxxfunction( signature(input_ = "list" ) , '
 
