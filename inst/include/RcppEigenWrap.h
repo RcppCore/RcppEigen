@@ -33,7 +33,7 @@ namespace Rcpp{
             if (f->minor < f->n)
                 throw std::runtime_error("CHOLMOD factorization was unsuccessful");
 
-//FIXME: Should extend this selection according to T
+            //FIXME: Should extend this selection according to T
             S4 ans(std::string(f->is_super ? "dCHMsuper" : "dCHMsimpl"));
             IntegerVector  dd(2);
             dd[0] = dd[1] = f->n;
@@ -220,17 +220,17 @@ namespace Rcpp{
         // Provides only Map::RowVectorX<t> export
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > > {
-          typedef typename Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > OUT ;
-          const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
-          Rcpp::Vector<RTYPE> vec ;
+            typedef typename Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > OUT ;
+            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+            Rcpp::Vector<RTYPE> vec ;
           
         public:
-          Exporter(SEXP x) : vec(x) {
-            if (TYPEOF(x) != RTYPE)
-              throw std::invalid_argument("Wrong R type for mapped rowvector");
-          }
-          OUT get() {return OUT(vec.begin(), vec.size());}
-        } ;
+            Exporter(SEXP x) : vec(x) {
+                if (TYPEOF(x) != RTYPE)
+                    throw std::invalid_argument("Wrong R type for mapped rowvector");
+            }
+            OUT get() {return OUT(vec.begin(), vec.size());}
+        };
 
         template<typename T>
         class Exporter< Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {

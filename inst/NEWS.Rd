@@ -3,6 +3,13 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.X.Y.Z (2016-XX-YY)}{
+  \itemize{
+    \item An exporter for RowVectorX was added (thanks to PR \ghpr{32}
+    by James Balamuta) 
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.8.1 (2016-02-29)}{
   \itemize{
     \item Applied another upstream UBSAN fix (PR \ghpr{30} by Yixuan)
