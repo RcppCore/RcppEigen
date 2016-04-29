@@ -202,7 +202,7 @@ namespace Rcpp{
             SEXP object;
         };
 
-		// Provides only VectorXt exportation
+		    // Provides only VectorX<t> exportation
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > {
             typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > OUT ;
@@ -217,20 +217,20 @@ namespace Rcpp{
             OUT get() {return OUT(vec.begin(), vec.size());}
         } ;
 
-		// Enables RowVectorXt exportation
-		template<typename T>
-		class Exporter<Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > > {
-			typedef typename Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > OUT;
-			const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype;
-			Rcpp::Vector<RTYPE> vec;
+		    // Enables RowVectorX<t> exportation
+		    template<typename T>
+		    class Exporter<Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > > {
+		    	typedef typename Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > OUT;
+		    	const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype;
+		    	Rcpp::Vector<RTYPE> vec;
 
-		public:
-			Exporter(SEXP x) : vec(x) {
-				if (TYPEOF(x) != RTYPE)
-					throw std::invalid_argument("Wrong R type for mapped rowvector");
-			}
-			OUT get() { return OUT(vec.begin(), vec.size()); }
-		};
+		    public:
+			      Exporter(SEXP x) : vec(x) {
+				        if (TYPEOF(x) != RTYPE)
+					          throw std::invalid_argument("Wrong R type for mapped rowvector");
+			      }
+			      OUT get() { return OUT(vec.begin(), vec.size()); }
+		    };
 
         template<typename T>
         class Exporter< Eigen::Map<Eigen::Array<T, Eigen::Dynamic, 1> > > {
