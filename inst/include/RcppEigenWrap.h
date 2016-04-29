@@ -201,8 +201,8 @@ namespace Rcpp{
         private:
             SEXP object;
         };
-
-
+        
+        // Provides only Map::VectorX<t> export
         template<typename T>
         class Exporter<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > > {
             typedef typename Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> > OUT ;
@@ -215,6 +215,21 @@ namespace Rcpp{
                     throw std::invalid_argument("Wrong R type for mapped vector");
             }
             OUT get() {return OUT(vec.begin(), vec.size());}
+        } ;
+
+        // Provides only Map::RowVectorX<t> export
+        template<typename T>
+        class Exporter<Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > > {
+          typedef typename Eigen::Map<Eigen::Matrix<T, 1, Eigen::Dynamic> > OUT ;
+          const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+          Rcpp::Vector<RTYPE> vec ;
+          
+        public:
+          Exporter(SEXP x) : vec(x) {
+            if (TYPEOF(x) != RTYPE)
+              throw std::invalid_argument("Wrong R type for mapped rowvector");
+          }
+          OUT get() {return OUT(vec.begin(), vec.size());}
         } ;
 
         template<typename T>
