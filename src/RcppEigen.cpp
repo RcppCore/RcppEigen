@@ -38,6 +38,6 @@ Rcpp::IntegerVector eigen_version(bool single) {
 }
 
 // [[Rcpp::export]]
-bool Eigen_SSE() {
+Rcpp::CharacterVector Eigen_SSE() {
     return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
 }

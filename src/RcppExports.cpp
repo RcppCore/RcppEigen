@@ -31,7 +31,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // Eigen_SSE
-bool Eigen_SSE();
+Rcpp::CharacterVector Eigen_SSE();
 RcppExport SEXP RcppEigen_Eigen_SSE() {
 BEGIN_RCPP
     Rcpp::RObject __result;
