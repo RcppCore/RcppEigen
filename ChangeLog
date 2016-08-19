@@ -1,10 +1,16 @@
+2016-08-19  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.9 of Eigen
+    * DESCRIPTION: Idem
+	* README.md: Idem
+
 2016-04-30  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Expanded
 
 2016-04-28  James Joseph Balamuta <balamut2@illinois.edu>
 
-	* inst/include/RcppEigenWrap.h: Added an exporter class for Map::RowVectorX<t> per 
+	* inst/include/RcppEigenWrap.h: Added an exporter class for Map::RowVectorX<t> per
 	http://stackoverflow.com/questions/36920689/rowvectorxd-not-supported-in-rcppeigen
 	* inst/include/unitTests/runit.RcppEigen.R: Added row exporter unit test.
 

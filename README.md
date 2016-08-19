@@ -12,18 +12,18 @@ systems. Its performance on many algorithms is comparable with some of the
 best implementations based on `Lapack` and level-3 `BLAS`.
 
 The RcppEigen package includes the header files from the Eigen C++
-template library (currently version 3.2.8). Thus users do not need to
+template library (currently version 3.2.9). Thus users do not need to
 install Eigen itself in order to use RcppEigen.
 
 ### Status
 
-The package is reasonably mature and under active development, following the 
+The package is reasonably mature and under active development, following the
 [Eigen](http://eigen.tuxfamily.org) release cycle.
 
 ### Documentation
 
 The package contains a pdf vignette which is a pre-print of the [paper by
-Bates and Eddelbuettel](https://www.jstatsoft.org/article/view/v052i05) 
+Bates and Eddelbuettel](https://www.jstatsoft.org/article/view/v052i05)
 in JSS (2013, v52i05).
 
 ### Authors
@@ -33,4 +33,3 @@ Douglas Bates, Dirk Eddelbuettel, Romain Francois, and Yixuan Qiu
 ### License
 
 GPL (>= 2)
-

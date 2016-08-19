@@ -3,10 +3,11 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.X.Y.Z (2016-XX-YY)}{
+\section{Changes in RcppEigen version 0.3.2.9.0 (2016-08-19)}{
   \itemize{
     \item An exporter for RowVectorX was added (thanks to PR \ghpr{32}
-    by James Balamuta) 
+    by James Balamuta)
+    \item Updated to version 3.2.9 of Eigen
   }
 }
 
@@ -54,7 +55,7 @@
     \CRANpkg{pkgKitten} if available
   }
 }
-    
+
 \section{Changes in RcppEigen version 0.3.2.3.0 (2014-12-22)}{
   \itemize{
     \item Updated to version 3.2.3 of Eigen
@@ -85,7 +86,7 @@
     the cpu id comparison, with thanks to Gael Guennebaud for the patch
   }
 }
-    
+
 \section{Changes in RcppEigen version 0.3.2.1.1 (2014-03-06)}{
   \itemize{
     \item Better \code{ifdef} on one directory entry feature, with
@@ -103,7 +104,7 @@
   \itemize{
     \item Updated and extended \code{RcppEigen.package.skeleton()} to
     use several examples via \CRANpkg{Rcpp} Attributes; also removed the
-    deprecated \code{namespace} argument 
+    deprecated \code{namespace} argument
     \item Updated skeleton package example for \CRANpkg{Rcpp} 0.11.0 or
     later by removing needed for linking with user library
     \item Updated files \code{DESCRIPTION}, \code{NAMESPACE},
@@ -128,7 +129,7 @@
     \item Applied two small patches to deal with non-g++ compilrs
     \item Clarifications concerning license and authorship of
     Eigen (as opposed to RcppEigen) code added to \code{DESCRIPTION} at
-    the request of CRAN 
+    the request of CRAN
   }
 }
 
@@ -157,7 +158,7 @@
     which cannot be changed to a ColMajor form.
     \item Because of changes in R, -DNDEBUG is automatic. One must
     override it with -UNDEBUG in the local ~/.R/Makevars to activate the
-    debugging code. 
+    debugging code.
     \item New (unexported) functions CxxFlags() and RcppEigenCxxFlags()
     for use in Makefiles
     \item Fixes related to Rcpp 0.10.*
@@ -210,5 +211,3 @@
     some difficulty with combining testthat, inline and R CMD check.
   }
 }
- 
-  
