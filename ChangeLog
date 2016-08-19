@@ -2,7 +2,8 @@
 
 	* inst/include/Eigen: Updated to release 3.2.9 of Eigen
     * DESCRIPTION: Idem
-	* README.md: Idem
+
+	* README.md: Updated version number and fixed the NOTE from CRAN URL check
 
 2016-04-30  Dirk Eddelbuettel  <edd@debian.org>
 
