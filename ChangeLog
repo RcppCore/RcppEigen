@@ -1,9 +1,14 @@
+2016-08-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Release 0.3.2.9.0 with big thanks to Yixuan for doing
+	the work!
+
 2016-08-19  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* inst/include/Eigen: Updated to release 3.2.9 of Eigen
-    * DESCRIPTION: Idem
 
-	* README.md: Updated version number and fixed the NOTE from CRAN URL check
+	* README.md: Updated version number and fixed the NOTE from CRAN URL
+	check
 
 2016-04-30  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -11,9 +16,10 @@
 
 2016-04-28  James Joseph Balamuta <balamut2@illinois.edu>
 
-	* inst/include/RcppEigenWrap.h: Added an exporter class for Map::RowVectorX<t> per
-	http://stackoverflow.com/questions/36920689/rowvectorxd-not-supported-in-rcppeigen
-	* inst/include/unitTests/runit.RcppEigen.R: Added row exporter unit test.
+	* inst/include/RcppEigenWrap.h: Added an exporter class for
+	Map::RowVectorX<t> per http://stackoverflow.com/questions/36920689/
+	* inst/include/unitTests/runit.RcppEigen.R: Added row exporter unit
+	test.
 
 2016-02-29  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -45,8 +51,8 @@
 	* README.md: Idem
 
 	* inst/include/Eigen/src/SparseCore/CompressedStorage.h,
-	  inst/include/Eigen/src/Core/util/Memory.h: Applied patch from upstream
-	to fix UBSAN errors
+	inst/include/Eigen/src/Core/util/Memory.h: Applied patch from
+	upstream to fix UBSAN errors
 
 2016-01-20  Dirk Eddelbuettel  <edd@debian.org>
 
