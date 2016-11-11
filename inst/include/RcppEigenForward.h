@@ -43,7 +43,7 @@
 /* forward declarations */
 namespace Rcpp {
     /* support for wrap */
-   
+
     template<typename T>
     SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj);
 
@@ -60,12 +60,14 @@ namespace Rcpp {
 	template<typename T> class Exporter< Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> >;
 	template<typename T> class Exporter< Eigen::Array<T, Eigen::Dynamic, 1> >;
 	template<typename T> class Exporter< Eigen::Array<T, 1, Eigen::Dynamic> >;
-	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;
+    template<typename T> class Exporter< Eigen::Map<Eigen::SparseMatrix<T> > >;
+	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;  // Deprecated
 	template<typename T> class Exporter< Eigen::SparseMatrix<T> >;
-	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T, Eigen::RowMajor> >;
+    template<typename T> class Exporter< Eigen::Map<Eigen::SparseMatrix<T, Eigen::RowMajor> > >;
+	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T, Eigen::RowMajor> >;  // Deprecated
 	template<typename T> class Exporter< Eigen::SparseMatrix<T, Eigen::RowMajor> >;
 
-    } // namespace traits 
+    } // namespace traits
 
 }
 
