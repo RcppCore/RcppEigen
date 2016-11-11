@@ -3,11 +3,21 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.3.3.0 (2016-11-12)}{
+  \itemize{
+    \item Updated to version 3.3.0 of Eigen
+    \item The class \code{MappedSparseMatrix<T>} has been deprecated since
+    Eigen 3.3.0. The new structure \code{Map<SparseMatrix<T> >} should be used
+    instead
+    \item Exporters for the new type \code{Map<SparseMatrix<T> >} were added
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.9.0 (2016-08-20)}{
   \itemize{
     \item Updated to version 3.2.9 of Eigen (PR \ghpr{37} by Yixuan
     closing \ghit{36} from Bob Carpenter of the Stan team)
-    \item An exporter for RowVectorX was added (thanks to PR \ghpr{32}
+    \item An exporter for \code{RowVectorX} was added (thanks to PR \ghpr{32}
     by James Balamuta)
   }
 }
