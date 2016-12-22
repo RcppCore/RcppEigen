@@ -1,3 +1,7 @@
+2016-12-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (URL, BugReports): Added / updated
+
 2016-08-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.3.2.9.0 with big thanks to Yixuan for doing

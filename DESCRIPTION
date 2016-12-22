@@ -29,4 +29,5 @@ LazyLoad: yes
 LinkingTo: Rcpp
 Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils
 Suggests: inline, RUnit, pkgKitten
-URL: http://eigen.tuxfamily.org
+URL: http://dirk.eddelbuettel.com/code/rcpp.eigen.html
+BugReports: https://github.com/RcppCore/RcppEigen/issues
