@@ -18,30 +18,30 @@ exprs <- list()
 exprs$lm.fit <- expression(stats::lm.fit(mm, y))
                                         # versions from RcppEigen
 ## column-pivoted QR decomposition - similar to lm.fit
-exprs$PivQR <- expression(.Call("fastLm", mm, y, 0L, PACKAGE="RcppEigen"))
+exprs$PivQR <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 0L, PACKAGE="RcppEigen"))
 ## LDLt Cholesky decomposition with rank detection
-exprs$LDLt <- expression(.Call("fastLm", mm, y, 2L, PACKAGE="RcppEigen"))
+exprs$LDLt <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 2L, PACKAGE="RcppEigen"))
 ## SVD using the Lapack subroutine dgesdd and Eigen support
-exprs$GESDD <- expression(.Call("fastLm", mm, y, 6L, PACKAGE="RcppEigen"))
+exprs$GESDD <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 6L, PACKAGE="RcppEigen"))
 ## SVD (the JacobiSVD class from Eigen)
-exprs$SVD <- expression(.Call("fastLm", mm, y, 4L, PACKAGE="RcppEigen"))
+exprs$SVD <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 4L, PACKAGE="RcppEigen"))
 ## eigenvalues and eigenvectors of X'X
-exprs$SymmEig <- expression(.Call("fastLm", mm, y, 5L, PACKAGE="RcppEigen"))
+exprs$SymmEig <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 5L, PACKAGE="RcppEigen"))
 
 ## Non-rank-revealing decompositions.  These work fine except when
 ## they don't.
 
 ## Unpivoted  QR decomposition
-exprs$QR <- expression(.Call("fastLm", mm, y, 1L, PACKAGE="RcppEigen"))
+exprs$QR <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 1L, PACKAGE="RcppEigen"))
 ## LLt Cholesky decomposition
-exprs$LLt <- expression(.Call("fastLm", mm, y, 3L, PACKAGE="RcppEigen"))
+exprs$LLt <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 3L, PACKAGE="RcppEigen"))
 
 if (suppressMessages(require("RcppArmadillo", character=TRUE, quietly=TRUE))) {
     exprs$arma <- expression(.Call("RcppArmadillo_fastLm", mm, y, PACKAGE="RcppArmadillo"))
 }
 
 if (suppressMessages(require("RcppGSL", character=TRUE, quietly=TRUE))) {
-    exprs$GSL <- expression(.Call("fastLm", mm, y, PACKAGE="RcppGSL"))
+    exprs$GSL <- expression(.Call("RcppGSL_fastLm", mm, y, PACKAGE="RcppGSL"))
 }
 
 do_bench <- function(n=100000L, p=40L, nrep=20L, suppressSVD=(n > 100000L)) {
@@ -60,6 +60,6 @@ print(do_bench())
 
 sessionInfo()
 
-.Call("eigen_version", FALSE, PACKAGE="RcppEigen")
+.Call("RcppEigen_eigen_version", FALSE, PACKAGE="RcppEigen")
 
-.Call("Eigen_SSE", FALSE, PACKAGE="RcppEigen")
+.Call("RcppEigen_Eigen_SSE", FALSE, PACKAGE="RcppEigen")

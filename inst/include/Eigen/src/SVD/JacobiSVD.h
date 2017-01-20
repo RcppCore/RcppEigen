@@ -11,7 +11,7 @@
 #ifndef EIGEN_JACOBISVD_H
 #define EIGEN_JACOBISVD_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 // forward declaration (needed by ICC)
@@ -412,14 +412,14 @@ struct svd_precondition_2x2_block_to_be_real<MatrixType, QRPreconditioner, true>
     }
 
     // update largest diagonal entry
-    maxDiagEntry = numext::maxi(maxDiagEntry,numext::maxi(abs(work_matrix.coeff(p,p)), abs(work_matrix.coeff(q,q))));
+    maxDiagEntry = numext::maxi<RealScalar>(maxDiagEntry,numext::maxi<RealScalar>(abs(work_matrix.coeff(p,p)), abs(work_matrix.coeff(q,q))));
     // and check whether the 2x2 block is already diagonal
     RealScalar threshold = numext::maxi<RealScalar>(considerAsZero, precision * maxDiagEntry);
     return abs(work_matrix.coeff(p,q))>threshold || abs(work_matrix.coeff(q,p)) > threshold;
   }
 };
 
-template<typename _MatrixType, int QRPreconditioner> 
+template<typename _MatrixType, int QRPreconditioner>
 struct traits<JacobiSVD<_MatrixType,QRPreconditioner> >
 {
   typedef _MatrixType MatrixType;
@@ -502,7 +502,7 @@ template<typename _MatrixType, int QRPreconditioner> class JacobiSVD
     typedef typename Base::MatrixUType MatrixUType;
     typedef typename Base::MatrixVType MatrixVType;
     typedef typename Base::SingularValuesType SingularValuesType;
-    
+
     typedef typename internal::plain_row_type<MatrixType>::type RowType;
     typedef typename internal::plain_col_type<MatrixType>::type ColType;
     typedef Matrix<Scalar, DiagSizeAtCompileTime, DiagSizeAtCompileTime,
@@ -648,7 +648,7 @@ void JacobiSVD<MatrixType, QRPreconditioner>::allocate(Index rows, Index cols, u
                             : m_computeThinV ? m_diagSize
                             : 0);
   m_workMatrix.resize(m_diagSize, m_diagSize);
-  
+
   if(m_cols>m_rows)   m_qr_precond_morecols.allocate(*this);
   if(m_rows>m_cols)   m_qr_precond_morerows.allocate(*this);
   if(m_rows!=m_cols)  m_scaledMatrix.resize(rows,cols);
@@ -671,7 +671,7 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
   // Scaling factor to reduce over/under-flows
   RealScalar scale = matrix.cwiseAbs().maxCoeff();
   if(scale==RealScalar(0)) scale = RealScalar(1);
-  
+
   /*** step 1. The R-SVD step: we use a QR decomposition to reduce to the case of a square matrix */
 
   if(m_rows!=m_cols)
@@ -725,7 +725,7 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
             if(computeV()) m_matrixV.applyOnTheRight(p,q,j_right);
 
             // keep track of the largest diagonal coefficient
-            maxDiagEntry = numext::maxi<RealScalar>(maxDiagEntry,numext::maxi(abs(m_workMatrix.coeff(p,p)), abs(m_workMatrix.coeff(q,q))));
+            maxDiagEntry = numext::maxi<RealScalar>(maxDiagEntry,numext::maxi<RealScalar>(abs(m_workMatrix.coeff(p,p)), abs(m_workMatrix.coeff(q,q))));
           }
         }
       }
@@ -753,7 +753,7 @@ JacobiSVD<MatrixType, QRPreconditioner>::compute(const MatrixType& matrix, unsig
       if(computeU() && (a<RealScalar(0))) m_matrixU.col(i) = -m_matrixU.col(i);
     }
   }
-  
+
   m_singularValues *= scale;
 
   /*** step 4. Sort singular values in descending order and compute the number of nonzero singular values ***/

@@ -10,10 +10,10 @@
 #ifndef EIGEN_SPARSE_COMPRESSED_BASE_H
 #define EIGEN_SPARSE_COMPRESSED_BASE_H
 
-namespace Eigen { 
+namespace Eigen {
 
 template<typename Derived> class SparseCompressedBase;
-  
+
 namespace internal {
 
 template<typename Derived>
@@ -41,17 +41,17 @@ class SparseCompressedBase
     EIGEN_SPARSE_PUBLIC_INTERFACE(SparseCompressedBase)
     using Base::operator=;
     using Base::IsRowMajor;
-    
+
     class InnerIterator;
     class ReverseInnerIterator;
-    
+
   protected:
     typedef typename Base::IndexVector IndexVector;
     Eigen::Map<IndexVector> innerNonZeros() { return Eigen::Map<IndexVector>(innerNonZeroPtr(), isCompressed()?0:derived().outerSize()); }
     const  Eigen::Map<const IndexVector> innerNonZeros() const { return Eigen::Map<const IndexVector>(innerNonZeroPtr(), isCompressed()?0:derived().outerSize()); }
-        
+
   public:
-    
+
     /** \returns the number of non zero coefficients */
     inline Index nonZeros() const
     {
@@ -64,7 +64,7 @@ class SparseCompressedBase
       else
         return innerNonZeros().sum();
     }
-    
+
     /** \returns a const pointer to the array of values.
       * This function is aimed at interoperability with other libraries.
       * \sa innerIndexPtr(), outerIndexPtr() */
@@ -102,7 +102,7 @@ class SparseCompressedBase
       * This function is aimed at interoperability with other libraries.
       * \warning it returns the null pointer 0 in compressed mode */
     inline StorageIndex* innerNonZeroPtr() { return derived().innerNonZeroPtr(); }
-    
+
     /** \returns whether \c *this is in compressed form. */
     inline bool isCompressed() const { return innerNonZeroPtr()==0; }
 
@@ -224,11 +224,11 @@ class SparseCompressedBase<Derived>::ReverseInnerIterator
       }
       else
       {
-        m_start.value() = mat.outerIndexPtr()[outer];
+        m_start = mat.outerIndexPtr()[outer];
         if(mat.isCompressed())
           m_id = mat.outerIndexPtr()[outer+1];
         else
-          m_id = m_start.value() + mat.innerNonZeroPtr()[outer];
+          m_id = m_start + mat.innerNonZeroPtr()[outer];
       }
     }
 
@@ -254,14 +254,15 @@ class SparseCompressedBase<Derived>::ReverseInnerIterator
     inline Index row() const { return IsRowMajor ? m_outer.value() : index(); }
     inline Index col() const { return IsRowMajor ? index() : m_outer.value(); }
 
-    inline operator bool() const { return (m_id > m_start.value()); }
+    inline operator bool() const { return (m_id > m_start); }
 
   protected:
     const Scalar* m_values;
     const StorageIndex* m_indices;
-    const internal::variable_if_dynamic<Index,Derived::IsVectorAtCompileTime?0:Dynamic> m_outer;
+    typedef internal::variable_if_dynamic<Index,Derived::IsVectorAtCompileTime?0:Dynamic> OuterType;
+    const OuterType m_outer;
+    Index m_start;
     Index m_id;
-    const internal::variable_if_dynamic<Index,Derived::IsVectorAtCompileTime?0:Dynamic> m_start;
 };
 
 namespace internal {
@@ -272,13 +273,12 @@ struct evaluator<SparseCompressedBase<Derived> >
 {
   typedef typename Derived::Scalar Scalar;
   typedef typename Derived::InnerIterator InnerIterator;
-  typedef typename Derived::ReverseInnerIterator ReverseInnerIterator;
-  
+
   enum {
     CoeffReadCost = NumTraits<Scalar>::ReadCost,
     Flags = Derived::Flags
   };
-  
+
   evaluator() : m_matrix(0)
   {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
@@ -287,22 +287,22 @@ struct evaluator<SparseCompressedBase<Derived> >
   {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
   }
-  
+
   inline Index nonZerosEstimate() const {
     return m_matrix->nonZeros();
   }
-  
+
   operator Derived&() { return m_matrix->const_cast_derived(); }
   operator const Derived&() const { return *m_matrix; }
-  
+
   typedef typename DenseCoeffsBase<Derived,ReadOnlyAccessors>::CoeffReturnType CoeffReturnType;
   Scalar coeff(Index row, Index col) const
   { return m_matrix->coeff(row,col); }
-  
+
   Scalar& coeffRef(Index row, Index col)
   {
     eigen_internal_assert(row>=0 && row<m_matrix->rows() && col>=0 && col<m_matrix->cols());
-      
+
     const Index outer = Derived::IsRowMajor ? row : col;
     const Index inner = Derived::IsRowMajor ? col : row;
 
