@@ -1,3 +1,10 @@
+2016-01-20  ChingChuan Chen  <zw12356@gmail.com>
+
+  * DESCRIPTION (Version): Release 0.3.3.1.0
+  * Use index type as long int (long long int is used in default, it may cause error.)
+    Although it can be fixed by defining RCPP_HAS_LONG_LONG_TYPES, 
+    it depends on C++11 which is not a good way to solve it.
+
 2016-12-22  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (URL, BugReports): Added / updated

@@ -22,6 +22,7 @@
 #ifndef RcppEigen__RcppEigen__h
 #define RcppEigen__RcppEigen__h
 
+#define EIGEN_DEFAULT_DENSE_INDEX_TYPE long int
 #include <RcppEigenForward.h>
 #include <Rcpp.h>
 #include <RcppEigenWrap.h>
