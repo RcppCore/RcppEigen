@@ -226,11 +226,11 @@ test.as.MSpMat <- function() {
     List input(input_) ;
     const Eigen::MappedSparseMatrix<double>  m1 = input[0]; // maps share storage and do not allow conversion
 
-    List res = List::create(_["nnz"]   = int(m1.nonZeros()),
-                            _["nr"]    = int(m1.rows()),
-                            _["nc"]    = int(m1.cols()),
-                            _["inSz"]  = int(m1.innerSize()),
-                            _["outSz"] = int(m1.outerSize()),
+    List res = List::create(_["nnz"]   = double(m1.nonZeros()),
+                            _["nr"]    = double(m1.rows()),
+                            _["nc"]    = double(m1.cols()),
+                            _["inSz"]  = double(m1.innerSize()),
+                            _["outSz"] = double(m1.outerSize()),
                             _["sum"]   = m1.sum());
 
     return res ;
@@ -240,7 +240,7 @@ test.as.MSpMat <- function() {
     KNX <- KNex[[1]]
     res <- fx(KNex)
     checkEquals(unname(unlist(res)),
-                c(nnzero(KNX), nrow(KNX), ncol(KNX),  nrow(KNX), ncol(KNX), sum(KNX@x)),
+                as.numeric(c(nnzero(KNX), nrow(KNX), ncol(KNX), nrow(KNX), ncol(KNX), sum(KNX@x))),
                 msg = "as<MSPMatrix>")
 }
 
@@ -251,11 +251,11 @@ test.as.SpMat <- function() {
     List input(input_) ;
     const Eigen::SparseMatrix<double>  m1 = input[0];
 
-    List res = List::create(_["nnz"]   = int(m1.nonZeros()),
-                            _["nr"]    = int(m1.rows()),
-                            _["nc"]    = int(m1.cols()),
-                            _["inSz"]  = int(m1.innerSize()),
-                            _["outSz"] = int(m1.outerSize()),
+    List res = List::create(_["nnz"]   = double(m1.nonZeros()),
+                            _["nr"]    = double(m1.rows()),
+                            _["nc"]    = double(m1.cols()),
+                            _["inSz"]  = double(m1.innerSize()),
+                            _["outSz"] = double(m1.outerSize()),
                             _["sum"]   = m1.sum());
 
     return res ;
@@ -264,6 +264,6 @@ test.as.SpMat <- function() {
     KNX <- KNex[[1]]
     res <- fx(KNex)
     checkEquals(unname(unlist(res)),
-                c(nnzero(KNX), nrow(KNX), ncol(KNX),  nrow(KNX), ncol(KNX), sum(KNX@x)),
+                as.numeric(c(nnzero(KNX), nrow(KNX), ncol(KNX), nrow(KNX), ncol(KNX), sum(KNX@x))),
                 msg = "as<MSPMatrix>")
 }

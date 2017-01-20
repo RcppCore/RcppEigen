@@ -235,8 +235,8 @@ test.sparseCholesky.R <- function() {
     VectorXd                        res = ff.solve(m1.adjoint() * v1);
 
     return List::create(_["res"]   = res,
-                        _["rows"]  = int(ff.rows()),
-                        _["cols"]  = int(ff.cols()));
+                        _["rows"]  = double(ff.rows()),
+                        _["cols"]  = double(ff.cols()));
 ',
                       plugin = "RcppEigen")
 
