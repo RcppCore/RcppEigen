@@ -46,7 +46,7 @@ struct traits<CwiseBinaryOp<BinaryOp, Lhs, Rhs> >
   typedef typename remove_reference<LhsNested>::type _LhsNested;
   typedef typename remove_reference<RhsNested>::type _RhsNested;
   enum {
-    Flags = _LhsNested::Flags & RowMajorBit
+    Flags = cwise_promote_storage_order<typename traits<Lhs>::StorageKind,typename traits<Rhs>::StorageKind,_LhsNested::Flags & RowMajorBit,_RhsNested::Flags & RowMajorBit>::value
   };
 };
 } // end namespace internal
@@ -74,7 +74,7 @@ class CwiseBinaryOpImpl;
   * \sa MatrixBase::binaryExpr(const MatrixBase<OtherDerived> &,const CustomBinaryOp &) const, class CwiseUnaryOp, class CwiseNullaryOp
   */
 template<typename BinaryOp, typename LhsType, typename RhsType>
-class CwiseBinaryOp :
+class CwiseBinaryOp : 
   public CwiseBinaryOpImpl<
           BinaryOp, LhsType, RhsType,
           typename internal::cwise_promote_storage_type<typename internal::traits<LhsType>::StorageKind,
@@ -83,7 +83,7 @@ class CwiseBinaryOp :
   internal::no_assignment_operator
 {
   public:
-
+    
     typedef typename internal::remove_all<BinaryOp>::type Functor;
     typedef typename internal::remove_all<LhsType>::type Lhs;
     typedef typename internal::remove_all<RhsType>::type Rhs;
@@ -181,3 +181,4 @@ MatrixBase<Derived>::operator+=(const MatrixBase<OtherDerived>& other)
 } // end namespace Eigen
 
 #endif // EIGEN_CWISE_BINARY_OP_H
+
