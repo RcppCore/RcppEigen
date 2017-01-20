@@ -1,3 +1,10 @@
+2017-01-20  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+    * inst/include/Eigen: Updated to release 3.3.2 of Eigen
+    * inst/include/unsupported: Idem
+    * DESCRIPTION: Idem
+    * README.md: Idem
+
 2017-01-20  ChingChuan Chen  <zw12356@gmail.com>
 
     * inst/include/Eigen: Updated to release 3.3.1 of Eigen

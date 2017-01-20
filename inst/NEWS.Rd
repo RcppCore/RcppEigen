@@ -3,7 +3,15 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.3.3.0 (2016-11-12)}{
+\section{Changes in RcppEigen version 0.3.3.2.0 (2017-01-20)}{
+  \itemize{
+    \item Updated to version 3.3.2 of Eigen
+    \item Fixed incorrect function names in the examples, thanks to
+    ChingChuan Chen
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.0.0 (2016-11-12)}{
   \itemize{
     \item Updated to version 3.3.0 of Eigen
     \item The class \code{MappedSparseMatrix<T>} has been deprecated since
