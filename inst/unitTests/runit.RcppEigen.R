@@ -166,7 +166,7 @@ test.as.MVec <- function(){
 
     List input(input_) ;
     const Eigen::Map<Eigen::VectorXi>   m1 = input[0] ; // maps share storage and do not allow conversion
-    const Eigen::Map<Eigen::VectorXd>   m2 = input[1] ; 
+    const Eigen::Map<Eigen::VectorXd>   m2 = input[1] ;
 
     List res = List::create(m1.sum(), m2.sum());
 
@@ -183,7 +183,7 @@ test.as.MRowVec <- function(){
 
     List input(input_) ;
     const Eigen::Map<Eigen::RowVectorXi>   m1 = input[0] ; // maps share storage and do not allow conversion
-    const Eigen::Map<Eigen::RowVectorXd>   m2 = input[1] ; 
+    const Eigen::Map<Eigen::RowVectorXd>   m2 = input[1] ;
 
     List res = List::create(m1.sum(), m2.sum());
 
@@ -203,7 +203,7 @@ test.as.MMat <- function(){
     const Eigen::Map<Eigen::MatrixXi>   m1 = input[0]; // maps share storage and do not allow conversion
     const Eigen::Map<Eigen::MatrixXd>   m2 = input[1] ;
 // FIXME: Write a version of as specifically for complex matrices.
-//    const Eigen::Map<Eigen::MatrixXcd>  m3 = input[2] ; 
+//    const Eigen::Map<Eigen::MatrixXcd>  m3 = input[2] ;
 
     List res = List::create(m1.sum(), m2.sum());//, m3.sum());
 
@@ -226,11 +226,11 @@ test.as.MSpMat <- function() {
     List input(input_) ;
     const Eigen::MappedSparseMatrix<double>  m1 = input[0]; // maps share storage and do not allow conversion
 
-    List res = List::create(_["nnz"]   = m1.nonZeros(),
-                            _["nr"]    = m1.rows(),
-                            _["nc"]    = m1.cols(),
-                            _["inSz"]  = m1.innerSize(),
-                            _["outSz"] = m1.outerSize(),
+    List res = List::create(_["nnz"]   = int(m1.nonZeros()),
+                            _["nr"]    = int(m1.rows()),
+                            _["nc"]    = int(m1.cols()),
+                            _["inSz"]  = int(m1.innerSize()),
+                            _["outSz"] = int(m1.outerSize()),
                             _["sum"]   = m1.sum());
 
     return res ;
@@ -251,11 +251,11 @@ test.as.SpMat <- function() {
     List input(input_) ;
     const Eigen::SparseMatrix<double>  m1 = input[0];
 
-    List res = List::create(_["nnz"]   = m1.nonZeros(),
-                            _["nr"]    = m1.rows(),
-                            _["nc"]    = m1.cols(),
-                            _["inSz"]  = m1.innerSize(),
-                            _["outSz"] = m1.outerSize(),
+    List res = List::create(_["nnz"]   = int(m1.nonZeros()),
+                            _["nr"]    = int(m1.rows()),
+                            _["nc"]    = int(m1.cols()),
+                            _["inSz"]  = int(m1.innerSize()),
+                            _["outSz"] = int(m1.outerSize()),
                             _["sum"]   = m1.sum());
 
     return res ;

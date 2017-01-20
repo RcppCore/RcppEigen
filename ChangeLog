@@ -5,6 +5,10 @@
     * DESCRIPTION: Idem
     * README.md: Idem
 
+    * inst/unitTests/runit.RcppEigen.R, inst/unitTests/runit.sparse.R:
+    Explicitly convert matrix size to `int` type such that Rcpp can properly
+    return the value to R, thanks to ChingChuan Chen
+
 2017-01-20  ChingChuan Chen  <zw12356@gmail.com>
 
     * inst/include/Eigen: Updated to release 3.3.1 of Eigen
