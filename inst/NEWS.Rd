@@ -3,6 +3,16 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.2.9.1 (2017-03-14)}{
+  \itemize{
+    \item Synchronize CholMod header file with Matrix package to ensure
+    binary compatibility on all platforms (Martin Maechler in \ghpr{42})
+    \item Added file \code{init.c} with calls to \code{R_registerRoutines()}
+    \code{and R_useDynamicSymbols()}; also use \code{.registration=TRUE}
+    in \code{useDynLib} in \code{NAMESPACE}
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.9.0 (2016-08-20)}{
   \itemize{
     \item Updated to version 3.2.9 of Eigen (PR \ghpr{37} by Yixuan
