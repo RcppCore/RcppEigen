@@ -1,3 +1,18 @@
+2017-03-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.2.9.1
+
+	* src/init.c (R_init_RcppEigen): Call R_registerRoutines()
+	and R_useDynamicSymbols()
+
+	* NAMESPACE: Use .registration=TRUE on useDynLib
+
+	* R/fastLm.R (fastLmPure): Remove erroneous fourth argument from .Call
+
+2017-03-13  Martin Maechler  <maechler@r-project.org>
+
+	* inst/include/RcppEigenCholmod.h: Synchronize with Matrix package
+
 2017-02-21  Yixuan Qiu  <yixuan.qiu@cos.name>
 
     * inst/include/Eigen: Updated to release 3.3.3 of Eigen

@@ -3,21 +3,25 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.3.3.0 (2017-02-21)}{
+\section{Changes in RcppEigen version 0.3.3.3.0 (2017-03-22)}{
   \itemize{
     \item Updated to version 3.3.3 of Eigen
     \item Fixed incorrect function names in the examples, thanks to
     ChingChuan Chen
-  }
-}
-
-\section{Changes in RcppEigen version 0.3.3.0.0 (2016-11-12)}{
-  \itemize{
-    \item Updated to version 3.3.0 of Eigen
     \item The class \code{MappedSparseMatrix<T>} has been deprecated since
     Eigen 3.3.0. The new structure \code{Map<SparseMatrix<T> >} should be used
     instead
     \item Exporters for the new type \code{Map<SparseMatrix<T> >} were added
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.2.9.1 (2017-03-14)}{
+  \itemize{
+    \item Synchronize CholMod header file with Matrix package to ensure
+    binary compatibility on all platforms (Martin Maechler in \ghpr{42})
+    \item Added file \code{init.c} with calls to \code{R_registerRoutines()}
+    \code{and R_useDynamicSymbols()}; also use \code{.registration=TRUE}
+    in \code{useDynLib} in \code{NAMESPACE}
   }
 }
 
