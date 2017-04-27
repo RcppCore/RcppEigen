@@ -1,3 +1,7 @@
+2017-04-27  Yixuan Qiu  <yixuan.qiu@cos.name>
+    * inst/include/Eigen/src/Core/arch/CUDA/Half.h: Fixed compiler warning
+    on `long long` type in C++ 98 mode
+
 2017-03-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.2.9.1
