@@ -1,6 +1,11 @@
+2017-04-27  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Switch to using run.sh for Travis CI
+
 2017-04-27  Yixuan Qiu  <yixuan.qiu@cos.name>
-    * inst/include/Eigen/src/Core/arch/CUDA/Half.h: Fixed compiler warning
-    on `long long` type in C++ 98 mode
+
+	* inst/include/Eigen/src/Core/arch/CUDA/Half.h: Fixed compiler warning
+	on 'long long' type in C++ 98 mode
 
 2017-03-14  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -19,29 +24,29 @@
 
 2017-02-21  Yixuan Qiu  <yixuan.qiu@cos.name>
 
-    * inst/include/Eigen: Updated to release 3.3.3 of Eigen
-    * inst/include/unsupported: Idem
-    * DESCRIPTION: Idem
-    * README.md: Idem
+	* inst/include/Eigen: Updated to release 3.3.3 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
 
 2017-01-20  Yixuan Qiu  <yixuan.qiu@cos.name>
 
-    * inst/include/Eigen: Updated to release 3.3.2 of Eigen
-    * inst/include/unsupported: Idem
-    * DESCRIPTION: Idem
-    * README.md: Idem
+	* inst/include/Eigen: Updated to release 3.3.2 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
 
-    * inst/unitTests/runit.RcppEigen.R, inst/unitTests/runit.sparse.R:
-    Explicitly convert matrix size to `double` type such that Rcpp can properly
-    return the value to R, thanks to ChingChuan and Dirk
+	* inst/unitTests/runit.RcppEigen.R, inst/unitTests/runit.sparse.R:
+	Explicitly convert matrix size to `double` type such that Rcpp can
+	properly return the value to R, thanks to ChingChuan and Dirk
 
 2017-01-20  ChingChuan Chen  <zw12356@gmail.com>
 
-    * inst/include/Eigen: Updated to release 3.3.1 of Eigen
-    * inst/include/unsupported: Idem
-    * DESCRIPTION: Idem
+	* inst/include/Eigen: Updated to release 3.3.1 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
 
-    * inst/examples/lmBenchmark.R: Fixed function names
+	* inst/examples/lmBenchmark.R: Fixed function names
 
 2016-12-22  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -49,14 +54,14 @@
 
 2016-11-12  Yixuan Qiu  <yixuan.qiu@cos.name>
 
-    * inst/include/Eigen: Updated to release 3.3.0 of Eigen
-    * inst/include/unsupported: Idem
-    * DESCRIPTION: Idem
-    * README.md: Idem
+	* inst/include/Eigen: Updated to release 3.3.0 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
 
-    * inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h:
-    Added exporters for the new Map<SparseMatrix<T> > type
-    * inst/unitTests/runit.sparse.R: Unit tests for the new type
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h:
+	Added exporters for the new Map<SparseMatrix<T> > type
+	* inst/unitTests/runit.sparse.R: Unit tests for the new type
 
 2016-08-20  Dirk Eddelbuettel  <edd@debian.org>
 

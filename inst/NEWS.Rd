@@ -12,6 +12,7 @@
     Eigen 3.3.0. The new structure \code{Map<SparseMatrix<T> >} should be used
     instead
     \item Exporters for the new type \code{Map<SparseMatrix<T> >} were added
+    \item Travis CI is now driven via \code{run.sh} from our forked r-travis
   }
 }
 
