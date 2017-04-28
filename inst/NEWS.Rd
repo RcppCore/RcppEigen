@@ -3,6 +3,19 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.3.3.0 (2017-04-27)}{
+  \itemize{
+    \item Updated to version 3.3.3 of Eigen
+    \item Fixed incorrect function names in the examples, thanks to
+    ChingChuan Chen
+    \item The class \code{MappedSparseMatrix<T>} has been deprecated since
+    Eigen 3.3.0. The new structure \code{Map<SparseMatrix<T> >} should be used
+    instead
+    \item Exporters for the new type \code{Map<SparseMatrix<T> >} were added
+    \item Travis CI is now driven via \code{run.sh} from our forked r-travis
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.2.9.1 (2017-03-14)}{
   \itemize{
     \item Synchronize CholMod header file with Matrix package to ensure
@@ -17,7 +30,7 @@
   \itemize{
     \item Updated to version 3.2.9 of Eigen (PR \ghpr{37} by Yixuan
     closing \ghit{36} from Bob Carpenter of the Stan team)
-    \item An exporter for RowVectorX was added (thanks to PR \ghpr{32}
+    \item An exporter for \code{RowVectorX} was added (thanks to PR \ghpr{32}
     by James Balamuta)
   }
 }
