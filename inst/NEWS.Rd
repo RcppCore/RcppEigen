@@ -3,7 +3,7 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.3.3.0 (2017-04-27)}{
+\section{Changes in RcppEigen version 0.3.3.3.0 (2017-04-29)}{
   \itemize{
     \item Updated to version 3.3.3 of Eigen
     \item Fixed incorrect function names in the examples, thanks to

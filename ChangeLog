@@ -1,8 +1,16 @@
+2017-04-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Release 0.3.3.3.0
+
+	[ which again owes a very big thank you to Yixuan for doing the work! ]
+
 2017-04-27  Dirk Eddelbuettel  <edd@debian.org>
 
 	* .travis.yml: Switch to using run.sh for Travis CI
 
 2017-04-27  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
 
 	* inst/include/Eigen/src/Core/arch/CUDA/Half.h: Fixed compiler warning
 	on 'long long' type in C++ 98 mode
@@ -24,12 +32,16 @@
 
 2017-02-21  Yixuan Qiu  <yixuan.qiu@cos.name>
 
+	[ In RcppEigen 0.3.3.* branch ]
+
 	* inst/include/Eigen: Updated to release 3.3.3 of Eigen
 	* inst/include/unsupported: Idem
 	* DESCRIPTION: Idem
 	* README.md: Idem
 
 2017-01-20  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
 
 	* inst/include/Eigen: Updated to release 3.3.2 of Eigen
 	* inst/include/unsupported: Idem
@@ -42,6 +54,8 @@
 
 2017-01-20  ChingChuan Chen  <zw12356@gmail.com>
 
+	[ In RcppEigen 0.3.3.* branch ]
+
 	* inst/include/Eigen: Updated to release 3.3.1 of Eigen
 	* inst/include/unsupported: Idem
 	* DESCRIPTION: Idem
@@ -53,6 +67,8 @@
 	* DESCRIPTION (URL, BugReports): Added / updated
 
 2016-11-12  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
 
 	* inst/include/Eigen: Updated to release 3.3.0 of Eigen
 	* inst/include/unsupported: Idem
