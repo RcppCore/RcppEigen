@@ -1,6 +1,6 @@
 ## lmBenchmark.R: Benchmark different implementations of linear model solutions
 ##
-## Copyright (C)  2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C)  2011 - 2017  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 
@@ -62,4 +62,4 @@ sessionInfo()
 
 .Call("RcppEigen_eigen_version", FALSE, PACKAGE="RcppEigen")
 
-.Call("RcppEigen_Eigen_SSE", FALSE, PACKAGE="RcppEigen")
+.Call("RcppEigen_Eigen_SSE", PACKAGE="RcppEigen")

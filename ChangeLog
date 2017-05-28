@@ -1,3 +1,8 @@
+2017-05-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/examples/lmBenchmark.R (do_bench): Remove spurious argument in
+	call to RcppEigen:::Eigen_SSE() (cf github issue #44)
+
 2017-04-29  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.3.3.3.0
