@@ -193,7 +193,7 @@ class MatrixMarketIterator
         std::string curfile;
         curfile = m_folder + "/" + m_curs_id->d_name;
         // Discard if it is a folder
-#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi))
+#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
         if (m_curs_id->d_type == DT_DIR) continue; //FIXME This may not be available on non BSD systems
 #endif
 //         struct stat st_buf; 
