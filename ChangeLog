@@ -1,3 +1,8 @@
+2017-06-06  Yu Gong  <armgong@yahoo.com>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h:
+	Also permit compilation under Haiku-OS
+
 2017-05-28  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/examples/lmBenchmark.R (do_bench): Remove spurious argument in
