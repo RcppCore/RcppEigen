@@ -1,3 +1,17 @@
+2018-02-04  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen: Updated to the upstream 3.3 branch of Eigen
+	based on version 3.3.4
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h:
+	Patch from upstream Eigen that has not been ported to the 3.3 branch
+	(cf GitHub issue #48)
+
 2017-11-19  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.3.3.1
