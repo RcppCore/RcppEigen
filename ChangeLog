@@ -1,7 +1,11 @@
+2018-02-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/Core/arch/CUDA/Half.h (Eigen): Condition use
+	of long long and unsigned long on C++11
+
 2018-02-04  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	[ In RcppEigen 0.3.3.* branch ]
-
 	* inst/include/Eigen: Updated to the upstream 3.3 branch of Eigen
 	based on version 3.3.4
 	* inst/include/unsupported: Idem
