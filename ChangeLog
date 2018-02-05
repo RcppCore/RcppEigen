@@ -3,6 +3,10 @@
 	* inst/include/Eigen/src/Core/arch/CUDA/Half.h (Eigen): Condition use
 	of long long and unsigned long on C++11
 
+	* inst/include/Eigen/src/Core/arch/SSE/Complex.h (Eigen): Comment-out
+	use of diagnostic-suppressing pragma for gcc + clang to satisfy CRAN
+	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h: Idem
+
 2018-02-04  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	[ In RcppEigen 0.3.3.* branch ]
