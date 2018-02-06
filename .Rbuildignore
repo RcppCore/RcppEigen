@@ -1,3 +1,4 @@
+patch/*
 vignettes/jss835
 vignettes/RcppEigen-intro-nojss.*
 NEWS.org

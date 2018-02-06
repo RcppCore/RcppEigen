@@ -1,0 +1,163 @@
+Only in ./eigen-eigen-88c4604601b9/: bench
+Only in ./eigen-eigen-88c4604601b9/: blas
+Only in ./eigen-eigen-88c4604601b9/: cmake
+Only in ./eigen-eigen-88c4604601b9/: CMakeLists.txt
+Only in ./eigen-eigen-88c4604601b9/: COPYING.BSD
+Only in ./eigen-eigen-88c4604601b9/: COPYING.GPL
+Only in ./eigen-eigen-88c4604601b9/: COPYING.LGPL
+Only in ./eigen-eigen-88c4604601b9/: COPYING.MINPACK
+Only in ./eigen-eigen-88c4604601b9/: COPYING.MPL2
+Only in ./eigen-eigen-88c4604601b9/: COPYING.README
+Only in ./eigen-eigen-88c4604601b9/: CTestConfig.cmake
+Only in ./eigen-eigen-88c4604601b9/: CTestCustom.cmake.in
+Only in ./eigen-eigen-88c4604601b9/: debug
+Only in ./eigen-eigen-88c4604601b9/: demos
+Only in ./eigen-eigen-88c4604601b9/: doc
+diff -r -u ./eigen-eigen-88c4604601b9/Eigen/CholmodSupport ./include/Eigen/CholmodSupport
+--- ./eigen-eigen-88c4604601b9/Eigen/CholmodSupport	2018-01-03 15:55:52.000000000 -0500
++++ ./include/Eigen/CholmodSupport	2018-02-04 14:06:06.527035000 -0500
+@@ -13,7 +13,7 @@
+ #include "src/Core/util/DisableStupidWarnings.h"
+ 
+ extern "C" {
+-  #include <cholmod.h>
++  #include <RcppEigenCholmod.h>
+ }
+ 
+ /** \ingroup Support_modules
+Only in ./eigen-eigen-88c4604601b9/Eigen: CMakeLists.txt
+diff -r -u ./eigen-eigen-88c4604601b9/Eigen/src/Core/arch/CUDA/Half.h ./include/Eigen/src/Core/arch/CUDA/Half.h
+--- ./eigen-eigen-88c4604601b9/Eigen/src/Core/arch/CUDA/Half.h	2018-01-03 15:55:52.000000000 -0500
++++ ./include/Eigen/src/Core/arch/CUDA/Half.h	2018-02-06 08:19:30.904301638 -0500
+@@ -119,12 +119,14 @@
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(unsigned long) const {
+     return static_cast<unsigned long>(half_impl::half_to_float(*this));
+   }
++  #if EIGEN_HAS_CXX11
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(long long) const {
+     return static_cast<long long>(half_impl::half_to_float(*this));
+   }
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(unsigned long long) const {
+     return static_cast<unsigned long long>(half_to_float(*this));
+   }
++  #endif
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(float) const {
+     return half_impl::half_to_float(*this);
+   }
+diff -r -u ./eigen-eigen-88c4604601b9/Eigen/src/Core/arch/SSE/Complex.h ./include/Eigen/src/Core/arch/SSE/Complex.h
+--- ./eigen-eigen-88c4604601b9/Eigen/src/Core/arch/SSE/Complex.h	2018-01-03 15:55:52.000000000 -0500
++++ ./include/Eigen/src/Core/arch/SSE/Complex.h	2018-02-05 13:46:26.921642310 -0500
+@@ -98,10 +98,10 @@
+   res.v = _mm_loadl_pi(_mm_set1_ps(0.0f), reinterpret_cast<const __m64*>(&from));
+ #elif EIGEN_GNUC_AT_LEAST(4,6)
+   // Suppress annoying "may be used uninitialized in this function" warning with gcc >= 4.6
+-  #pragma GCC diagnostic push
+-  #pragma GCC diagnostic ignored "-Wuninitialized"
++  // #pragma GCC diagnostic push
++  // #pragma GCC diagnostic ignored "-Wuninitialized"
+   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
+-  #pragma GCC diagnostic pop
++  // #pragma GCC diagnostic pop
+ #else
+   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
+ #endif
+diff -r -u ./eigen-eigen-88c4604601b9/Eigen/src/Core/util/DisableStupidWarnings.h ./include/Eigen/src/Core/util/DisableStupidWarnings.h
+--- ./eigen-eigen-88c4604601b9/Eigen/src/Core/util/DisableStupidWarnings.h	2018-01-03 15:55:52.000000000 -0500
++++ ./include/Eigen/src/Core/util/DisableStupidWarnings.h	2018-02-05 13:46:26.925644780 -0500
+@@ -4,7 +4,6 @@
+ #ifdef _MSC_VER
+   // 4100 - unreferenced formal parameter (occurred e.g. in aligned_allocator::destroy(pointer p))
+   // 4101 - unreferenced local variable
+-  // 4127 - conditional expression is constant
+   // 4181 - qualifier applied to reference type ignored
+   // 4211 - nonstandard extension used : redefined extern to static
+   // 4244 - 'argument' : conversion from 'type1' to 'type2', possible loss of data
+@@ -20,7 +19,7 @@
+   #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+     #pragma warning( push )
+   #endif
+-  #pragma warning( disable : 4100 4101 4127 4181 4211 4244 4273 4324 4503 4512 4522 4700 4714 4717 4800)
++  #pragma warning( disable : 4100 4101 4181 4211 4244 4273 4324 4503 4512 4522 4700 4714 4717 4800)
+ 
+ #elif defined __INTEL_COMPILER
+   // 2196 - routine is both "inline" and "noinline" ("noinline" assumed)
+@@ -38,21 +37,25 @@
+ #elif defined __clang__
+   // -Wconstant-logical-operand - warning: use of logical && with constant operand; switch to bitwise & or remove constant
+   //     this is really a stupid warning as it warns on compile-time expressions involving enums
+-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+-    #pragma clang diagnostic push
+-  #endif
+-  #pragma clang diagnostic ignored "-Wconstant-logical-operand"
++  // #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
++  //   #pragma clang diagnostic push
++  // #endif
++  // #pragma clang diagnostic ignored "-Wconstant-logical-operand"
++  // #if __clang_major__ >= 3 && __clang_minor__ >= 5
++  //   #pragma clang diagnostic ignored "-Wabsolute-value"
++  // #endif
+ 
+ #elif defined __GNUC__ && __GNUC__>=6
+ 
+-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+-    #pragma GCC diagnostic push
+-  #endif
+-  #pragma GCC diagnostic ignored "-Wignored-attributes"
++  // #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
++  //   #pragma GCC diagnostic push
++  // #endif
++  // #pragma GCC diagnostic ignored "-Wignored-attributes"
+ 
+ #endif
+ 
+ #if defined __NVCC__
++  #pragma diag_suppress boolean_controlling_expr_is_constant
+   // Disable the "statement is unreachable" message
+   #pragma diag_suppress code_is_unreachable
+   // Disable the "dynamic initialization in unreachable code" message
+@@ -70,6 +73,7 @@
+   #pragma diag_suppress 2671
+   #pragma diag_suppress 2735
+   #pragma diag_suppress 2737
++  #pragma diag_suppress 2739
+ #endif
+ 
+ #endif // not EIGEN_WARNINGS_DISABLED
+Only in ./eigen-eigen-88c4604601b9/: eigen3.pc.in
+Only in ./eigen-eigen-88c4604601b9/: failtest
+Only in ./eigen-eigen-88c4604601b9/: .hg_archival.txt
+Only in ./eigen-eigen-88c4604601b9/: .hgeol
+Only in ./eigen-eigen-88c4604601b9/: .hgignore
+Only in ./eigen-eigen-88c4604601b9/: .hgtags
+Only in ./eigen-eigen-88c4604601b9/: INSTALL
+Only in ./eigen-eigen-88c4604601b9/: lapack
+Only in ./include: RcppEigenCholmod.h
+Only in ./include: RcppEigenForward.h
+Only in ./include: RcppEigen.h
+Only in ./include: RcppEigenStubs.h
+Only in ./include: RcppEigenWrap.h
+Only in ./eigen-eigen-88c4604601b9/: README.md
+Only in ./eigen-eigen-88c4604601b9/: scripts
+Only in ./eigen-eigen-88c4604601b9/: signature_of_eigen3_matrix_library
+Only in ./eigen-eigen-88c4604601b9/: test
+Only in ./eigen-eigen-88c4604601b9/unsupported: bench
+Only in ./eigen-eigen-88c4604601b9/unsupported: CMakeLists.txt
+Only in ./eigen-eigen-88c4604601b9/unsupported: doc
+Only in ./eigen-eigen-88c4604601b9/unsupported/Eigen: CMakeLists.txt
+Only in ./eigen-eigen-88c4604601b9/unsupported/Eigen/CXX11: CMakeLists.txt
+Only in ./eigen-eigen-88c4604601b9/unsupported/Eigen/src/EulerAngles: CMakeLists.txt
+diff -r -u ./eigen-eigen-88c4604601b9/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h ./include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+--- ./eigen-eigen-88c4604601b9/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2018-01-03 15:55:52.000000000 -0500
++++ ./include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2018-02-04 14:10:32.572055000 -0500
+@@ -193,7 +193,9 @@
+         std::string curfile;
+         curfile = m_folder + "/" + m_curs_id->d_name;
+         // Discard if it is a folder
++#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
+         if (m_curs_id->d_type == DT_DIR) continue; //FIXME This may not be available on non BSD systems
++#endif
+ //         struct stat st_buf; 
+ //         stat (curfile.c_str(), &st_buf);
+ //         if (S_ISDIR(st_buf.st_mode)) continue;
+Only in ./eigen-eigen-88c4604601b9/unsupported: README.txt
+Only in ./eigen-eigen-88c4604601b9/unsupported: test
