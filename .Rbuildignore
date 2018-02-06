@@ -6,4 +6,4 @@ vignettes/jss.bst
 debian
 ^.*\.Rproj$
 ^\.Rproj\.user$
-\.tar\.gz$
+.*\.tar\.gz$
