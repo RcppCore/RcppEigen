@@ -1,3 +1,8 @@
+2018-02-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* patches/eigen-3.3.4.diff: Diff to upstream Eigen 3.3.4,
+	cherry-picked in the 3.3.4 branch of Yixuan
+
 2018-02-05  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.3.4.0
