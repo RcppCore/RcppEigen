@@ -159,7 +159,7 @@ namespace Rcpp{
         template <typename T, int RTYPE>
         class Eigen_Matrix_Exporter {
             public:
-            Eigen_Matrix_Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Eigen_Matrix_Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
                 if (::Rf_isMatrix(x)) {
@@ -254,7 +254,7 @@ namespace Rcpp{
             int d_ncol, d_nrow ;
 
             public:
-            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped matrix");
                 if (::Rf_isMatrix(x)) {
@@ -274,7 +274,7 @@ namespace Rcpp{
             int d_ncol, d_nrow ;
 
             public:
-            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped 2D array");
                 if (::Rf_isMatrix(x)) {
