@@ -87,7 +87,7 @@ namespace Rcpp{
 																T::ColsAtCompileTime>,
 												  const T&>::type objCopy(obj);
             int m = obj.rows(), n = obj.cols();
-			R_xlen_t size = std::static_cast<R_xlen_t>(m) * n;
+			R_xlen_t size = static_cast<R_xlen_t>(m) * n;
 			SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
             if( T::ColsAtCompileTime != 1 ) {
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
