@@ -87,7 +87,8 @@ namespace Rcpp{
 																T::ColsAtCompileTime>,
 												  const T&>::type objCopy(obj);
             int m = obj.rows(), n = obj.cols();
-			SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + m * n));
+			R_xlen_t size = static_cast<R_xlen_t>(m) * n;
+			SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
             if( T::ColsAtCompileTime != 1 ) {
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
@@ -159,7 +160,7 @@ namespace Rcpp{
         template <typename T, int RTYPE>
         class Eigen_Matrix_Exporter {
             public:
-            Eigen_Matrix_Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Eigen_Matrix_Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped vector");
                 if (::Rf_isMatrix(x)) {
@@ -254,7 +255,7 @@ namespace Rcpp{
             int d_ncol, d_nrow ;
 
             public:
-            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped matrix");
                 if (::Rf_isMatrix(x)) {
@@ -274,7 +275,7 @@ namespace Rcpp{
             int d_ncol, d_nrow ;
 
             public:
-            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_length(x)) {
+            Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
                     throw std::invalid_argument("Wrong R type for mapped 2D array");
                 if (::Rf_isMatrix(x)) {

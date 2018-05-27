@@ -1,3 +1,8 @@
+2018-05-25  Ralf Stubner  <ralf.stubner@daqana.com>
+
+	* inst/include/RcppEigenWrap.h: Use Rf_xlength and R_xlen_t to
+	support long vectors
+
 2018-02-07  Dirk Eddelbuettel  <edd@debian.org>
 
 	* patches/eigen-3.3.4.diff: Diff to upstream Eigen 3.3.4,
