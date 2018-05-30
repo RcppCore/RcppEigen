@@ -13,9 +13,9 @@ before_install:
   - ./run.sh bootstrap
 
 install:
-  - ./run.sh install_aptget r-cran-rcpp r-cran-matrix r-cran-inline r-cran-runit r-cran-pkgkitten
+  - ./run.sh install_aptget r-cran-rcpp r-cran-matrix r-cran-inline r-cran-runit r-cran-pkgkitten r-cran-microbenchmark
 
-script: 
+script:
   - ./run.sh run_tests
 
 #after_success:
@@ -28,4 +28,3 @@ notifications:
   email:
     on_success: change
     on_failure: change
-
