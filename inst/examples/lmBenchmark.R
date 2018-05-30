@@ -37,7 +37,7 @@ exprs$QR <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 1L, PACKAGE="RcppEi
 exprs$LLt <- expression(.Call("RcppEigen_fastLm_Impl", mm, y, 3L, PACKAGE="RcppEigen"))
 
 if (suppressMessages(require("RcppArmadillo", character=TRUE, quietly=TRUE))) {
-    exprs$arma <- expression(.Call("RcppArmadillo_fastLm", mm, y, PACKAGE="RcppArmadillo"))
+    exprs$arma <- expression(.Call("_RcppArmadillo_fastLm_impl", mm, y, PACKAGE="RcppArmadillo"))
 }
 
 if (suppressMessages(require("RcppGSL", character=TRUE, quietly=TRUE))) {

@@ -1,3 +1,8 @@
+2018-05-30  Michael Weylandt  <michael.weylandt@gmail.com>
+
+	* inst/examples/lmBenchmark.R: Update call to RcppArmadillo's version
+	of fastLm in benchmark script
+
 2018-05-25  Ralf Stubner  <ralf.stubner@daqana.com>
 
 	* inst/include/RcppEigenWrap.h: Use Rf_xlength and R_xlen_t to
