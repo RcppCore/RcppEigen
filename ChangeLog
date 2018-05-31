@@ -1,3 +1,9 @@
+2018-05-30  Michael Weylandt  <michael.weylandt@gmail.com>
+
+	* inst/examples/lmBenchmark.R: Update benchmark script to use
+	microbenchmark and to use exposed fastLm functions from Rcpp
+	packages rather than invoking .Call directly
+
 2018-05-25  Ralf Stubner  <ralf.stubner@daqana.com>
 
 	* inst/include/RcppEigenWrap.h: Use Rf_xlength and R_xlen_t to
