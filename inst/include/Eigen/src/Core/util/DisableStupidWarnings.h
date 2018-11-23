@@ -37,20 +37,17 @@
 #elif defined __clang__
   // -Wconstant-logical-operand - warning: use of logical && with constant operand; switch to bitwise & or remove constant
   //     this is really a stupid warning as it warns on compile-time expressions involving enums
-  // #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
-  //   #pragma clang diagnostic push
-  // #endif
-  // #pragma clang diagnostic ignored "-Wconstant-logical-operand"
-  // #if __clang_major__ >= 3 && __clang_minor__ >= 5
-  //   #pragma clang diagnostic ignored "-Wabsolute-value"
-  // #endif
+  //#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+  //  #pragma clang diagnostic push
+  //#endif
+  //#pragma clang diagnostic ignored "-Wconstant-logical-operand"
 
 #elif defined __GNUC__ && __GNUC__>=6
 
-  // #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
-  //   #pragma GCC diagnostic push
-  // #endif
-  // #pragma GCC diagnostic ignored "-Wignored-attributes"
+  //#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+  //  #pragma GCC diagnostic push
+  //#endif
+  //#pragma GCC diagnostic ignored "-Wignored-attributes"
 
 #endif
 
