@@ -3,10 +3,13 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.x.y.z (2018-aa-bb)}{
+\section{Changes in RcppEigen version 0.3.3.5.0 (2018-11-24)}{
   \itemize{
+    \item Updated to version 3.3.5 of Eigen (Dirk in \ghpr{65})
     \item Long vectors are now supported via \code{R_xlen_t} (Ralf
     Stubner in \ghpr{55} fixing \ghit{54}).
+    \item The benchmarking example was updated in its use of
+    RcppArmadillo (Michael Weylandt in \ghpr{56}).
   }
 }
 

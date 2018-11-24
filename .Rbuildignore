@@ -7,4 +7,4 @@ debian
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .*\.tar\.gz$
-^patches/
+^patches

@@ -13,7 +13,7 @@
 
 #define EIGEN_WORLD_VERSION 3
 #define EIGEN_MAJOR_VERSION 3
-#define EIGEN_MINOR_VERSION 4
+#define EIGEN_MINOR_VERSION 5
 
 #define EIGEN_VERSION_AT_LEAST(x,y,z) (EIGEN_WORLD_VERSION>x || (EIGEN_WORLD_VERSION>=x && \
                                       (EIGEN_MAJOR_VERSION>y || (EIGEN_MAJOR_VERSION>=y && \
@@ -989,7 +989,13 @@ namespace Eigen {
 #   define EIGEN_NOEXCEPT
 #   define EIGEN_NOEXCEPT_IF(x)
 #   define EIGEN_NO_THROW throw()
-#   define EIGEN_EXCEPTION_SPEC(X) throw(X)
+#   if EIGEN_COMP_MSVC
+      // MSVC does not support exception specifications (warning C4290),
+      // and they are deprecated in c++11 anyway.
+#     define EIGEN_EXCEPTION_SPEC(X) throw()
+#   else
+#     define EIGEN_EXCEPTION_SPEC(X) throw(X)
+#   endif
 #endif
 
 #endif // EIGEN_MACROS_H
