@@ -1,0 +1,140 @@
+diff -ru eigen-3.3.5/Eigen/CholmodSupport inst/include/Eigen/CholmodSupport
+--- eigen-3.3.5/Eigen/CholmodSupport	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/Eigen/CholmodSupport	2018-11-22 20:56:05.407463176 -0600
+@@ -13,7 +13,7 @@
+ #include "src/Core/util/DisableStupidWarnings.h"
+ 
+ extern "C" {
+-  #include <cholmod.h>
++  #include <RcppEigenCholmod.h>
+ }
+ 
+ /** \ingroup Support_modules
+Only in eigen-3.3.5/Eigen: CMakeLists.txt
+diff -ru eigen-3.3.5/Eigen/src/Core/arch/CUDA/Half.h inst/include/Eigen/src/Core/arch/CUDA/Half.h
+--- eigen-3.3.5/Eigen/src/Core/arch/CUDA/Half.h	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/Eigen/src/Core/arch/CUDA/Half.h	2018-11-22 20:57:25.834187584 -0600
+@@ -119,12 +119,14 @@
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(unsigned long) const {
+     return static_cast<unsigned long>(half_impl::half_to_float(*this));
+   }
++  #if EIGEN_HAS_CXX11
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(long long) const {
+     return static_cast<long long>(half_impl::half_to_float(*this));
+   }
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(unsigned long long) const {
+     return static_cast<unsigned long long>(half_to_float(*this));
+   }
++  #endif
+   EIGEN_DEVICE_FUNC EIGEN_EXPLICIT_CAST(float) const {
+     return half_impl::half_to_float(*this);
+   }
+diff -ru eigen-3.3.5/Eigen/src/Core/arch/SSE/Complex.h inst/include/Eigen/src/Core/arch/SSE/Complex.h
+--- eigen-3.3.5/Eigen/src/Core/arch/SSE/Complex.h	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/Eigen/src/Core/arch/SSE/Complex.h	2018-11-22 20:59:03.388691931 -0600
+@@ -98,10 +98,10 @@
+   res.v = _mm_loadl_pi(_mm_set1_ps(0.0f), reinterpret_cast<const __m64*>(&from));
+ #elif EIGEN_GNUC_AT_LEAST(4,6)
+   // Suppress annoying "may be used uninitialized in this function" warning with gcc >= 4.6
+-  #pragma GCC diagnostic push
+-  #pragma GCC diagnostic ignored "-Wuninitialized"
++  //#pragma GCC diagnostic push
++  //#pragma GCC diagnostic ignored "-Wuninitialized"
+   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
+-  #pragma GCC diagnostic pop
++  //#pragma GCC diagnostic pop
+ #else
+   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
+ #endif
+diff -ru eigen-3.3.5/Eigen/src/Core/util/DisableStupidWarnings.h inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
+--- eigen-3.3.5/Eigen/src/Core/util/DisableStupidWarnings.h	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/Eigen/src/Core/util/DisableStupidWarnings.h	2018-11-22 21:02:32.261638153 -0600
+@@ -4,7 +4,6 @@
+ #ifdef _MSC_VER
+   // 4100 - unreferenced formal parameter (occurred e.g. in aligned_allocator::destroy(pointer p))
+   // 4101 - unreferenced local variable
+-  // 4127 - conditional expression is constant
+   // 4181 - qualifier applied to reference type ignored
+   // 4211 - nonstandard extension used : redefined extern to static
+   // 4244 - 'argument' : conversion from 'type1' to 'type2', possible loss of data
+@@ -20,7 +19,7 @@
+   #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+     #pragma warning( push )
+   #endif
+-  #pragma warning( disable : 4100 4101 4127 4181 4211 4244 4273 4324 4503 4512 4522 4700 4714 4717 4800)
++  #pragma warning( disable : 4100 4101 4181 4211 4244 4273 4324 4503 4512 4522 4700 4714 4717 4800)
+ 
+ #elif defined __INTEL_COMPILER
+   // 2196 - routine is both "inline" and "noinline" ("noinline" assumed)
+@@ -38,21 +37,22 @@
+ #elif defined __clang__
+   // -Wconstant-logical-operand - warning: use of logical && with constant operand; switch to bitwise & or remove constant
+   //     this is really a stupid warning as it warns on compile-time expressions involving enums
+-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+-    #pragma clang diagnostic push
+-  #endif
+-  #pragma clang diagnostic ignored "-Wconstant-logical-operand"
++  //#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
++  //  #pragma clang diagnostic push
++  //#endif
++  //#pragma clang diagnostic ignored "-Wconstant-logical-operand"
+ 
+ #elif defined __GNUC__ && __GNUC__>=6
+ 
+-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+-    #pragma GCC diagnostic push
+-  #endif
+-  #pragma GCC diagnostic ignored "-Wignored-attributes"
++  //#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
++  //  #pragma GCC diagnostic push
++  //#endif
++  //#pragma GCC diagnostic ignored "-Wignored-attributes"
+ 
+ #endif
+ 
+ #if defined __NVCC__
++  #pragma diag_suppress boolean_controlling_expr_is_constant
+   // Disable the "statement is unreachable" message
+   #pragma diag_suppress code_is_unreachable
+   // Disable the "dynamic initialization in unreachable code" message
+@@ -70,6 +70,7 @@
+   #pragma diag_suppress 2671
+   #pragma diag_suppress 2735
+   #pragma diag_suppress 2737
++  #pragma diag_suppress 2739
+ #endif
+ 
+ #endif // not EIGEN_WARNINGS_DISABLED
+Only in eigen-3.3.5/unsupported/: bench
+Only in eigen-3.3.5/unsupported/: CMakeLists.txt
+Only in eigen-3.3.5/unsupported/: doc
+Only in eigen-3.3.5/unsupported/Eigen: CMakeLists.txt
+Only in eigen-3.3.5/unsupported/Eigen/CXX11: CMakeLists.txt
+Only in eigen-3.3.5/unsupported/Eigen/src/EulerAngles: CMakeLists.txt
+diff -ru eigen-3.3.5/unsupported/Eigen/src/IterativeSolvers/DGMRES.h inst/include/unsupported/Eigen/src/IterativeSolvers/DGMRES.h
+--- eigen-3.3.5/unsupported/Eigen/src/IterativeSolvers/DGMRES.h	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/unsupported/Eigen/src/IterativeSolvers/DGMRES.h	2018-11-22 21:12:59.577162671 -0600
+@@ -173,7 +173,7 @@
+   /** 
+    * Set the restart value (default is 30)  
+    */
+-  Index set_restart(const Index restart) { m_restart=restart; }
++  void set_restart(const Index restart) { m_restart=restart; }
+   
+   /** 
+    * Set the number of eigenvalues to deflate at each restart 
+diff -ru eigen-3.3.5/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+--- eigen-3.3.5/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2018-07-23 04:33:42.000000000 -0500
++++ inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2018-11-22 21:03:35.872739714 -0600
+@@ -193,7 +193,9 @@
+         std::string curfile;
+         curfile = m_folder + "/" + m_curs_id->d_name;
+         // Discard if it is a folder
++#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
+         if (m_curs_id->d_type == DT_DIR) continue; //FIXME This may not be available on non BSD systems
++#endif
+ //         struct stat st_buf; 
+ //         stat (curfile.c_str(), &st_buf);
+ //         if (S_ISDIR(st_buf.st_mode)) continue;
+Only in eigen-3.3.5/unsupported/: README.txt
+Only in eigen-3.3.5/unsupported/: test

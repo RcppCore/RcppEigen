@@ -1,6 +1,6 @@
 ## RcppEigen
 
-[![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen) [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
+[![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen) [![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen) [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
 
 ### Overview
 
@@ -12,12 +12,12 @@ systems. Its performance on many algorithms is comparable with some of the
 best implementations based on `Lapack` and level-3 `BLAS`.
 
 The RcppEigen package includes the header files from the Eigen C++
-template library (currently version 3.3.4). Thus users do not need to
+template library (currently version 3.3.5). Thus users do not need to
 install Eigen itself in order to use RcppEigen.
 
 ### Status
 
-The package is reasonably mature and under active development, following the
+The package is mature and under active development, following the
 [Eigen](http://eigen.tuxfamily.org) release cycle.
 
 ### Documentation
