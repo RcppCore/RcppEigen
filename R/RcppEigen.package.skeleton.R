@@ -64,12 +64,11 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     DESCRIPTION <- file.path(root, "DESCRIPTION")
     if (file.exists(DESCRIPTION)) {
         x <- cbind(read.dcf(DESCRIPTION), 
-                   "Imports" = sprintf("Rcpp (>= %s), RcppEigen (>= %s)", 
-                   packageDescription("Rcpp")[["Version"]], 
-                   packageDescription("RcppEigen")[["Version"]]), 
+                   "Imports" = sprintf("Rcpp (>= %s)", 
+                   packageDescription("Rcpp")[["Version"]]), 
                    "LinkingTo" = "Rcpp, RcppEigen")
         write.dcf(x, file = DESCRIPTION)
-        message(" >> added Imports: Rcpp, RcppEigen")
+        message(" >> added Imports: Rcpp")
         message(" >> added LinkingTo: Rcpp, RcppEigen")
     }
 	
