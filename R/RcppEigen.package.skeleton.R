@@ -41,7 +41,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     call <- match.call()
     call[[1]] <- skelFunUsed
     if ("example_code" %in% names(call)) {
-        call[["example_code"]] <- NULL    # remove the example_code argument
+        call[["example_code"]] <- NULL  # remove the example_code argument
     }
     if (! haveKitten) {                 # in the package.skeleton() case
         if (fake) {
