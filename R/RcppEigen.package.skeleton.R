@@ -47,6 +47,10 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
         if (fake) {
             call[["list"]] <- "Rcpp.fake.fun"
         }
+    } else {
+        if (force) {
+            call[["force"]] <- NULL
+        }
     }
 
     tryCatch(eval(call, envir = env),
