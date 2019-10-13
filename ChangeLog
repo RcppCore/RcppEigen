@@ -1,5 +1,7 @@
 2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
+	* README.md: Added CRAN + BioConductor badges for reverse depends
+
 	* DESCRIPTION (Version, Date): Roll minor version
 
 	* R/RcppEigen.package.skeleton.R (RcppEigen.package.skeleton): Test for

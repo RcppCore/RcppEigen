@@ -1,6 +1,13 @@
 ## RcppEigen
 
-[![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen) [![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen) [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
+[![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen) 
+[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) 
+[![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) 
+[![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen) 
+[![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen) 
+[![CRAN use](https://jangorecki.gitlab.io/rdeps/RcppEigen/CRAN_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
+[![BioConductor use](https://jangorecki.gitlab.io/rdeps/RcppEigen/BioC_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
+[![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen) 
 
 ### Overview
 
