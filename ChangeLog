@@ -1,6 +1,7 @@
 2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
-	* README.md: Added CRAN + BioConductor badges for reverse depends
+	* README.md: Added CRAN + BioConductor badges for reverse depends,
+	add StackOverflow badge to recommend help searches under 'Rcpp'
 
 	* DESCRIPTION (Version, Date): Roll minor version
 
