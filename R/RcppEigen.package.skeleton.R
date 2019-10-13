@@ -1,6 +1,6 @@
 ## RcppEigen.package.skeleton.R: makes a skeleton for a package that wants to use RcppEigen
 ##
-## Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C) 2011 - 2019  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -19,12 +19,12 @@
 
 RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
                                        environment = .GlobalEnv,
-                                       path = ".", force = FALSE, 
-                                       code_files = character(), 
+                                       path = ".", force = FALSE,
+                                       code_files = character(),
                                        example_code = TRUE) {
-	
+
     env <- parent.frame(1)
-	
+
     if (!length(list)) {
         fake <- TRUE
         assign("Rcpp.fake.fun", function() {}, envir = env)
@@ -40,39 +40,39 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     ## first let the traditional version do its business
     call <- match.call()
     call[[1]] <- skelFunUsed
+    if ("example_code" %in% names(call)) {
+        call[["example_code"]] <- NULL    # remove the example_code argument
+    }
     if (! haveKitten) {                 # in the package.skeleton() case
-        if ("example_code" %in% names(call)) {
-            call[["example_code"]] <- NULL    # remove the example_code argument
-        }
         if (fake) {
             call[["list"]] <- "Rcpp.fake.fun"
         }
     }
-	
+
     tryCatch(eval(call, envir = env),
              error = function(e) {
                  cat(paste(e, "\n")) # print error
                  stop(paste("error while calling `", skelFunName, "`", sep=""))
              })
-	
+
     message("\nAdding RcppEigen settings")
-	
-    ## now pick things up 
+
+    ## now pick things up
     root <- file.path(path, name)
-	
+
     ## Add Rcpp to the DESCRIPTION
     DESCRIPTION <- file.path(root, "DESCRIPTION")
     if (file.exists(DESCRIPTION)) {
-        x <- cbind(read.dcf(DESCRIPTION), 
-                   "Imports" = sprintf("Rcpp (>= %s)", 
-                   packageDescription("Rcpp")[["Version"]]), 
+        x <- cbind(read.dcf(DESCRIPTION),
+                   "Imports" = sprintf("Rcpp (>= %s)",
+                   packageDescription("Rcpp")[["Version"]]),
                    "LinkingTo" = "Rcpp, RcppEigen")
         write.dcf(x, file = DESCRIPTION)
         message(" >> added Imports: Rcpp")
         message(" >> added LinkingTo: Rcpp, RcppEigen")
     }
-	
-    ## add a useDynLib to NAMESPACE, 
+
+    ## add a useDynLib to NAMESPACE,
     NAMESPACE <- file.path(root, "NAMESPACE")
     lines <- readLines(NAMESPACE)
     if (! grepl("useDynLib", lines)) {
@@ -83,7 +83,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
         writeLines(lines, con = NAMESPACE)
         message(" >> added useDynLib and importFrom directives to NAMESPACE")
     }
-	
+
     ## lay things out in the src directory
     src <- file.path(root, "src")
     if (!file.exists(src)) {
@@ -99,13 +99,13 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
         file.copy(file.path(skeleton, "Makevars"), Makevars)
         message(" >> added Makevars file with RcppEigen settings")
     }
-	
+
     Makevars.win <- file.path(src, "Makevars.win")
     if (!file.exists(Makevars.win)) {
         file.copy(file.path(skeleton, "Makevars.win"), Makevars.win)
         message(" >> added Makevars.win file with RcppEigen settings")
     }
-		
+
     if (example_code) {
         file.copy(file.path(skeleton, "rcppeigen_hello_world.cpp"), src)
         message(" >> added example src file using Eigen classes")
@@ -115,13 +115,12 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
 	Rcpp::compileAttributes(root)
         message(" >> invoked Rcpp::compileAttributes to create wrappers")
     }
-    
+
     if (fake) {
         rm("Rcpp.fake.fun", envir = env)
         unlink(file.path(root, "R"  , "Rcpp.fake.fun.R"))
         unlink(file.path(root, "man", "Rcpp.fake.fun.Rd"))
     }
-	
+
     invisible(NULL)
 }
-

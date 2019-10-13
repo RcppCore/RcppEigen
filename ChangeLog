@@ -1,3 +1,8 @@
+2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/RcppEigen.package.skeleton.R (RcppEigen.package.skeleton): Move
+	test for example_code outside of haveKitten test
+
 2019-05-24  Dirk Eddelbuettel  <edd@debian.org>
 
 	* vignettes/RcppEigen-Introduction.Rnw: Update vignette to use

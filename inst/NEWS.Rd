@@ -10,6 +10,7 @@
     \item Small RNG use update to first example in skeleton package used
     by package creation helper.
     \item Update vignette example to use RcppEigen:::eigen_version().
+    \item Correct one RcppEigen.package.skeleton() corner case.
   }
 }
 
