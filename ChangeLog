@@ -1,3 +1,13 @@
+2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/tinytest.R: Renamed from tests/doRUnit.R
+	* inst/tinytest/test_fastLm.R: Renamed from inst/unitTests/runit*
+	* inst/tinytest/test_RcppEigen.R: Idem
+	* inst/tinytest/test_solution.R: Idem
+	* inst/tinytest/test_sparse.R: Idem
+	* inst/tinytest/test_transform.R: Idem
+	* inst/tinytest/test_wrap.R: Idem
+
 2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Added CRAN + BioConductor badges for reverse depends,
