@@ -1,3 +1,17 @@
+2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * test_sparse.R: Converted to tinytest
+	* cpp/sparse.cpp: Added
+
+2019-10-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * test_fastLm.R: Converted to tinytest
+        * test_RcppEigen.R: Idem
+        * test_solution.R: Idem
+
+	* cpp/rcppeigen.cpp: Added
+        * cpp/solution.cpp: Idem
+	
 2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
 
 	* tests/tinytest.R: Renamed from tests/doRUnit.R
