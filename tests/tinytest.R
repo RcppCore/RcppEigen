@@ -1,33 +1,15 @@
-#### doRUnit.R --- Run RUnit tests
-####------------------------------------------------------------------------
 
-### borrowed from package fUtilities in RMetrics
-### http://r-forge.r-project.org/plugins/scmsvn/viewcvs.php/pkg/fUtilities/tests/doRUnit.R?rev=1958&root=rmetrics&view=markup
+if (requireNamespace("tinytest", quietly=TRUE) &&
+    utils::packageVersion("tinytest") >= "1.0.0") {
 
-### Originally follows Gregor Gojanc's example in CRAN package  'gdata'
-### and the corresponding section in the R Wiki:
-###  http://wiki.r-project.org/rwiki/doku.php?id=developers:runit
+    ## Set a seed to make the test deterministic
+    set.seed(42)
 
-### MM: Vastly changed:  This should also be "runnable" for *installed*
-##              package which has no ./tests/
-## ----> put the bulk of the code e.g. in  ../inst/unitTests/runTests.R :
+    ## R makes us to this
+    Sys.setenv("R_TESTS"="")
 
-if(require("RUnit", quietly = TRUE)) {
-    pkg <- "RcppEigen"
-
-    require( pkg, character.only=TRUE)
-
-    path <- system.file("unitTests", package = pkg)
-
-    stopifnot(file.exists(path), file.info(path.expand(path))$isdir)
-
-    ## without this, we get unit test failures
-    Sys.setenv( R_TESTS = "" )
-
-    RcppEigen.unit.test.output.dir <- getwd()
-
-    source(file.path(path, "runTests.R"), echo = TRUE)
-
-} else {
-    print( "package RUnit not available, cannot run unit tests" )
+    ## there are several more granular ways to test files in a tinytest directory,
+    ## see its package vignette; tests can also run once the package is installed
+    ## using the same command `test_package(pkgName)`, or by director or file
+    tinytest::test_package("RcppEigen", ncpu=getOption("Ncpus", 1))
 }

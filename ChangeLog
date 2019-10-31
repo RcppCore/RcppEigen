@@ -1,5 +1,10 @@
 2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
 
+	* DESCRIPTION (Suggests): Switch from RUnit to tinytest
+	* .travis.yml (install): Ditto
+
+	* tests/tinytest.R: Converted to tinytest
+
         * test_sparse.R: Converted to tinytest
 	* cpp/sparse.cpp: Added
 
