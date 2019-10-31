@@ -53,7 +53,7 @@ double asMappedSparseDoubleColMajor(Eigen::Map<Eigen::SparseMatrix<double, Eigen
 }
 
 // [[Rcpp::export]]
-Eigen::MappedSparseMatrix<double, Eigen::ColMajor> asMappedSparseDeprecatedDoubleColMajor(Eigen::MappedSparseMatrix<double, Eigen::ColMajor> mm) {
+double asMappedSparseDeprecatedDoubleColMajor(Eigen::MappedSparseMatrix<double, Eigen::ColMajor> mm) {
     // Deprecated
     double s = mm.sum();          // access instantiated sparse matrix
     return s;

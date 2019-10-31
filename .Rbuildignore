@@ -8,3 +8,4 @@ debian
 ^\.Rproj\.user$
 .*\.tar\.gz$
 ^patches
+^.editorconfig$

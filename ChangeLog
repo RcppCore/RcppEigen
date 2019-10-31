@@ -3,6 +3,8 @@
 	* inst/tinytest/cpp/sparse.cpp: More idiomatic Eigen code
 	* inst/tinytest/test_sparse.R: Idem
 
+	* .editorconfig: Added
+
 2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Suggests): Switch from RUnit to tinytest
