@@ -1,5 +1,11 @@
 2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
 
+	* inst/tinytest/test_transform.R: Switch from RUnit to tinytest
+	* inst/tinytest/test_wrap.R: Idem
+
+	* inst/tinytest/cpp/transform.cpp: Added using Rcpp Attributes
+	* inst/tinytest/cpp/wrap.cpp: Idem
+
 	* inst/tinytest/cpp/sparse.cpp: More idiomatic Eigen code
 	* inst/tinytest/test_sparse.R: Idem
 
@@ -13,7 +19,7 @@
 	* tests/tinytest.R: Converted to tinytest
 
         * test_sparse.R: Converted to tinytest
-	* cpp/sparse.cpp: Added
+	* cpp/sparse.cpp: Added using Rcpp Attributes
 
 2019-10-29  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -21,7 +27,7 @@
         * test_RcppEigen.R: Idem
         * test_solution.R: Idem
 
-	* cpp/rcppeigen.cpp: Added
+	* cpp/rcppeigen.cpp: Added using Rcpp Attributes
         * cpp/solution.cpp: Idem
 	
 2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
