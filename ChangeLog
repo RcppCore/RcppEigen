@@ -1,3 +1,8 @@
+2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/cpp/sparse.cpp: More idiomatic Eigen code
+	* inst/tinytest/test_sparse.R: Idem
+
 2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Suggests): Switch from RUnit to tinytest
