@@ -1,3 +1,7 @@
+2019-11-01  Dirk Eddelbuettel  <edd@debian.org>
+	
+	* R/unit.test.R (compile_unit_tests): Removed as no longer needed
+
 2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_transform.R: Switch from RUnit to tinytest
