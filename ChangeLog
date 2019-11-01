@@ -1,3 +1,49 @@
+2019-11-01  Dirk Eddelbuettel  <edd@debian.org>
+	
+	* R/unit.test.R (compile_unit_tests): Removed as no longer needed
+
+2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_transform.R: Switch from RUnit to tinytest
+	* inst/tinytest/test_wrap.R: Idem
+
+	* inst/tinytest/cpp/transform.cpp: Added using Rcpp Attributes
+	* inst/tinytest/cpp/wrap.cpp: Idem
+
+	* inst/tinytest/cpp/sparse.cpp: More idiomatic Eigen code
+	* inst/tinytest/test_sparse.R: Idem
+
+	* .editorconfig: Added
+
+2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Suggests): Switch from RUnit to tinytest
+	* .travis.yml (install): Ditto
+
+	* tests/tinytest.R: Converted to tinytest
+
+        * test_sparse.R: Converted to tinytest
+	* cpp/sparse.cpp: Added using Rcpp Attributes
+
+2019-10-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * test_fastLm.R: Converted to tinytest
+        * test_RcppEigen.R: Idem
+        * test_solution.R: Idem
+
+	* cpp/rcppeigen.cpp: Added using Rcpp Attributes
+        * cpp/solution.cpp: Idem
+	
+2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/tinytest.R: Renamed from tests/doRUnit.R
+	* inst/tinytest/test_fastLm.R: Renamed from inst/unitTests/runit*
+	* inst/tinytest/test_RcppEigen.R: Idem
+	* inst/tinytest/test_solution.R: Idem
+	* inst/tinytest/test_sparse.R: Idem
+	* inst/tinytest/test_transform.R: Idem
+	* inst/tinytest/test_wrap.R: Idem
+
 2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Added CRAN + BioConductor badges for reverse depends,
