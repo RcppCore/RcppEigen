@@ -3,14 +3,20 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.3.?.0 (2019-??-??)}{
+\section{Changes in RcppEigen version 0.3.3.7.0 (2019-11-16)}{
   \itemize{
     \item Fixed skeleton package creation listing RcppEigen under Imports
     (James Balamuta in \ghpr{68} addressing \ghit{16}).
     \item Small RNG use update to first example in skeleton package used
-    by package creation helper.
-    \item Update vignette example to use RcppEigen:::eigen_version().
-    \item Correct one RcppEigen.package.skeleton() corner case.
+    by package creation helper (Dirk addressing \ghit{69}).
+    \item Update vignette example to use RcppEigen:::eigen_version() (Dirk
+    addressing \ghit{71}).
+    \item Correct one RcppEigen.package.skeleton() corner case (Dirk in
+    \ghpr{77} fixing \ghit{75}).
+    \item Correct one usage case with \pkg{pkgKitten} (Dirk in \ghpr{78}).
+    \item The package now uses \pkg{tinytest} for unit tests (Dirk in
+    \ghpr{81}).
+    \item Upgraded to Eigen 3.3.7 (Dirk in \ghpr{82} fixing \ghit{80}).
   }
 }
 
@@ -38,7 +44,7 @@
 \section{Changes in RcppEigen version 0.3.3.3.1 (2017-11-19)}{
   \itemize{
     \item Compilation under Haiku-OS is now supported (Yu Gong in
-    \ghpr{45}). 
+    \ghpr{45}).
     \item The \code{Rcpp.plugin.maker} helper function is called via
     \code{::} as it is in fact exported (yet we had old code using
     \code{:::}).

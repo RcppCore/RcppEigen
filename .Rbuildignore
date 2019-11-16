@@ -9,3 +9,4 @@ debian
 .*\.tar\.gz$
 ^patches
 ^.editorconfig$
+^eigen-?\.?\.?
