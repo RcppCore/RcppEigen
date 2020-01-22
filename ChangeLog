@@ -1,3 +1,7 @@
+2020-01-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: README.md: Add a Debian badge
+
 2019-11-16  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.3.3.7.0
