@@ -5,7 +5,7 @@
 [![License](http://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](http://www.mozilla.org/MPL/2.0/) 
 [![CRAN](http://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen) 
 [![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
-[![Debian package](https://img.shields.io/debian/v/r-cran-rcppeigen/sid?color=green)](https://packages.debian.org/sid/r-cran-rcppeigen)  
+[![Debian package](https://img.shields.io/debian/v/r-cran-rcppeigen/sid?color=brightgreen)](https://packages.debian.org/sid/r-cran-rcppeigen)  
 [![Downloads](http://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](http://www.r-pkg.org/pkg/RcppEigen)
 [![CRAN use](https://jangorecki.gitlab.io/rdeps/RcppEigen/CRAN_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
 [![BioConductor use](https://jangorecki.gitlab.io/rdeps/RcppEigen/BioC_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
