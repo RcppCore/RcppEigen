@@ -1,3 +1,7 @@
+2020-03-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Added commit badge, edited
+
 2020-01-22  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: README.md: Add a Debian badge
@@ -11,7 +15,7 @@
 	* patches/eigen-3.3.7.diff: Carried local CRAN patches forward
 
 2019-11-01  Dirk Eddelbuettel  <edd@debian.org>
-	
+
 	* R/unit.test.R (compile_unit_tests): Removed as no longer needed
 
 2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
@@ -45,7 +49,7 @@
 
 	* cpp/rcppeigen.cpp: Added using Rcpp Attributes
         * cpp/solution.cpp: Idem
-	
+
 2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
 
 	* tests/tinytest.R: Renamed from tests/doRUnit.R
