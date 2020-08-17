@@ -1,3 +1,7 @@
+2020-08-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Add JSS badge
+
 2020-03-29  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Added commit badge, edited
