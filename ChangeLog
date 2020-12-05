@@ -1,3 +1,9 @@
+2020-12-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen: Upgraded to Eigen 3.3.9
+	* inst/include/unsupported/Eigen: Idem
+	* patches/eigen-3.3.9.diff: Carried local CRAN patches forward
+
 2020-08-16  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Add JSS badge

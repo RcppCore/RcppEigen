@@ -98,10 +98,10 @@ template<> EIGEN_STRONG_INLINE Packet2cf pset1<Packet2cf>(const std::complex<flo
   res.v = _mm_loadl_pi(_mm_set1_ps(0.0f), reinterpret_cast<const __m64*>(&from));
 #elif EIGEN_GNUC_AT_LEAST(4,6)
   // Suppress annoying "may be used uninitialized in this function" warning with gcc >= 4.6
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wuninitialized"
+  //#pragma GCC diagnostic push
+  //#pragma GCC diagnostic ignored "-Wuninitialized"
   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
-  #pragma GCC diagnostic pop
+  //#pragma GCC diagnostic pop
 #else
   res.v = _mm_loadl_pi(res.v, (const __m64*)&from);
 #endif
