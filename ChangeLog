@@ -8,6 +8,11 @@
 
 	* .travis.yml: Switch to r-ci using focal and bspm
 
+	* README.md: Updated URLs to https and/or redirect location
+	* inst/CITATION: Idem
+	* man/RcppEigen-package.Rd: Idem
+	* man/fastLm.Rd: Idem
+
 2020-08-16  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Add JSS badge

@@ -37,7 +37,7 @@ fastLm(X, \dots)
     Cholesky, 3 for the LDLT Cholesky, 4 for the Jacobi singular value
     decomposition (SVD) and 5 for a method based on the
     eigenvalue-eigenvector decomposition of
-    \eqn{\mathbf{X}^\prime\mathbf{X}}{X'X}.  Default is zero.} 
+    \eqn{\mathbf{X}^\prime\mathbf{X}}{X'X}.  Default is zero.}
 
   \item{\dots}{not used}
 }
@@ -47,7 +47,7 @@ fastLm(X, \dots)
 
   The \code{fastLmPure} function provides a reference use case of the \code{Eigen}
   C++ template library via the wrapper functions in the \pkg{RcppEigen} package.
-  
+
   The \code{fastLm} function provides a more standard implementation of
   a linear model fit, offering both a default and a formula interface as
   well as \code{print}, \code{summary} and \code{predict} methods.
@@ -57,7 +57,7 @@ fastLm(X, \dots)
   decomposition, so that it can handle rank-deficient cases
   effectively.  Other methods for determining least squares solutions
   are available according to the value of the \code{method} argument.
-  
+
   An example of the type of situation requiring extra care in checking
   for rank deficiency is a two-way layout with missing cells (see the
   examples section).  These cases require a special pivoting scheme of
@@ -78,7 +78,7 @@ fastLm(X, \dots)
      call argument similar to the \code{\link{lm}} or
   \code{\link[MASS]{rlm}} functions..
 }
-\seealso{\code{\link{lm}}, \code{\link{lm.fit}}} 
+\seealso{\code{\link{lm}}, \code{\link{lm.fit}}}
 \references{
   Douglas Bates and Dirk Eddelbuettel (2013). Fast and Elegant Numerical
   Linear Algebra Using the \pkg{RcppEigen} Package. \emph{Journal of
@@ -86,8 +86,8 @@ fastLm(X, \dots)
   URL http://www.jstatsoft.org/v52/i05/.
 }
 \author{
-  Eigen is described at \url{http://eigen.tuxfamily.org}. RcppEigen is written by
-  Douglas Bates, Dirk Eddelbuettel and Romain Francois.
+  Eigen is described at \url{http://eigen.tuxfamily.org/index.php?title=Main_Page}.
+  RcppEigen is written by Douglas Bates, Dirk Eddelbuettel and Romain Francois.
 }
 \examples{
   data(trees, package="datasets")
