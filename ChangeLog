@@ -4,6 +4,8 @@
 	* inst/include/unsupported/Eigen: Idem
 	* patches/eigen-3.3.9.diff: Carried local CRAN patches forward
 
+	* .travis.yml: Switch to r-ci using focal and bspm
+
 2020-08-16  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Add JSS badge
