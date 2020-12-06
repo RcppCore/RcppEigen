@@ -17,7 +17,7 @@ Rcpp/Eigen bridge
   package are for illustration only.
 
   As described at the Eigen project's home page,
-  \url{http://eigen.tuxfamily.org}, Eigen is a versatile, fast, reliable
+  \url{http://eigen.tuxfamily.org/index.php?title=Main_Page}, Eigen is a versatile, fast, reliable
   and elegant collection of C++ classes for linear algebra.
 }
 \references{

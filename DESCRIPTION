@@ -1,8 +1,8 @@
 Package: RcppEigen
 Type: Package
 Title: 'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
-Version: 0.3.3.7.0
-Date: 2019-11-16
+Version: 0.3.3.9.0
+Date: 2020-12-05
 Author: Douglas Bates, Dirk Eddelbuettel, Romain Francois, and Yixuan Qiu;
  the authors of Eigen for the included version of Eigen
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
@@ -21,7 +21,6 @@ Description: R and 'Eigen' integration using 'Rcpp'.
  later. 'RcppEigen' (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under
  the GNU GPL version 2 or later, as is the rest of 'Rcpp'.
 License: GPL (>= 2) | file LICENSE
-Depends: R (>= 2.15.1)
 LazyLoad: yes
 LinkingTo: Rcpp
 Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils
