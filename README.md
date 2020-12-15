@@ -1,6 +1,7 @@
 ## RcppEigen: Rcpp Integration for the Eigen Templated Linear Algebra Library
 
 [![Build Status](https://travis-ci.org/RcppCore/RcppEigen.svg)](https://travis-ci.org/RcppCore/RcppEigen)
+[![CI](https://github.com/RcppCore/RcppEigen/workflows/ci/badge.svg)](https://github.com/RcppCore/RcppEigen/actions?query=workflow%3Aci)
 [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](https://www.mozilla.org/MPL/2.0/)
 [![CRAN](https://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
