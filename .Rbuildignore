@@ -10,3 +10,4 @@ debian
 ^patches
 ^.editorconfig$
 ^eigen-?\.?\.?
+^\.github

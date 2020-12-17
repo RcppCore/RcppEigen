@@ -3,6 +3,13 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.3.9.1 (2020-12-17)}{
+  \itemize{
+    \item Upgraded to Eigen 3.3.9 (Dirk in \ghpr{92} fixing \ghit{91}).
+    \item Added GitHub Actions CI using \code{run.sh} from r-ci (Dirk)
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.3.7.0 (2019-11-16)}{
   \itemize{
     \item Fixed skeleton package creation listing RcppEigen under Imports

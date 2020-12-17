@@ -1,3 +1,9 @@
+2020-12-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.1 (following
+	coordinated update of reverse dependency StanHeaders)
+	* inst/NEWS.Rd: Release 0.3.3.9.1
+
 2020-12-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* .github/workflows/ci.yaml: Add CI runner using r-ci
