@@ -79,7 +79,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     ## add a useDynLib to NAMESPACE,
     NAMESPACE <- file.path(root, "NAMESPACE")
     lines <- readLines(NAMESPACE)
-    if (! grepl("useDynLib", lines)) {
+    if (!any(grepl("useDynLib", lines))) {
         lines <- c(sprintf("useDynLib(%s)", name),
                    "import(RcppEigen)",
                    "importFrom(Rcpp, evalCpp)",        ## ensures Rcpp instantiation
