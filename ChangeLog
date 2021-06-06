@@ -1,8 +1,12 @@
 2021-06-06  Dirk Eddelbuettel  <edd@debian.org>
 
+	* README.md: Added coverage badge
+
 	* .github/workflows/ci.yaml (jobs): Turn on coverage
 	* .covrignore: Added
 	* .codecov.yml (ignore): Idem
+
+	* R/RcppEigen.package.skeleton.R: Set nocov
 
 2021-05-09  Dirk Eddelbuettel  <edd@debian.org>
 
