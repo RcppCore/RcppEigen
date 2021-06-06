@@ -1,0 +1,8 @@
+coverage:
+  precision: 1
+
+comment: false
+
+ignore:
+  - "inst/include/Eigen/"
+  - "inst/include/unsupported/Eigen/"
