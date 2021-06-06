@@ -1,6 +1,6 @@
 ## RcppEigen.package.skeleton.R: makes a skeleton for a package that wants to use RcppEigen
 ##
-## Copyright (C) 2011 - 2019  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C) 2011 - 2021  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -23,7 +23,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
                                        code_files = character(),
                                        example_code = TRUE) {
 
-    env <- parent.frame(1)
+    env <- parent.frame(1)              # #nocov start
 
     if (!length(list)) {
         fake <- TRUE
@@ -126,5 +126,5 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
         unlink(file.path(root, "man", "Rcpp.fake.fun.Rd"))
     }
 
-    invisible(NULL)
+    invisible(NULL) 						# #nocov end
 }
