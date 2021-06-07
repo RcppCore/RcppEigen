@@ -1,6 +1,6 @@
 #!/usr/bin/r -t
 #
-# Copyright (C) 2011 - 2019  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+# Copyright (C) 2011 - 2021  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 #
 # This file is part of RcppEigen
 #
@@ -27,6 +27,7 @@ flm2 <- fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 2L)
 flm3 <- fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 3L)
 flm4 <- fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 4L)
 flm5 <- fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 5L)
+flm6 <- fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 6L)
 
 fit       <- lm(log(Volume) ~ log(Girth), data=trees)
 fitCoef   <- unname(coef(fit))
@@ -44,6 +45,11 @@ expect_equal(flm4$coefficients , fitCoef,   info="fastLm0.coef")
 expect_equal(flm4$se           , fitStdErr, info="fastLm0.stderr")
 expect_equal(flm5$coefficients , fitCoef,   info="fastLm0.coef")
 expect_equal(flm5$se           , fitStdErr, info="fastLm0.stderr")
+expect_equal(flm6$coefficients , fitCoef,   info="fastLm0.coef")
+expect_equal(flm6$se           , fitStdErr, info="fastLm0.stderr")
+
+## check unsupported type
+expect_error(fastLmPure(cbind(1, log(trees$Girth)), log(trees$Volume), 7L))
 
 
 #test.fastLm.formula <- function() {
