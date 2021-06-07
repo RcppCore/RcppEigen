@@ -3,6 +3,13 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.3.9.2 (2021-06-07)}{
+  \itemize{
+    \item Added test coverage in continuous integration
+    \item Added new tests to increase test coverage
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.3.9.1 (2020-12-17)}{
   \itemize{
     \item Upgraded to Eigen 3.3.9 (Dirk in \ghpr{92} fixing \ghit{91}).

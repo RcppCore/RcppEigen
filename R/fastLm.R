@@ -109,7 +109,7 @@ predict.fastLm <- function(object, newdata=NULL, ...) {
         if (!is.null(object$formula)) {
             x <- model.matrix(object$formula, newdata)
         } else {
-            x <- newdata
+            x <- newdata			# #nocov
         }
         y <- as.vector(x %*% coef(object))
     }
