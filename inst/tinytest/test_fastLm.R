@@ -54,3 +54,12 @@ fit <- lm(log(Volume) ~ log(Girth), data=trees)
 expect_equal(flm$coefficients, coef(fit), info="fastLm.formula.coef")
 expect_equal(as.numeric(flm$se), as.numeric(coef(summary(fit))[,2]),
             info="fastLm.formula.stderr")
+
+## also tickle print and predict methods
+expect_stdout(print(flm))
+expect_stdout(print(summary(flm)))
+vec <- predict(flm, newdata=data.frame(Girth=c(1,2,3), Volume=c(2,3,4)))
+expect_equal(class(vec), "numeric")
+expect_equal(length(vec), 3L)
+vec <- predict(flm, newdata=NULL)
+expect_equal(vec, fitted(flm))

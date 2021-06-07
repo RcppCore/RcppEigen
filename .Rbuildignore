@@ -11,3 +11,5 @@ debian
 ^.editorconfig$
 ^eigen-?\.?\.?
 ^\.github
+^\.codecov.yml
+^\.covrignore
