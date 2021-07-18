@@ -1,6 +1,7 @@
 2021-07-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_fastLm.R: Add tests for summary
+	* src/fastLm.cpp: Add a few #nocov tags
 
 2021-07-17  Dirk Eddelbuettel  <edd@debian.org>
 
