@@ -69,3 +69,9 @@ expect_equal(class(vec), "numeric")
 expect_equal(length(vec), 3L)
 vec <- predict(flm, newdata=NULL)
 expect_equal(vec, fitted(flm))
+
+## also generate summary
+flmsum <- summary(flm)
+fitsum <- summary(fit)
+expect_equal(flmsum$coef, fitsum$coef)
+expect_equal(length(flmsum), 12)
