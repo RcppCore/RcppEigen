@@ -1,3 +1,8 @@
+2021-07-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/RcppEigenWrap.h: Two more #nocov tags
+	* src/fastLm.cpp: One more #nocov tag
+
 2021-07-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_fastLm.R: Add tests for summary

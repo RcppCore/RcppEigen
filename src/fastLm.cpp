@@ -142,7 +142,7 @@ namespace lmsol {
 	std::vector<int> iwork(8 * n);
 	double wrk;
 	if (m < n || S.size() != n || Vt.rows() != n || Vt.cols() != n)
-	    throw std::invalid_argument("dimension mismatch in gesvd");
+	    throw std::invalid_argument("dimension mismatch in gesvd"); // #nocov
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
 			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info);
 	int lwork(wrk);

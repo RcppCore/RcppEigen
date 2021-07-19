@@ -213,7 +213,7 @@ namespace Rcpp{
         public:
             Exporter(SEXP x) : vec(x) {
                 if (TYPEOF(x) != RTYPE)
-                    throw std::invalid_argument("Wrong R type for mapped vector");
+                    throw std::invalid_argument("Wrong R type for mapped vector"); // #nocov
             }
             OUT get() {return OUT(vec.begin(), vec.size());}
         } ;
@@ -257,7 +257,7 @@ namespace Rcpp{
             public:
             Exporter(SEXP x) : vec(x), d_ncol(1), d_nrow(Rf_xlength(x)) {
                 if (TYPEOF(x) != RTYPE)
-                    throw std::invalid_argument("Wrong R type for mapped matrix");
+                    throw std::invalid_argument("Wrong R type for mapped matrix");	// #nocov
                 if (::Rf_isMatrix(x)) {
                     int *dims = INTEGER( ::Rf_getAttrib( x, R_DimSymbol ) ) ;
                     d_nrow = dims[0];
