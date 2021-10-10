@@ -13,7 +13,7 @@
 [![CRAN use](https://jangorecki.gitlab.io/rdeps/RcppEigen/CRAN_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
 [![BioConductor use](https://jangorecki.gitlab.io/rdeps/RcppEigen/BioC_usage.svg?sanitize=true)](https://cran.r-project.org/package=RcppEigen)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-rcpp-orange.svg)](https://stackoverflow.com/questions/tagged/rcpp)
-[![JSS](https://img.shields.io/badge/JSS-10.18637%2Fjss.v052.i05-brightgreen)](https://dx.doi.org/10.18637/jss.v052.i05)
+[![JSS](https://img.shields.io/badge/JSS-10.18637%2Fjss.v052.i05-brightgreen)](https://doi.org/10.18637/jss.v052.i05)
 
 
 ### Synopsis
@@ -68,8 +68,7 @@ The package is mature and under active development, following the
 ### Documentation
 
 The package contains a pdf vignette which is a pre-print of the [paper by
-Bates and Eddelbuettel](https://www.jstatsoft.org/article/view/v052i05)
-in JSS (2013, v52i05).
+Bates and Eddelbuettel](https://doi.org/10.18637/jss.v052.i05) in JSS (2013, v52i05).
 
 ### Authors
 

@@ -1,3 +1,8 @@
+2021-10-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/CITATION: Switch JSS url to doi form per JSS request
+	* README.md: Idem
+
 2021-07-19  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/include/RcppEigenWrap.h: Two more #nocov tags
