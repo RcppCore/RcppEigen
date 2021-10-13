@@ -1,3 +1,7 @@
+2021-10-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/CITATION: Refinment of doi use
+
 2021-10-10  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/CITATION: Switch JSS url to doi form per JSS request
