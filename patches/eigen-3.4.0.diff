@@ -1,0 +1,153 @@
+diff '--exclude=CMakeLists.txt' -ruw eigen-3.4.0/Eigen/CholmodSupport inst/include/Eigen/CholmodSupport
+--- eigen-3.4.0/Eigen/CholmodSupport	2021-08-19 04:41:58.000000000 +0800
++++ inst/include/Eigen/CholmodSupport	2021-10-26 12:58:06.061753725 +0800
+@@ -13,7 +13,7 @@
+ #include "src/Core/util/DisableStupidWarnings.h"
+
+ extern "C" {
+-  #include <cholmod.h>
++  #include <RcppEigenCholmod.h>
+ }
+
+ /** \ingroup Support_modules
+diff '--exclude=CMakeLists.txt' -ruw eigen-3.4.0/Eigen/src/CholmodSupport/CholmodSupport.h inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
+--- eigen-3.4.0/Eigen/src/CholmodSupport/CholmodSupport.h	2021-08-19 04:41:58.000000000 +0800
++++ inst/include/Eigen/src/CholmodSupport/CholmodSupport.h	2021-10-26 14:01:03.556869005 +0800
+@@ -167,12 +167,10 @@
+ // template specializations for int and long that call the correct cholmod method
+
+ #define EIGEN_CHOLMOD_SPECIALIZE0(ret, name) \
+-    template<typename _StorageIndex> inline ret cm_ ## name       (cholmod_common &Common) { return cholmod_ ## name   (&Common); } \
+-    template<>                       inline ret cm_ ## name<SuiteSparse_long> (cholmod_common &Common) { return cholmod_l_ ## name (&Common); }
++    template<typename _StorageIndex> inline ret cm_ ## name       (cholmod_common &Common) { return cholmod_ ## name   (&Common); }
+
+ #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1) \
+-    template<typename _StorageIndex> inline ret cm_ ## name       (t1& a1, cholmod_common &Common) { return cholmod_ ## name   (&a1, &Common); } \
+-    template<>                       inline ret cm_ ## name<SuiteSparse_long> (t1& a1, cholmod_common &Common) { return cholmod_l_ ## name (&a1, &Common); }
++    template<typename _StorageIndex> inline ret cm_ ## name       (t1& a1, cholmod_common &Common) { return cholmod_ ## name   (&a1, &Common); }
+
+ EIGEN_CHOLMOD_SPECIALIZE0(int, start)
+ EIGEN_CHOLMOD_SPECIALIZE0(int, finish)
+@@ -184,15 +182,15 @@
+ EIGEN_CHOLMOD_SPECIALIZE1(cholmod_factor*, analyze, cholmod_sparse, A)
+
+ template<typename _StorageIndex> inline cholmod_dense*  cm_solve         (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return cholmod_solve     (sys, &L, &B, &Common); }
+-template<>                       inline cholmod_dense*  cm_solve<SuiteSparse_long>   (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return cholmod_l_solve   (sys, &L, &B, &Common); }
++// template<>                       inline cholmod_dense*  cm_solve<SuiteSparse_long>   (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return cholmod_l_solve   (sys, &L, &B, &Common); }
+
+ template<typename _StorageIndex> inline cholmod_sparse* cm_spsolve       (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return cholmod_spsolve   (sys, &L, &B, &Common); }
+-template<>                       inline cholmod_sparse* cm_spsolve<SuiteSparse_long> (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return cholmod_l_spsolve (sys, &L, &B, &Common); }
++// template<>                       inline cholmod_sparse* cm_spsolve<SuiteSparse_long> (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return cholmod_l_spsolve (sys, &L, &B, &Common); }
+
+ template<typename _StorageIndex>
+ inline int  cm_factorize_p       (cholmod_sparse*  A, double beta[2], _StorageIndex* fset, std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return cholmod_factorize_p   (A, beta, fset, fsize, L, &Common); }
+-template<>
+-inline int  cm_factorize_p<SuiteSparse_long> (cholmod_sparse*  A, double beta[2], SuiteSparse_long* fset,          std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return cholmod_l_factorize_p (A, beta, fset, fsize, L, &Common); }
++// template<>
++// inline int  cm_factorize_p<SuiteSparse_long> (cholmod_sparse*  A, double beta[2], SuiteSparse_long* fset,          std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return cholmod_l_factorize_p (A, beta, fset, fsize, L, &Common); }
+
+ #undef EIGEN_CHOLMOD_SPECIALIZE0
+ #undef EIGEN_CHOLMOD_SPECIALIZE1
+diff '--exclude=CMakeLists.txt' -ruw eigen-3.4.0/Eigen/src/Core/util/DisableStupidWarnings.h inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
+--- eigen-3.4.0/Eigen/src/Core/util/DisableStupidWarnings.h	2021-08-19 04:41:58.000000000 +0800
++++ inst/include/Eigen/src/Core/util/DisableStupidWarnings.h	2021-10-26 14:09:07.167883764 +0800
+@@ -37,40 +37,40 @@
+ #elif defined __clang__
+   // -Wconstant-logical-operand - warning: use of logical && with constant operand; switch to bitwise & or remove constant
+   //     this is really a stupid warning as it warns on compile-time expressions involving enums
+-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+-    #pragma clang diagnostic push
+-  #endif
+-  #pragma clang diagnostic ignored "-Wconstant-logical-operand"
+-  #if __clang_major__ >= 3 && __clang_minor__ >= 5
+-    #pragma clang diagnostic ignored "-Wabsolute-value"
+-  #endif
+-  #if __clang_major__ >= 10
+-    #pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
+-  #endif
+-  #if ( defined(__ALTIVEC__) || defined(__VSX__) ) && __cplusplus < 201103L
+-    // warning: generic selections are a C11-specific feature
+-    // ignoring warnings thrown at vec_ctf in Altivec/PacketMath.h
+-    #pragma clang diagnostic ignored "-Wc11-extensions"
+-  #endif
++  // #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
++  //   #pragma clang diagnostic push
++  // #endif
++  // #pragma clang diagnostic ignored "-Wconstant-logical-operand"
++  // #if __clang_major__ >= 3 && __clang_minor__ >= 5
++  //   #pragma clang diagnostic ignored "-Wabsolute-value"
++  // #endif
++  // #if __clang_major__ >= 10
++  //   #pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
++  // #endif
++  // #if ( defined(__ALTIVEC__) || defined(__VSX__) ) && __cplusplus < 201103L
++  //   // warning: generic selections are a C11-specific feature
++  //   // ignoring warnings thrown at vec_ctf in Altivec/PacketMath.h
++  //   #pragma clang diagnostic ignored "-Wc11-extensions"
++  // #endif
+
+ #elif defined __GNUC__
+
+-  #if (!defined(EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)) &&  (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+-    #pragma GCC diagnostic push
+-  #endif
+-  // g++ warns about local variables shadowing member functions, which is too strict
+-  #pragma GCC diagnostic ignored "-Wshadow"
+-  #if __GNUC__ == 4 && __GNUC_MINOR__ < 8
+-    // Until g++-4.7 there are warnings when comparing unsigned int vs 0, even in templated functions:
+-    #pragma GCC diagnostic ignored "-Wtype-limits"
+-  #endif
+-  #if __GNUC__>=6
+-    #pragma GCC diagnostic ignored "-Wignored-attributes"
+-  #endif
+-  #if __GNUC__==7
+-    // See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89325
+-    #pragma GCC diagnostic ignored "-Wattributes"
+-  #endif
++  // #if (!defined(EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)) &&  (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
++  //   #pragma GCC diagnostic push
++  // #endif
++  // // g++ warns about local variables shadowing member functions, which is too strict
++  // #pragma GCC diagnostic ignored "-Wshadow"
++  // #if __GNUC__ == 4 && __GNUC_MINOR__ < 8
++  //   // Until g++-4.7 there are warnings when comparing unsigned int vs 0, even in templated functions:
++  //   #pragma GCC diagnostic ignored "-Wtype-limits"
++  // #endif
++  // #if __GNUC__>=6
++  //   #pragma GCC diagnostic ignored "-Wignored-attributes"
++  // #endif
++  // #if __GNUC__==7
++  //   // See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89325
++  //   #pragma GCC diagnostic ignored "-Wattributes"
++  // #endif
+ #endif
+
+ #if defined __NVCC__
+diff '--exclude=CMakeLists.txt' -ruw eigen-3.4.0/Eigen/src/Core/util/ReenableStupidWarnings.h inst/include/Eigen/src/Core/util/ReenableStupidWarnings.h
+--- eigen-3.4.0/Eigen/src/Core/util/ReenableStupidWarnings.h	2021-08-19 04:41:58.000000000 +0800
++++ inst/include/Eigen/src/Core/util/ReenableStupidWarnings.h	2021-10-26 14:20:01.194903723 +0800
+@@ -11,9 +11,9 @@
+   #elif defined __INTEL_COMPILER
+     #pragma warning pop
+   #elif defined __clang__
+-    #pragma clang diagnostic pop
++    // #pragma clang diagnostic pop
+   #elif defined __GNUC__  &&  (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+-    #pragma GCC diagnostic pop
++    // #pragma GCC diagnostic pop
+   #endif
+
+   #if defined __NVCC__
+diff '--exclude=CMakeLists.txt' -ruw eigen-3.4.0/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+--- eigen-3.4.0/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2021-08-19 04:41:58.000000000 +0800
++++ inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2021-10-26 13:07:49.922771543 +0800
+@@ -193,7 +193,9 @@
+         std::string curfile;
+         curfile = m_folder + "/" + m_curs_id->d_name;
+         // Discard if it is a folder
++#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
+         if (m_curs_id->d_type == DT_DIR) continue; //FIXME This may not be available on non BSD systems
++#endif
+ //         struct stat st_buf;
+ //         stat (curfile.c_str(), &st_buf);
+ //         if (S_ISDIR(st_buf.st_mode)) continue;
