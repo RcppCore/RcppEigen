@@ -1,6 +1,6 @@
 2021-10-26  Yixuan Qiu  <yixuan.qiu@cos.name>
 
-	* DESCRIPTION (Version, Date): Release 0.3.4.0.0
+	* DESCRIPTION (Version, Date): Release candidate 0.3.3.99.0
 
 	* inst/include/Eigen: Upgraded to Eigen 3.4.0
 	* inst/include/unsupported/Eigen: Idem
