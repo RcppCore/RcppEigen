@@ -1,4 +1,4 @@
-## Copyright (C)       2011 Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C)  2011 - 2017  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -15,10 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with RcppEigen.  If not, see <http://www.gnu.org/licenses/>.
 
-inlineCxxPlugin <-
-    Rcpp:::Rcpp.plugin.maker(
-                             include.before = "#include <RcppEigen.h>", 
-                             package        = "RcppEigen"
-#                             , LinkingTo      = c("RcppEigen", "Rcpp")
-                             )
+inlineCxxPlugin <- Rcpp::Rcpp.plugin.maker(include.before = "#include <RcppEigen.h>",
+                                           package        = "RcppEigen"
+#                                          , LinkingTo      = c("RcppEigen", "Rcpp")
+                                           )
 

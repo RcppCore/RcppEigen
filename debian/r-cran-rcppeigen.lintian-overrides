@@ -1,7 +1,0 @@
-r-cran-rcppeigen: binary-or-shlib-defines-rpath usr/lib/R/site-library/RcppEigen/libs/RcppEigen.so /usr/lib/R/site-library/Rcpp/lib
-r-cran-rcppeigen: hardening-no-relro usr/lib/R/site-library/RcppEigen/libs/RcppEigen.so
-r-cran-rcppeigen: hardening-no-fortify-functions usr/lib/R/site-library/RcppEigen/libs/RcppEigen.so
-r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.RcppEigen.R
-r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.fastLm.R
-r-cran-rcppeigen: script-not-executable usr/lib/R/site-library/RcppEigen/unitTests/runit.sparse.R
-r-cran-rcppeigen: extra-license-file usr/lib/R/site-library/RcppEigen/LICENSE

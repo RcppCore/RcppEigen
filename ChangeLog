@@ -1,3 +1,386 @@
+2021-10-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/CITATION: Switch JSS url to doi form per JSS request
+	* README.md: Idem
+
+2021-07-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/RcppEigenWrap.h: Two more #nocov tags
+	* src/fastLm.cpp: One more #nocov tag
+
+2021-07-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_fastLm.R: Add tests for summary
+	* src/fastLm.cpp: Add a few #nocov tags
+
+2021-07-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll minor version
+
+	* R/RcppEigen.package.skeleton.R (RcppEigen.package.skeleton): Also
+	import RcppEigen in DESCRIPTION
+
+2021-06-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll minor version
+
+	* inst/tinytest/test_misc.R: New test file
+	* inst/tinytest/test_fastLm.R: Added tests
+
+	* R/fastLm.R: Add single one-line nocov tag
+
+	* .Rbuildignore: Add .covignore and .codecov.yml
+
+2021-06-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Added coverage badge
+
+	* .github/workflows/ci.yaml (jobs): Turn on coverage
+	* .covrignore: Added
+	* .codecov.yml (ignore): Idem
+
+	* R/RcppEigen.package.skeleton.R: Set nocov
+
+2021-05-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (URL): Add GitHub repo to URL field
+
+2021-01-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/RcppEigen.package.skeleton.R: Wrap any() around grepl()
+
+2020-12-25  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .github/workflows/ci.yaml: Small tweaks to CI YAML file
+
+2020-12-17  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.1 (following
+	coordinated update of reverse dependency StanHeaders)
+	* inst/NEWS.Rd: Release 0.3.3.9.1
+
+2020-12-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .github/workflows/ci.yaml: Add CI runner using r-ci
+	* README.md: Add new badge
+
+2020-12-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.3.9.0
+
+	* inst/include/Eigen: Upgraded to Eigen 3.3.9
+	* inst/include/unsupported/Eigen: Idem
+	* patches/eigen-3.3.9.diff: Carried local CRAN patches forward
+
+	* .travis.yml: Switch to r-ci using focal and bspm
+
+	* README.md: Updated URLs to https and/or redirect location
+	* inst/CITATION: Idem
+	* man/RcppEigen-package.Rd: Idem
+	* man/fastLm.Rd: Idem
+
+2020-08-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Add JSS badge
+
+2020-03-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Added commit badge, edited
+
+2020-01-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: README.md: Add a Debian badge
+
+2019-11-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.3.7.0
+
+	* inst/include/Eigen: Upgraded to Eigen 3.3.7
+	* inst/include/unsupported/Eigen: Idem
+	* patches/eigen-3.3.7.diff: Carried local CRAN patches forward
+
+2019-11-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* R/unit.test.R (compile_unit_tests): Removed as no longer needed
+
+2019-10-31  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_transform.R: Switch from RUnit to tinytest
+	* inst/tinytest/test_wrap.R: Idem
+
+	* inst/tinytest/cpp/transform.cpp: Added using Rcpp Attributes
+	* inst/tinytest/cpp/wrap.cpp: Idem
+
+	* inst/tinytest/cpp/sparse.cpp: More idiomatic Eigen code
+	* inst/tinytest/test_sparse.R: Idem
+
+	* .editorconfig: Added
+
+2019-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Suggests): Switch from RUnit to tinytest
+	* .travis.yml (install): Ditto
+
+	* tests/tinytest.R: Converted to tinytest
+
+        * test_sparse.R: Converted to tinytest
+	* cpp/sparse.cpp: Added using Rcpp Attributes
+
+2019-10-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * test_fastLm.R: Converted to tinytest
+        * test_RcppEigen.R: Idem
+        * test_solution.R: Idem
+
+	* cpp/rcppeigen.cpp: Added using Rcpp Attributes
+        * cpp/solution.cpp: Idem
+
+2019-10-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* tests/tinytest.R: Renamed from tests/doRUnit.R
+	* inst/tinytest/test_fastLm.R: Renamed from inst/unitTests/runit*
+	* inst/tinytest/test_RcppEigen.R: Idem
+	* inst/tinytest/test_solution.R: Idem
+	* inst/tinytest/test_sparse.R: Idem
+	* inst/tinytest/test_transform.R: Idem
+	* inst/tinytest/test_wrap.R: Idem
+
+2019-10-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Added CRAN + BioConductor badges for reverse depends,
+	add StackOverflow badge to recommend help searches under 'Rcpp'
+
+	* DESCRIPTION (Version, Date): Roll minor version
+
+	* R/RcppEigen.package.skeleton.R (RcppEigen.package.skeleton): Test for
+	example_code outside of haveKitten test; remove force argument if unused
+
+2019-05-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/RcppEigen-Introduction.Rnw: Update vignette to use
+	RcppEigen:::eigen_version() instead of .Call()
+
+2019-03-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/skeleton/rcppeigen_hello_world.cpp: Rework first example to
+	not rely on Eigen RNG which R CMD check would complain about.
+
+2019-02-16  James Joseph Balamuta <balamut2@illinois.edu>
+
+	* R/runit.RcppEigen.R: Removed listing RcppEigen in Imports during
+	skeleton package creation.
+
+2018-11-24  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.3.5.0
+
+2018-11-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen: Updated to release 3.3.5
+	* inst/include/unsupported: Idem
+	* patches/eigen-3.3.5.diff: Diff of local patches
+
+2018-09-02  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Switch Travis CI to R 3.5 repo
+
+2018-05-30  Michael Weylandt  <michael.weylandt@gmail.com>
+
+	* inst/examples/lmBenchmark.R: Update benchmark script to use
+	microbenchmark and to use exposed fastLm functions from Rcpp
+	packages rather than invoking .Call directly
+
+2018-05-25  Ralf Stubner  <ralf.stubner@daqana.com>
+
+	* inst/include/RcppEigenWrap.h: Use Rf_xlength and R_xlen_t to
+	support long vectors
+
+2018-02-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* patches/eigen-3.3.4.diff: Diff to upstream Eigen 3.3.4,
+	cherry-picked in the 3.3.4 branch of Yixuan
+
+2018-02-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.3.4.0
+
+	* inst/include/Eigen/src/Core/arch/CUDA/Half.h (Eigen): Condition use
+	of long long and unsigned long on C++11
+
+	* inst/include/Eigen/src/Core/arch/SSE/Complex.h (Eigen): Comment-out
+	use of diagnostic-suppressing pragma for gcc + clang to satisfy CRAN
+	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h: Idem
+
+2018-02-04  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+	* inst/include/Eigen: Updated to the upstream 3.3 branch of Eigen
+	based on version 3.3.4
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h:
+	Patch from upstream Eigen that has not been ported to the 3.3 branch
+	(cf GitHub issue #48)
+
+2017-11-19  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.3.3.1
+
+	* R/inline.R: Use '::' not ':::' for Rcpp.plugin.maker
+
+2017-08-26  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml (before_install): Use https for curl fetch
+
+2017-06-06  Yu Gong  <armgong@yahoo.com>
+
+	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h:
+	Also permit compilation under Haiku-OS
+
+2017-05-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/examples/lmBenchmark.R (do_bench): Remove spurious argument in
+	call to RcppEigen:::Eigen_SSE() (cf github issue #44)
+
+2017-04-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Release 0.3.3.3.0
+
+	[ which again owes a very big thank you to Yixuan for doing the work! ]
+
+2017-04-27  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Switch to using run.sh for Travis CI
+
+2017-04-27  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen/src/Core/arch/CUDA/Half.h: Fixed compiler warning
+	on 'long long' type in C++ 98 mode
+
+2017-03-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.3.2.9.1
+
+	* src/init.c (R_init_RcppEigen): Call R_registerRoutines()
+	and R_useDynamicSymbols()
+
+	* NAMESPACE: Use .registration=TRUE on useDynLib
+
+	* R/fastLm.R (fastLmPure): Remove erroneous fourth argument from .Call
+
+2017-03-13  Martin Maechler  <maechler@r-project.org>
+
+	* inst/include/RcppEigenCholmod.h: Synchronize with Matrix package
+
+2017-02-21  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen: Updated to release 3.3.3 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+2017-01-20  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen: Updated to release 3.3.2 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/unitTests/runit.RcppEigen.R, inst/unitTests/runit.sparse.R:
+	Explicitly convert matrix size to `double` type such that Rcpp can
+	properly return the value to R, thanks to ChingChuan and Dirk
+
+2017-01-20  ChingChuan Chen  <zw12356@gmail.com>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen: Updated to release 3.3.1 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+
+	* inst/examples/lmBenchmark.R: Fixed function names
+
+2016-12-22  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (URL, BugReports): Added / updated
+
+2016-11-12  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	[ In RcppEigen 0.3.3.* branch ]
+
+	* inst/include/Eigen: Updated to release 3.3.0 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/include/RcppEigenForward.h, inst/include/RcppEigenWrap.h:
+	Added exporters for the new Map<SparseMatrix<T> > type
+	* inst/unitTests/runit.sparse.R: Unit tests for the new type
+
+2016-08-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Release 0.3.2.9.0 with big thanks to Yixuan for doing
+	the work!
+
+2016-08-19  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.9 of Eigen
+
+	* README.md: Updated version number and fixed the NOTE from CRAN URL
+	check
+
+2016-04-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Expanded
+
+2016-04-28  James Joseph Balamuta <balamut2@illinois.edu>
+
+	* inst/include/RcppEigenWrap.h: Added an exporter class for
+	Map::RowVectorX<t> per http://stackoverflow.com/questions/36920689/
+	* inst/include/unitTests/runit.RcppEigen.R: Added row exporter unit
+	test.
+
+2016-02-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version): Release 0.3.2.8.1
+	* inst/NEWS.Rd: Release 0.3.2.8.1
+	* debian/*: Changes for Debian release of 0.3.2.8.1
+
+2016-02-28  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen/src/SparseCore/CompressedStorage.h,
+	  inst/include/Eigen/src/SparseCore/SparseBlock.h,
+	  inst/include/Eigen/src/SparseCore/SparseMatrix.h,
+	  inst/include/Eigen/src/SparseCore/SparseRedux.h,
+	  inst/include/Eigen/src/SparseCore/SparseVector.h:
+	Another patch from upstream to fix UBSAN null pointer errors
+
+2016-02-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version): Release 0.3.2.8.0
+	* DESCRIPTION (Author): Added Yixuan Qiu
+
+	* inst/NEWS.Rd: Release 0.3.2.8.0
+
+2016-02-22  Yixuan Qiu  <yixuan.qiu@cos.name>
+
+	* inst/include/Eigen: Updated to release 3.2.8 of Eigen
+	* inst/include/unsupported: Idem
+	* DESCRIPTION: Idem
+	* README.md: Idem
+
+	* inst/include/Eigen/src/SparseCore/CompressedStorage.h,
+	inst/include/Eigen/src/Core/util/Memory.h: Applied patch from
+	upstream to fix UBSAN errors
+
 2016-01-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.3.2.7.0

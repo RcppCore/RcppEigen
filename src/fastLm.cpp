@@ -44,17 +44,17 @@ namespace lmsol {
 	  m_y(y),
 	  m_n(X.rows()),
 	  m_p(X.cols()),
-	  m_coef(VectorXd::Constant(m_p, ::NA_REAL)),
+	  m_coef(VectorXd::Constant(m_p, ::NA_REAL)), 		// #nocov
 	  m_r(::NA_INTEGER),
 	  m_fitted(m_n),
-	  m_se(VectorXd::Constant(m_p, ::NA_REAL)),
+	  m_se(VectorXd::Constant(m_p, ::NA_REAL)), 		// #nocov
 	  m_usePrescribedThreshold(false) {
     }
 
-    lm& lm::setThreshold(const RealScalar& threshold) {
+    lm& lm::setThreshold(const RealScalar& threshold) { 	// #nocov start
 	m_usePrescribedThreshold = true;
 	m_prescribedThreshold = threshold;
-	return *this;
+	return *this;           				// #nocov end
     }
 
     inline ArrayXd lm::Dplus(const ArrayXd& d) {
@@ -71,16 +71,16 @@ namespace lmsol {
     }
 
     /** Returns the threshold that will be used by certain methods such as rank().
-     * 
+     *
      *  The default value comes from experimenting (see "LU precision
      *  tuning" thread on the Eigen list) and turns out to be
-     *  identical to Higham's formula used already in LDLt. 
+     *  identical to Higham's formula used already in LDLt.
      *
      *  @return The user-prescribed threshold or the default.
      */
     RealScalar lm::threshold() const {
 	return m_usePrescribedThreshold ? m_prescribedThreshold
-	    : numeric_limits<double>::epsilon() * m_p; 
+	    : numeric_limits<double>::epsilon() * m_p;
     }
 
     ColPivQR::ColPivQR(const Map<MatrixXd> &X, const Map<VectorXd> &y)
@@ -94,8 +94,8 @@ namespace lmsol {
 	    m_se       = Pmat * PQR.matrixQR().topRows(m_p).
 		triangularView<Upper>().solve(I_p()).rowwise().norm();
 	    return;
-	} 
-	MatrixXd                     Rinv(PQR.matrixQR().topLeftCorner(m_r, m_r).
+	}
+	MatrixXd                     Rinv(PQR.matrixQR().topLeftCorner(m_r, m_r). 	// #nocov start
 					  triangularView<Upper>().
 					  solve(MatrixXd::Identity(m_r, m_r)));
 	VectorXd                  effects(PQR.householderQ().adjoint() * y);
@@ -106,9 +106,9 @@ namespace lmsol {
 	effects.tail(m_n - m_r).setZero();
 	m_fitted                          = PQR.householderQ() * effects;
 	m_se.head(m_r)                    = Rinv.rowwise().norm();
-	m_se                              = Pmat * m_se;
+	m_se                              = Pmat * m_se; 				// #nocov end
     }
-    
+
     QR::QR(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	HouseholderQR<MatrixXd> QR(X);
 	m_coef                     = QR.solve(y);
@@ -116,15 +116,15 @@ namespace lmsol {
 	m_se                       = QR.matrixQR().topRows(m_p).
 	    triangularView<Upper>().solve(I_p()).rowwise().norm();
     }
-    
-    
+
+
     Llt::Llt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	LLT<MatrixXd>  Ch(XtX().selfadjointView<Lower>());
 	m_coef            = Ch.solve(X.adjoint() * y);
 	m_fitted          = X * m_coef;
 	m_se              = Ch.matrixL().solve(I_p()).colwise().norm();
     }
-    
+
     Ldlt::Ldlt(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
 	LDLT<MatrixXd> Ch(XtX().selfadjointView<Lower>());
 	Dplus(Ch.vectorD());	// to set the rank
@@ -136,13 +136,13 @@ namespace lmsol {
 	m_fitted          = X * m_coef;
 	m_se              = Ch.solve(I_p()).diagonal().array().sqrt();
     }
-    
+
     int gesdd(MatrixXd& A, ArrayXd& S, MatrixXd& Vt) {
 	int info, mone = -1, m = A.rows(), n = A.cols();
 	std::vector<int> iwork(8 * n);
 	double wrk;
 	if (m < n || S.size() != n || Vt.rows() != n || Vt.cols() != n)
-	    throw std::invalid_argument("dimension mismatch in gesvd");
+	    throw std::invalid_argument("dimension mismatch in gesvd"); // #nocov
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
 			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info);
 	int lwork(wrk);
@@ -222,7 +222,7 @@ namespace lmsol {
             if (!(colnames).isNULL())
                 coef.attr("names") = clone(CharacterVector(colnames));
         }
-	    
+
         VectorXd         resid = y - ans.fitted();
         int               rank = ans.rank();
         int                 df = (rank == ::NA_INTEGER) ? n - X.cols() : n - rank;
@@ -240,9 +240,8 @@ namespace lmsol {
     }
 }
 
-// This defines the R-callable function 'fastLm' 
+// This defines the R-callable function 'fastLm'
 // [[Rcpp::export]]
 Rcpp::List fastLm_Impl(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type) {
-    return lmsol::fastLm(X, y, type); 
+    return lmsol::fastLm(X, y, type);
 }
-

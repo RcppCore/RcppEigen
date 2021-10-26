@@ -1,11 +1,120 @@
 \name{NEWS}
-\title{News for Package 'RcppEigen'}
+\title{News for Package \pkg{RcppEigen}}
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
+
+\section{Changes in RcppEigen version 0.3.3.9.2 (2021-06-07)}{
+  \itemize{
+    \item Added test coverage in continuous integration
+    \item Added new tests to increase test coverage
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.9.1 (2020-12-17)}{
+  \itemize{
+    \item Upgraded to Eigen 3.3.9 (Dirk in \ghpr{92} fixing \ghit{91}).
+    \item Added GitHub Actions CI using \code{run.sh} from r-ci (Dirk)
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.7.0 (2019-11-16)}{
+  \itemize{
+    \item Fixed skeleton package creation listing RcppEigen under Imports
+    (James Balamuta in \ghpr{68} addressing \ghit{16}).
+    \item Small RNG use update to first example in skeleton package used
+    by package creation helper (Dirk addressing \ghit{69}).
+    \item Update vignette example to use RcppEigen:::eigen_version() (Dirk
+    addressing \ghit{71}).
+    \item Correct one RcppEigen.package.skeleton() corner case (Dirk in
+    \ghpr{77} fixing \ghit{75}).
+    \item Correct one usage case with \pkg{pkgKitten} (Dirk in \ghpr{78}).
+    \item The package now uses \pkg{tinytest} for unit tests (Dirk in
+    \ghpr{81}).
+    \item Upgraded to Eigen 3.3.7 (Dirk in \ghpr{82} fixing \ghit{80}).
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.5.0 (2018-11-24)}{
+  \itemize{
+    \item Updated to version 3.3.5 of Eigen (Dirk in \ghpr{65})
+    \item Long vectors are now supported via \code{R_xlen_t} (Ralf
+    Stubner in \ghpr{55} fixing \ghit{54}).
+    \item The benchmarking example was updated in its use of
+    RcppArmadillo (Michael Weylandt in \ghpr{56}).
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.4.0 (2018-02-05)}{
+  \itemize{
+    \item Updated to version 3.3.4 of Eigen (Yixuan in \ghpr{49})
+    \item Also carried over on new upstream (Yixuan, addressing
+    \ghit{48})
+    \item As before, condition \code{long long} use on C++11.
+    \item Pragmas for g++ & clang to suppress diagnostics messages are
+    disabled per CRAN Policy; use \code{-Wno-ignored-attributes} to quieten.
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.3.1 (2017-11-19)}{
+  \itemize{
+    \item Compilation under Haiku-OS is now supported (Yu Gong in
+    \ghpr{45}).
+    \item The \code{Rcpp.plugin.maker} helper function is called via
+    \code{::} as it is in fact exported (yet we had old code using
+    \code{:::}).
+    \item A spurious argument was removed from an example call.
+    \item Travis CI now uses https to fetch the test runner script.
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.3.3.0 (2017-04-29)}{
+  \itemize{
+    \item Updated to version 3.3.3 of Eigen
+    \item Fixed incorrect function names in the examples, thanks to
+    ChingChuan Chen
+    \item The class \code{MappedSparseMatrix<T>} has been deprecated since
+    Eigen 3.3.0. The new structure \code{Map<SparseMatrix<T> >} should be used
+    instead
+    \item Exporters for the new type \code{Map<SparseMatrix<T> >} were added
+    \item Travis CI is now driven via \code{run.sh} from our forked r-travis
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.2.9.1 (2017-03-14)}{
+  \itemize{
+    \item Synchronize CholMod header file with Matrix package to ensure
+    binary compatibility on all platforms (Martin Maechler in \ghpr{42})
+    \item Added file \code{init.c} with calls to \code{R_registerRoutines()}
+    \code{and R_useDynamicSymbols()}; also use \code{.registration=TRUE}
+    in \code{useDynLib} in \code{NAMESPACE}
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.2.9.0 (2016-08-20)}{
+  \itemize{
+    \item Updated to version 3.2.9 of Eigen (PR \ghpr{37} by Yixuan
+    closing \ghit{36} from Bob Carpenter of the Stan team)
+    \item An exporter for \code{RowVectorX} was added (thanks to PR \ghpr{32}
+    by James Balamuta)
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.2.8.1 (2016-02-29)}{
+  \itemize{
+    \item Applied another upstream UBSAN fix (PR \ghpr{30} by Yixuan)
+  }
+}
+
+\section{Changes in RcppEigen version 0.3.2.8.0 (2016-02-23)}{
+  \itemize{
+    \item Updated to version 3.2.8 of Eigen (PR \ghpr{29} by Yixuan)
+  }
+}
 
 \section{Changes in RcppEigen version 0.3.2.7.0 (2016-01-18)}{
   \itemize{
     \item Updated to version 3.2.7 of Eigen
+    \item One unit test file tightened to please R-devel CMD check
     \item The fastLm example will not include the Lapack header if MKL
     is defined (thanks to PR \ghpr{25} by Alexey Stukalow)
   }
@@ -34,7 +143,7 @@
     \CRANpkg{pkgKitten} if available
   }
 }
-    
+
 \section{Changes in RcppEigen version 0.3.2.3.0 (2014-12-22)}{
   \itemize{
     \item Updated to version 3.2.3 of Eigen
@@ -65,7 +174,7 @@
     the cpu id comparison, with thanks to Gael Guennebaud for the patch
   }
 }
-    
+
 \section{Changes in RcppEigen version 0.3.2.1.1 (2014-03-06)}{
   \itemize{
     \item Better \code{ifdef} on one directory entry feature, with
@@ -83,7 +192,7 @@
   \itemize{
     \item Updated and extended \code{RcppEigen.package.skeleton()} to
     use several examples via \CRANpkg{Rcpp} Attributes; also removed the
-    deprecated \code{namespace} argument 
+    deprecated \code{namespace} argument
     \item Updated skeleton package example for \CRANpkg{Rcpp} 0.11.0 or
     later by removing needed for linking with user library
     \item Updated files \code{DESCRIPTION}, \code{NAMESPACE},
@@ -108,7 +217,7 @@
     \item Applied two small patches to deal with non-g++ compilrs
     \item Clarifications concerning license and authorship of
     Eigen (as opposed to RcppEigen) code added to \code{DESCRIPTION} at
-    the request of CRAN 
+    the request of CRAN
   }
 }
 
@@ -137,7 +246,7 @@
     which cannot be changed to a ColMajor form.
     \item Because of changes in R, -DNDEBUG is automatic. One must
     override it with -UNDEBUG in the local ~/.R/Makevars to activate the
-    debugging code. 
+    debugging code.
     \item New (unexported) functions CxxFlags() and RcppEigenCxxFlags()
     for use in Makefiles
     \item Fixes related to Rcpp 0.10.*
@@ -190,5 +299,3 @@
     some difficulty with combining testthat, inline and R CMD check.
   }
 }
- 
-  

@@ -132,13 +132,13 @@ matrices to represent projections in a visualization application. \pkg{Eigen}
 grew from there and has over the course of about a decade produced three
 major releases with \pkg{Eigen}3 being the current major version. To
 check the minor and patch version numbers, load the \pkg{RcppEigen}
-package and call
+package and call this (internal) helper function:
 \begin{CodeInput}
-R> .Call("eigen_version", FALSE)
+R> RcppEigen:::eigen_version(FALSE)
 \end{CodeInput}
 \begin{CodeOutput}
 major minor patch 
-    3     1     1 
+    3     3     5 
 \end{CodeOutput}
 \pkg{Eigen} is of interest as the \proglang{R} system for statistical
 computation and graphics \citep{R:Main} is itself easily extensible. This is

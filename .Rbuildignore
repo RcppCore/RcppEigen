@@ -4,3 +4,12 @@ NEWS.org
 vignettes/jss.bst
 .travis.yml
 debian
+^.*\.Rproj$
+^\.Rproj\.user$
+.*\.tar\.gz$
+^patches
+^.editorconfig$
+^eigen-?\.?\.?
+^\.github
+^\.codecov.yml
+^\.covrignore

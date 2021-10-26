@@ -1,0 +1,11 @@
+coverage:
+  precision: 1
+
+comment: false
+
+ignore:
+  - "inst/include/Eigen/"
+  - "inst/include/unsupported/Eigen/"
+
+codecov:
+  token: 0b726434-b483-4a82-9cfe-e8312f3b3e9b
