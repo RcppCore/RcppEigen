@@ -1,3 +1,7 @@
+2021-12-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Remove unused continuous integration artifact and badge
+
 2021-10-13  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/CITATION: Refinment of doi use
