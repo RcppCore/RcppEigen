@@ -2,7 +2,7 @@
 //
 // RcppEigenWrap.h: Rcpp wrap methods for Eigen matrices, vectors and arrays
 //
-// Copyright (C) 2011 - 2012   Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2022   Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -81,18 +81,18 @@ namespace Rcpp{
         // for plain dense objects
         template <typename T>
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ) {
-	    typename Eigen::internal::conditional<
-		T::IsRowMajor,
-		Eigen::Matrix<typename T::Scalar,
-			      T::RowsAtCompileTime,
-			      T::ColsAtCompileTime>,
-		const T&>::type objCopy(obj);
-	    R_xlen_t m = obj.rows(), n = obj.cols(), size = m * n;
-	    SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
+            typename Eigen::internal::conditional<
+                T::IsRowMajor,
+                Eigen::Matrix<typename T::Scalar,
+                              T::RowsAtCompileTime,
+                              T::ColsAtCompileTime>,
+                const T&>::type objCopy(obj);
+            R_xlen_t m = obj.rows(), n = obj.cols(), size = m * n;
+            SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
             if ( T::ColsAtCompileTime != 1 ) {
-		if (m > INT_MAX || n > INT_MAX) {
-		    throw std::runtime_error("array dimensions cannot exceed INT_MAX");
-		}
+                if (m > INT_MAX || n > INT_MAX) {
+                    Rcpp::stop("array dimensions cannot exceed INT_MAX");
+                }
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
                 d[0] = m;

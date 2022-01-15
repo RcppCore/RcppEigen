@@ -1,3 +1,7 @@
+2022-01-15  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* inst/include/RcppEigenWrap.h: Use R_xlen_t for vectors rows + cols
+
 2021-12-29  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Add total downloads badge
