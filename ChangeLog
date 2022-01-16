@@ -1,5 +1,8 @@
 2022-01-16  Dirk Eddelbuettel  <edd@debian.org>
 
+	* inst/tinytest/test_wrap.R: Added (optional) large memory wrap tests
+ 	* inst/tinytest/cpp/wrap.cpp: Added C++ part of test
+
 	* .codecov.yml: Added to not trigger PR fail for small additions
 
 2022-01-16  Mikael Jagan  <jaganmn@mcmaster.ca>

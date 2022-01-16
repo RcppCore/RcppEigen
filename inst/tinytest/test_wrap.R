@@ -1,5 +1,5 @@
-#
-# Copyright (C) 2012 - 2013  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+
+# Copyright (C) 2012 - 2022  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 #
 # This file is part of RcppEigen.
 #
@@ -85,3 +85,25 @@ integer_mat <- matrix(as.integer(diag(nrow = 5L)))
 numeric_mat <- diag(nrow = 5L)
 res <- as_Array2D(list(integer_mat, numeric_mat))
 expect_equal(unlist(res), rep.int(5, 6L))
+
+
+## CI systems may have limited memory, and CRAN may not like us creating multi-gb objects
+## so remainer is opt-in
+if (Sys.getenv("RunLargeMemoryTests") != "yes") exit_file("Set 'RunLargeMemoryTests' to 'yes' to run.")
+
+## add test for wrapping of large vectors (PRs #105, 106) which works for vectors
+## but fails for matrices as we violate the 'size_t value permitted for lenth values
+## but not inside a `dim` object of type `integer` (aka `int32_t`)
+n <- 2^31 + 100                         # in excess of limit of 2^31 - 1
+res <- vector_large_wrap(n)
+expect_true(is.vector(res, "integer"))
+expect_equal(length(res), n)
+expect_equal(res[seq_len(2^10)], rep_len(0:9, 2^10))
+
+expect_error(matrix_large_wrap(n))
+n <- 2^31 - 100                         # within limit of 2^31 - 1 for dim given one column
+res <- matrix_large_wrap(n)
+expect_true(is.matrix(res))
+expect_equal(typeof(res), "integer")
+expect_equal(dim(res), c(n,1))
+expect_equal(res[seq_len(2^10)], rep_len(0:9, 2^10))
