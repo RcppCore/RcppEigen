@@ -88,11 +88,11 @@ namespace Rcpp{
                               T::ColsAtCompileTime>,
                 const T&>::type objCopy(obj);
             R_xlen_t m = obj.rows(), n = obj.cols(), size = m * n;
+            if (m > INT_MAX || n > INT_MAX) {
+                Rcpp::stop("array dimensions cannot exceed INT_MAX");
+            }
             SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
             if ( T::ColsAtCompileTime != 1 ) {
-                if (m > INT_MAX || n > INT_MAX) {
-                    Rcpp::stop("array dimensions cannot exceed INT_MAX");
-                }
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
                 d[0] = m;
