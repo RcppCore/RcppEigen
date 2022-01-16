@@ -1,3 +1,11 @@
+2022-01-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .codecov.yml: Added to not trigger PR fail for small additions
+
+2022-01-16  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* inst/include/RcppEigenWrap.h: Refine use plain dense wrap() change
+
 2022-01-15  Mikael Jagan  <jaganmn@mcmaster.ca>
 
 	* inst/include/RcppEigenWrap.h: Use R_xlen_t for vectors rows + cols

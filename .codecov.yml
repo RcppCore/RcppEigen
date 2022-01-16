@@ -1,11 +1,17 @@
-coverage:
-  precision: 1
-
 comment: false
+coverage:
+  status:
+    project:
+      default:
+        target: 70%    # the (on purpose low) required coverage value
+        threshold: 2%  # the permitted delta in hitting the target
+    patch:
+      default:
+        target: 0%     # the (on purpose low) required coverage value
 
-ignore:
-  - "inst/include/Eigen/"
-  - "inst/include/unsupported/Eigen/"
-
-codecov:
-  token: 0b726434-b483-4a82-9cfe-e8312f3b3e9b
+#  layout: "header, diff, tree, changes"
+#  behavior: default
+#  require_changes: false  # if true: only post the comment if coverage changes
+#  branches: null
+#  flags: null
+#  paths: null
