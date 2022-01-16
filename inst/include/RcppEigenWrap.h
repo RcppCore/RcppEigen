@@ -81,18 +81,21 @@ namespace Rcpp{
         // for plain dense objects
         template <typename T>
         SEXP eigen_wrap_plain_dense( const T& obj, Rcpp::traits::true_type ) {
+            bool needs_dim = T::ColsAtCompileTime != 1;
+            R_xlen_t m = obj.rows(), n = obj.cols();
+            if (needs_dim && (m > INT_MAX || n > INT_MAX)) {
+                Rcpp::stop("array dimensions cannot exceed INT_MAX");
+            }
+            R_xlen_t size = m * n;
             typename Eigen::internal::conditional<
                 T::IsRowMajor,
                 Eigen::Matrix<typename T::Scalar,
                               T::RowsAtCompileTime,
                               T::ColsAtCompileTime>,
                 const T&>::type objCopy(obj);
-            R_xlen_t m = obj.rows(), n = obj.cols(), size = m * n;
-            if (m > INT_MAX || n > INT_MAX) {
-                Rcpp::stop("array dimensions cannot exceed INT_MAX");
-            }
-            SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(), objCopy.data() + size));
-            if ( T::ColsAtCompileTime != 1 ) {
+            SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(),
+                                            objCopy.data() + size));
+            if (needs_dim) {
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
                 d[0] = m;
