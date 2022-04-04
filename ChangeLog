@@ -1,3 +1,8 @@
+2022-04-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/fastLm.cpp: Add FCONE in two calls for improved Fortran and C
+	character interface per Writing R Extensions, Section 6.6.1
+
 2022-01-16  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_wrap.R: Added (optional) large memory wrap tests

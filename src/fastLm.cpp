@@ -2,7 +2,7 @@
 //
 // fastLm.cpp: Rcpp/Eigen example of a simple lm() alternative
 //
-// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2022  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -144,11 +144,11 @@ namespace lmsol {
 	if (m < n || S.size() != n || Vt.rows() != n || Vt.cols() != n)
 	    throw std::invalid_argument("dimension mismatch in gesvd"); // #nocov
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
-			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info);
+			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info FCONE);
 	int lwork(wrk);
 	std::vector<double> work(lwork);
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
-			 &m, Vt.data(), &n, &work[0], &lwork, &iwork[0], &info);
+			 &m, Vt.data(), &n, &work[0], &lwork, &iwork[0], &info FCONE);
 	return info;
     }
 
