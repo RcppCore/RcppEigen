@@ -1,3 +1,8 @@
+2022-04-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.2
+	* inst/NEWS.Rd: Release 0.3.3.9.2
+
 2022-04-04  Dirk Eddelbuettel  <edd@debian.org>
 
 	* src/fastLm.cpp: Add FCONE in two calls for improved Fortran and C

@@ -3,7 +3,7 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
-\section{Changes in RcppEigen version 0.3.3.9.2 (2022-xx-yy)}{
+\section{Changes in RcppEigen version 0.3.3.9.2 (2022-04-05)}{
   \itemize{
     \item Added test coverage in continuous integration
     \item Added new tests to increase test coverage
