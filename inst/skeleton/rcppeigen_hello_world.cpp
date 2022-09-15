@@ -9,7 +9,7 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 // simple example of creating two matrices and
-// returning the result of an operatioon on them
+// returning the result of an operation on them
 //
 // via the exports attribute we tell Rcpp to make this function
 // available from R
