@@ -1,5 +1,7 @@
 2022-11-04  Dirk Eddelbuettel  <edd@debian.org>
 
+	* src/init.c: Add 'void' for proper prototype pleasing clang-15
+
 	* R/fastLm.R (summary.fastLm,print.fastLm): Refer to correct and full
 	variable name df.residual in the returned object
 

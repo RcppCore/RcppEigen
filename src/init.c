@@ -3,12 +3,12 @@
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
-/* FIXME: 
+/* FIXME:
    Check these declarations against the C/Fortran source code.
 */
 
 /* .Call calls */
-extern SEXP RcppEigen_Eigen_SSE();
+extern SEXP RcppEigen_Eigen_SSE(void);
 extern SEXP RcppEigen_eigen_version(SEXP);
 extern SEXP RcppEigen_fastLm_Impl(SEXP, SEXP, SEXP);
 
