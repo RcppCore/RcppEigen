@@ -54,7 +54,7 @@ summary.fastLm <- function(object, ...) {
     object$coefficients <- cbind(Estimate     = coef,
                                  "Std. Error" = se,
                                  "t value"    = tval,
-                                 "Pr(>|t|)"   = 2*pt(-abs(tval), df=object$df))
+                                 "Pr(>|t|)"   = 2*pt(-abs(tval), df=object$df.residual))
 
     ## cf src/stats/R/lm.R and case with no weights and an intercept
     f <- object$fitted.values
@@ -66,7 +66,7 @@ summary.fastLm <- function(object, ...) {
     object$r.squared <- mss/(mss + rss)
     df.int <- if (object$intercept) 1L else 0L
     n <- length(f)
-    rdf <- object$df
+    rdf <- object$df.residual
     object$adj.r.squared <- 1 - (1 - object$r.squared) * ((n - df.int)/rdf)
     class(object) <- "summary.fastLm"
     object
@@ -82,7 +82,7 @@ print.summary.fastLm <- function(x, ...) {
 
     printCoefmat(x$coefficients, P.values=TRUE, has.Pvalue=TRUE, ...)
     cat("\nResidual standard error: ", formatC(x$s, digits=digits), " on ",
-        formatC(x$df), " degrees of freedom\n", sep="")
+        formatC(x$df.residual), " degrees of freedom\n", sep="")
     cat("Multiple R-squared: ", formatC(x$r.squared, digits=digits),
         ",\tAdjusted R-squared: ",formatC(x$adj.r.squared, digits=digits),
         "\n", sep="")
