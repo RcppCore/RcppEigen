@@ -5,6 +5,8 @@
 	* R/fastLm.R (summary.fastLm,print.fastLm): Refer to correct and full
 	variable name df.residual in the returned object
 
+	* .github/workflows/ci.yaml (jobs): Update to actions/checkout@v3
+
 2022-09-15  Jonah Gabry  <jgabry@gmail.com>
 
 	* inst/skeleton/rcppeigen_hello_world.cpp: Correct typo
