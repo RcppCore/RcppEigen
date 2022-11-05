@@ -3,6 +3,18 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.3.9.3 (2022-11-04)}{
+  \itemize{
+    \item The dependency on R is now versioned to 3.6.0 or later for
+    support for \code{USE_FC_LEN_T} from Fortran.
+    \item An old example typo was corrected (Jonah Gabry in \ghpr{114}).
+    \item The \code{fastLm} methods now reference \code{df.residual} by
+    its full name (Closes \ghit{115}).
+    \item A function prototype was updated for \code{clang-15}.
+    \item GitHub Actions were updated to checkout version 3.
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.3.9.2 (2022-04-05)}{
   \itemize{
     \item Added test coverage in continuous integration
