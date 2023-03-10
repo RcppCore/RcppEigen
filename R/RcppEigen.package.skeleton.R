@@ -1,6 +1,6 @@
 ## RcppEigen.package.skeleton.R: makes a skeleton for a package that wants to use RcppEigen
 ##
-## Copyright (C) 2011 - 2021  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C) 2011 - 2023  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -68,7 +68,7 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     DESCRIPTION <- file.path(root, "DESCRIPTION")
     if (file.exists(DESCRIPTION)) {
         x <- cbind(read.dcf(DESCRIPTION),
-                   "Imports" = sprintf("Rcpp (>= %s), RcppEigen",
+                   "Imports" = sprintf("Rcpp (>= %s)",
                    packageDescription("Rcpp")[["Version"]]),
                    "LinkingTo" = "Rcpp, RcppEigen")
         write.dcf(x, file = DESCRIPTION)
@@ -81,7 +81,6 @@ RcppEigen.package.skeleton <- function(name= "anRpackage", list = character(),
     lines <- readLines(NAMESPACE)
     if (!any(grepl("useDynLib", lines))) {
         lines <- c(sprintf("useDynLib(%s)", name),
-                   "import(RcppEigen)",
                    "importFrom(Rcpp, evalCpp)",        ## ensures Rcpp instantiation
                    lines)
         writeLines(lines, con = NAMESPACE)
