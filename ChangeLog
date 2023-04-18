@@ -1,3 +1,7 @@
+2023-04-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Use app.codecov.io as base for codecov link
+
 2023-03-10  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Date, Version): Roll minor version

@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](https://www.mozilla.org/MPL/2.0/)
 [![CRAN](https://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
 [![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
-[![Coverage Status](https://codecov.io/gh/RcppCore/RcppEigen/graph/badge.svg)](https://codecov.io/github/RcppCore/RcppEigen?branch=master)
+[![Coverage Status](https://codecov.io/gh/RcppCore/RcppEigen/graph/badge.svg)](https://app.codecov.io/github/RcppCore/RcppEigen?branch=master)
 [![Debian package](https://img.shields.io/debian/v/r-cran-rcppeigen/sid?color=brightgreen)](https://packages.debian.org/sid/r-cran-rcppeigen)
 [![Last Commit](https://img.shields.io/github/last-commit/RcppCore/RcppEigen)](https://github.com/RcppCore/RcppEigen)
 [![Downloads (monthly)](https://cranlogs.r-pkg.org/badges/RcppEigen?color=brightgreen)](https://www.r-pkg.org:443/pkg/RcppEigen)
