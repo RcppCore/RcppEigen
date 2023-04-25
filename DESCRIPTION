@@ -14,12 +14,12 @@ Description: R and 'Eigen' integration using 'Rcpp'.
  such matrices, and solutions of linear systems. Its performance on many
  algorithms is comparable with some of the best implementations based on
  'Lapack' and level-3 'BLAS'. The 'RcppEigen' package includes the header
- files from the 'Eigen' C++ template library (currently version 3.3.4). Thus
- users do not need to install 'Eigen' itself in order to use 'RcppEigen'.
- Since version 3.1.1, 'Eigen' is licensed under the Mozilla Public License
- (version 2); earlier version were licensed under the GNU LGPL version 3 or
- later. 'RcppEigen' (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under
- the GNU GPL version 2 or later, as is the rest of 'Rcpp'.
+ files from the 'Eigen' C++ template library. Thus users do not need to
+ install 'Eigen' itself in order to use 'RcppEigen'. Since version 3.1.1,
+ 'Eigen' is licensed under the Mozilla Public License (version 2); earlier
+ version were licensed under the GNU LGPL version 3 or later. 'RcppEigen'
+ (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under the GNU GPL
+ version 2 or later, as is the rest of 'Rcpp'.
 License: GPL (>= 2) | file LICENSE
 LazyLoad: yes
 Depends: R (>= 3.6.0)
