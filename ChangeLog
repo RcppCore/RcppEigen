@@ -8,6 +8,9 @@
 	* src/RcppExports.cpp: Regenerated
 	* R/RcppExports.R: Idem
 
+	* src/Makevars: Document possible use of '-fopenmp'
+	* src/Makevars.win: Idem
+
 2023-04-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Use app.codecov.io as base for codecov link
