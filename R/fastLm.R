@@ -1,6 +1,6 @@
 ## fastLm.R: Rcpp/Eigen implementation of lm()
 ##
-## Copyright (C)  2011 - 2017  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+## Copyright (C)  2011 - 2023  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 ##
 ## This file is part of RcppEigen.
 ##
@@ -21,7 +21,7 @@ fastLmPure <- function(X, y, method = 0L) {
 
     stopifnot(is.matrix(X), is.numeric(y), NROW(y)==nrow(X))
 
-    .Call("RcppEigen_fastLm_Impl", X, y, method, PACKAGE="RcppEigen")
+    fastLm_Impl(X, y, method)
 }
 
 fastLm <- function(X, ...) UseMethod("fastLm")

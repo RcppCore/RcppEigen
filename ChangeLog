@@ -1,3 +1,13 @@
+2023-07-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/RcppEigen.cpp (EigenNbThreads): Add simple threads reporter
+
+	* R/fastLm.R (fastLmPure): Simpler call to `fastLm_Impl()`
+
+	* src/init.c: Replaced by auto-generated section in RcppExports.cpp
+	* src/RcppExports.cpp: Regenerated
+	* R/RcppExports.R: Idem
+
 2023-04-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* README.md: Use app.codecov.io as base for codecov link

@@ -2,7 +2,7 @@
 //
 // RcppEigen.cpp: Rcpp/Eigen glue
 //
-// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2023  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -25,13 +25,13 @@
 Rcpp::IntegerVector eigen_version(bool single) {
     using Rcpp::_;
     using Rcpp::IntegerVector;
-	
+
     if (single) {
         return Rcpp::wrap( 10000 * EIGEN_WORLD_VERSION +
-                           100 * EIGEN_MAJOR_VERSION + 
+                           100 * EIGEN_MAJOR_VERSION +
                            EIGEN_MINOR_VERSION ) ;
     }
-	
+
     return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
                                  _["minor"] = EIGEN_MAJOR_VERSION,
                                  _["patch"] = EIGEN_MINOR_VERSION);
@@ -40,4 +40,9 @@ Rcpp::IntegerVector eigen_version(bool single) {
 // [[Rcpp::export]]
 bool Eigen_SSE() {
     return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
+}
+
+// [[Rcpp::export]]
+int EigenNbThreads() {
+    return Eigen::nbThreads();
 }
