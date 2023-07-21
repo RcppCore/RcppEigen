@@ -1,3 +1,7 @@
+2023-07-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll micro version and date
+
 2023-07-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* src/RcppEigen.cpp (EigenNbThreads): Add simple threads reporter
