@@ -2,6 +2,8 @@
 
 	* DESCRIPTION (Date, Version): Roll micro version and date
 
+	* README.md: Add r-universe badge
+
 2023-07-20  Dirk Eddelbuettel  <edd@debian.org>
 
 	* src/RcppEigen.cpp (EigenNbThreads): Add simple threads reporter

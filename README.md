@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/license-MPL2-brightgreen.svg?style=flat)](https://www.mozilla.org/MPL/2.0/)
 [![CRAN](https://www.r-pkg.org/badges/version/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
+[![r-universe](https://rcppcore.r-universe.dev/badges/RcppEigen)](https://rcppcore.r-universe.dev/RcppEigen)
 [![Dependencies](https://tinyverse.netlify.com/badge/RcppEigen)](https://cran.r-project.org/package=RcppEigen)
 [![Coverage Status](https://codecov.io/gh/RcppCore/RcppEigen/graph/badge.svg)](https://app.codecov.io/github/RcppCore/RcppEigen?branch=master)
 [![Debian package](https://img.shields.io/debian/v/r-cran-rcppeigen/sid?color=brightgreen)](https://packages.debian.org/sid/r-cran-rcppeigen)
