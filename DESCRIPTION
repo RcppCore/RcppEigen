@@ -24,7 +24,7 @@ License: GPL (>= 2) | file LICENSE
 LazyLoad: yes
 Depends: R (>= 3.6.0)
 LinkingTo: Rcpp
-Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils
+Imports: Rcpp (>= 0.11.0), stats, utils
 Suggests: inline, tinytest, pkgKitten, microbenchmark
 URL: https://github.com/RcppCore/RcppEigen, https://dirk.eddelbuettel.com/code/rcpp.eigen.html
 BugReports: https://github.com/RcppCore/RcppEigen/issues
