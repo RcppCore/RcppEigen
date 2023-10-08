@@ -10,6 +10,10 @@
 #ifndef EIGEN_CHOLMODSUPPORT_H
 #define EIGEN_CHOLMODSUPPORT_H
 
+#ifndef R_MATRIX_CHOLMOD
+# define R_MATRIX_CHOLMOD(_NAME_) cholmod_ ## _NAME_
+#endif
+
 namespace Eigen { 
 
 namespace internal {
