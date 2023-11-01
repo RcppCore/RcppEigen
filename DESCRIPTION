@@ -25,6 +25,6 @@ LazyLoad: yes
 Depends: R (>= 3.6.0)
 LinkingTo: Rcpp
 Imports: Rcpp (>= 0.11.0), stats, utils
-Suggests: Matrix, inline, microbenchmark, pkgKitten, tinytest
+Suggests: Matrix, inline, tinytest, pkgKitten, microbenchmark
 URL: https://github.com/RcppCore/RcppEigen, https://dirk.eddelbuettel.com/code/rcpp.eigen.html
 BugReports: https://github.com/RcppCore/RcppEigen/issues

@@ -1,3 +1,18 @@
+2023-10-05  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* DESCRIPTION: Package 'Matrix' is now only a Suggests:
+	* NAMESPACE: Remove unconditional imports from package Matrix
+
+	* inst/include/Eigen/CholmodSupport: No longer need to include
+	RcppEigenCholdmod.h
+	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Small
+	wrapper adjustments conditional on Matrix use
+	* inst/include/RcppEigenCholmod.h: Updated
+	* inst/include/RcppEigenForward.h: Simplified
+	* inst/include/RcppEigenWrap.h: Ditto
+	* inst/include/RcppEigenStubs.cpp: New shorter helper
+	* inst/include/RcppEigenStubs.h: Removed
+
 2023-07-21  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Date, Version): Roll micro version and date
