@@ -1,6 +1,5 @@
 useDynLib("RcppEigen", .registration=TRUE)
 
-importClassesFrom("Matrix", "dgCMatrix", "dgeMatrix", "dsCMatrix", "dtCMatrix")
 importFrom("Rcpp", "evalCpp")
 importFrom("utils", "packageDescription", "package.skeleton")
 importFrom("stats", "model.frame", "model.matrix", "model.response", "fitted", "coef", "printCoefmat", "pt")

@@ -25,11 +25,8 @@
 #include <iterator>
 #include <RcppCommon.h>
 #include <Rconfig.h>
-#include <RcppEigenCholmod.h>
-#include <RcppEigenStubs.h>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <Eigen/CholmodSupport>
 //#include <unsupported/Eigen/AutoDiff>  // causes problems redefining sign
 #include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/KroneckerProduct>
@@ -42,10 +39,6 @@
 
 /* forward declarations */
 namespace Rcpp {
-    /* support for wrap */
-
-    template<typename T>
-    SEXP wrap(const Eigen::CholmodDecomposition<Eigen::SparseMatrix<T> >& obj);
 
     namespace traits {
 
