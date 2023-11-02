@@ -1,10 +1,15 @@
+2023-11-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.4
+	* inst/NEWS.Rd: Release 0.3.3.9.4
+
 2023-10-05  Mikael Jagan  <jaganmn@mcmaster.ca>
 
 	* DESCRIPTION: Package 'Matrix' is now only a Suggests:
 	* NAMESPACE: Remove unconditional imports from package Matrix
 
 	* inst/include/Eigen/CholmodSupport: No longer need to include
-	RcppEigenCholdmod.h
+	RcppEigenCholmod.h
 	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Small
 	wrapper adjustments conditional on Matrix use
 	* inst/include/RcppEigenCholmod.h: Updated
