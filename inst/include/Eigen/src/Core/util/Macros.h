@@ -389,11 +389,22 @@
 #endif
 
 // Does the compiler support result_of?
+// result_of was deprecated in c++17 and removed in c++ 20
 #ifndef EIGEN_HAS_STD_RESULT_OF
-#if EIGEN_MAX_CPP_VER>=11 && ((__has_feature(cxx_lambdas) || (defined(__cplusplus) && __cplusplus >= 201103L)))
+#if EIGEN_HAS_CXX11 && EIGEN_CPLUSPLUS <= 201402L
 #define EIGEN_HAS_STD_RESULT_OF 1
 #else
 #define EIGEN_HAS_STD_RESULT_OF 0
+#endif
+#endif
+
+// Does the compiler support invoke_result?
+// invoke_result was introduced in c++17
+#ifndef EIGEN_HAS_STD_INVOKE_RESULT
+#if EIGEN_COMP_CXXVER > 201402L
+#define EIGEN_HAS_STD_INVOKE_RESULT 1
+#else
+#define EIGEN_HAS_STD_INVOKE_RESULT 0
 #endif
 #endif
 

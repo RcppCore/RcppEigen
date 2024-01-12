@@ -309,19 +309,36 @@ protected:
 };
 
 /** \internal
-  * Convenient struct to get the result type of a unary or binary functor.
-  *
-  * It supports both the current STL mechanism (using the result_type member) as well as
-  * upcoming next STL generation (using a templated result member).
-  * If none of these members is provided, then the type of the first argument is returned. FIXME, that behavior is a pretty bad hack.
-  */
-#if EIGEN_HAS_STD_RESULT_OF
+ * Convenient struct to get the result type of a nullary, unary, binary, or
+ * ternary functor.
+ * 
+ * Pre C++11:
+ * Supports both a Func::result_type member and templated
+ * Func::result<Func(ArgTypes...)>::type member.
+ * 
+ * If none of these members is provided, then the type of the first
+ * argument is returned.
+ * 
+ * Post C++11:
+ * This uses std::result_of. However, note the `type` member removes
+ * const and converts references/pointers to their corresponding value type.
+ */
+#if EIGEN_HAS_STD_INVOKE_RESULT
+template<typename T> struct result_of;
+
+template<typename F, typename... ArgTypes>
+struct result_of<F(ArgTypes...)> {
+  typedef typename std::invoke_result<F, ArgTypes...>::type type1;
+  typedef typename remove_all<type1>::type type;
+};
+#elif EIGEN_HAS_STD_RESULT_OF
 template<typename T> struct result_of {
   typedef typename std::result_of<T>::type type1;
   typedef typename remove_all<type1>::type type;
 };
 #else
 template<typename T> struct result_of { };
+
 
 struct has_none {int a[1];};
 struct has_std_result_type {int a[2];};
