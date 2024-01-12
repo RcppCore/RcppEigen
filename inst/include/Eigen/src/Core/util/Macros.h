@@ -387,6 +387,30 @@
   #define EIGEN_HAS_C99_MATH 0
 #endif
 #endif
+  
+/// \internal EIGEN_COMP_MSVC_LANG set to _MSVC_LANG if the compiler is Microsoft Visual C++, 0 otherwise.
+#if defined(_MSVC_LANG)
+#define EIGEN_COMP_MSVC_LANG _MSVC_LANG
+#else
+#define EIGEN_COMP_MSVC_LANG 0
+#endif
+  
+// The macro EIGEN_CPLUSPLUS is a replacement for __cplusplus/_MSVC_LANG that
+// works for both platforms, indicating the C++ standard version number.
+//
+// With MSVC, without defining /Zc:__cplusplus, the __cplusplus macro will
+// report 199711L regardless of the language standard specified via /std.
+// We need to rely on _MSVC_LANG instead, which is only available after
+// VS2015.3.
+#if EIGEN_COMP_MSVC_LANG > 0
+#define EIGEN_CPLUSPLUS EIGEN_COMP_MSVC_LANG
+#elif EIGEN_COMP_MSVC >= 1900
+#define EIGEN_CPLUSPLUS 201103L
+#elif defined(__cplusplus)
+#define EIGEN_CPLUSPLUS __cplusplus
+#else
+#define EIGEN_CPLUSPLUS 0
+#endif
 
 // Does the compiler support result_of?
 // result_of was deprecated in c++17 and removed in c++ 20
@@ -401,7 +425,7 @@
 // Does the compiler support invoke_result?
 // invoke_result was introduced in c++17
 #ifndef EIGEN_HAS_STD_INVOKE_RESULT
-#if EIGEN_COMP_CXXVER > 201402L
+#if EIGEN_CPLUSPLUS > 201402L
 #define EIGEN_HAS_STD_INVOKE_RESULT 1
 #else
 #define EIGEN_HAS_STD_INVOKE_RESULT 0
