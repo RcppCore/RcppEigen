@@ -10,6 +10,10 @@
 #ifndef EIGEN_CHOLMODSUPPORT_H
 #define EIGEN_CHOLMODSUPPORT_H
 
+#ifndef R_MATRIX_CHOLMOD
+# define R_MATRIX_CHOLMOD(_NAME_) cholmod_ ## _NAME_
+#endif
+
 namespace Eigen {
 
 namespace internal {
@@ -84,10 +88,10 @@ cholmod_sparse viewAsCholmod(Ref<SparseMatrix<_Scalar,_Options,_StorageIndex> > 
   {
     res.itype = CHOLMOD_INT;
   }
-  else if (internal::is_same<_StorageIndex,SuiteSparse_long>::value)
-  {
-    res.itype = CHOLMOD_LONG;
-  }
+  // else if (internal::is_same<_StorageIndex,SuiteSparse_long>::value)
+  // {
+  //   res.itype = CHOLMOD_LONG;
+  // }
   else
   {
     eigen_assert(false && "Index type not supported yet");
@@ -167,10 +171,10 @@ namespace internal {
 // template specializations for int and long that call the correct cholmod method
 
 #define EIGEN_CHOLMOD_SPECIALIZE0(ret, name) \
-    template<typename _StorageIndex> inline ret cm_ ## name       (cholmod_common &Common) { return cholmod_ ## name   (&Common); }
+    template<typename _StorageIndex> inline ret cm_ ## name       (cholmod_common &Common) { return R_MATRIX_CHOLMOD(name)   (&Common); }
 
 #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1) \
-    template<typename _StorageIndex> inline ret cm_ ## name       (t1& a1, cholmod_common &Common) { return cholmod_ ## name   (&a1, &Common); }
+    template<typename _StorageIndex> inline ret cm_ ## name       (t1& a1, cholmod_common &Common) { return R_MATRIX_CHOLMOD(name)   (&a1, &Common); }
 
 EIGEN_CHOLMOD_SPECIALIZE0(int, start)
 EIGEN_CHOLMOD_SPECIALIZE0(int, finish)
@@ -181,16 +185,16 @@ EIGEN_CHOLMOD_SPECIALIZE1(int, free_sparse, cholmod_sparse*, A)
 
 EIGEN_CHOLMOD_SPECIALIZE1(cholmod_factor*, analyze, cholmod_sparse, A)
 
-template<typename _StorageIndex> inline cholmod_dense*  cm_solve         (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return cholmod_solve     (sys, &L, &B, &Common); }
-// template<>                       inline cholmod_dense*  cm_solve<SuiteSparse_long>   (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return cholmod_l_solve   (sys, &L, &B, &Common); }
+template<typename _StorageIndex> inline cholmod_dense*  cm_solve         (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return R_MATRIX_CHOLMOD(solve)     (sys, &L, &B, &Common); }
+// template<>                       inline cholmod_dense*  cm_solve<SuiteSparse_long>   (int sys, cholmod_factor& L, cholmod_dense&  B, cholmod_common &Common) { return R_MATRIX_CHOLMOD(l_solve)   (sys, &L, &B, &Common); }
 
-template<typename _StorageIndex> inline cholmod_sparse* cm_spsolve       (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return cholmod_spsolve   (sys, &L, &B, &Common); }
-// template<>                       inline cholmod_sparse* cm_spsolve<SuiteSparse_long> (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return cholmod_l_spsolve (sys, &L, &B, &Common); }
+template<typename _StorageIndex> inline cholmod_sparse* cm_spsolve       (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return R_MATRIX_CHOLMOD(spsolve)   (sys, &L, &B, &Common); }
+// template<>                       inline cholmod_sparse* cm_spsolve<SuiteSparse_long> (int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common &Common) { return R_MATRIX_CHOLMOD(l_spsolve) (sys, &L, &B, &Common); }
 
 template<typename _StorageIndex>
-inline int  cm_factorize_p       (cholmod_sparse*  A, double beta[2], _StorageIndex* fset, std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return cholmod_factorize_p   (A, beta, fset, fsize, L, &Common); }
+inline int  cm_factorize_p       (cholmod_sparse*  A, double beta[2], _StorageIndex* fset, std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return R_MATRIX_CHOLMOD(factorize_p)   (A, beta, fset, fsize, L, &Common); }
 // template<>
-// inline int  cm_factorize_p<SuiteSparse_long> (cholmod_sparse*  A, double beta[2], SuiteSparse_long* fset,          std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return cholmod_l_factorize_p (A, beta, fset, fsize, L, &Common); }
+// inline int  cm_factorize_p<SuiteSparse_long> (cholmod_sparse*  A, double beta[2], SuiteSparse_long* fset,          std::size_t fsize, cholmod_factor* L, cholmod_common &Common) { return R_MATRIX_CHOLMOD(l_factorize_p) (A, beta, fset, fsize, L, &Common); }
 
 #undef EIGEN_CHOLMOD_SPECIALIZE0
 #undef EIGEN_CHOLMOD_SPECIALIZE1

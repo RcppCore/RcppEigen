@@ -25,6 +25,10 @@
 #include <R_ext/Lapack.h>
 #endif
 
+#ifndef FCONE
+# define FCONE
+#endif
+
 namespace lmsol {
     using Rcpp::_;
     using Rcpp::as;
@@ -144,11 +148,11 @@ namespace lmsol {
 	if (m < n || S.size() != n || Vt.rows() != n || Vt.cols() != n)
 	    throw std::invalid_argument("dimension mismatch in gesvd"); // #nocov
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
-			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info);
+			 &m, Vt.data(), &n, &wrk, &mone, &iwork[0], &info FCONE);
 	int lwork(wrk);
 	std::vector<double> work(lwork);
 	F77_CALL(dgesdd)("O", &m, &n, A.data(), &m, S.data(), A.data(),
-			 &m, Vt.data(), &n, &work[0], &lwork, &iwork[0], &info);
+			 &m, Vt.data(), &n, &work[0], &lwork, &iwork[0], &info FCONE);
 	return info;
     }
 
