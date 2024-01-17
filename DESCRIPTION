@@ -23,7 +23,7 @@ Description: R and 'Eigen' integration using 'Rcpp'.
 License: GPL (>= 2) | file LICENSE
 LazyLoad: yes
 LinkingTo: Rcpp
-Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.0), stats, utils
-Suggests: inline, tinytest, pkgKitten, microbenchmark
+Imports: Rcpp (>= 0.11.0), stats, utils
+Suggests: Matrix, inline, tinytest, pkgKitten, microbenchmark
 URL: https://github.com/RcppCore/RcppEigen, https://dirk.eddelbuettel.com/code/rcpp.eigen.html
 BugReports: https://github.com/RcppCore/RcppEigen/issues
