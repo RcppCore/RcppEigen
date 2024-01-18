@@ -222,3 +222,23 @@ Rcpp::List as_Array2D(Rcpp::List input) {
 
     return res ;
 }
+
+// wrap large vector, passes for n > 2^31-1 as no dim attribute
+// [[Rcpp::export]]
+Rcpp::IntegerVector vector_large_wrap(R_xlen_t n) {
+    Eigen::VectorXi x(n, 1);
+    for (R_xlen_t i = 0; i < n; ++i) {
+        x(i) = static_cast<int32_t>(i % 10);
+    }
+    return Rcpp::wrap(x);
+}
+
+// wrap large matrix, fails for n > 2^31-1 if dim attribute > 2^31-1
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix matrix_large_wrap(R_xlen_t n) {
+    Eigen::MatrixXi x(n, 1);
+    for (R_xlen_t i = 0; i < n; ++i) {
+        x(i, 0) = static_cast<int32_t>(i % 10);
+    }
+    return Rcpp::wrap(x);
+}

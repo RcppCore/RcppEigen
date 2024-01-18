@@ -1,4 +1,4 @@
-2021-10-26  Yixuan Qiu  <yixuan.qiu@cos.name>
+2024-01-17  Yixuan Qiu  <yixuan.qiu@cos.name>
 
 	* DESCRIPTION (Version, Date): Release candidate 0.3.3.99.0
 
@@ -6,6 +6,118 @@
 	* inst/include/unsupported/Eigen: Idem
 	* patches/eigen-3.4.0.diff: Carried local CRAN patches forward
 	* patches/howToDiff.md: Idem
+
+2023-11-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.4
+	* inst/NEWS.Rd: Release 0.3.3.9.4
+
+2023-10-05  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* DESCRIPTION: Package 'Matrix' is now only a Suggests:
+	* NAMESPACE: Remove unconditional imports from package Matrix
+
+	* inst/include/Eigen/CholmodSupport: No longer need to include
+	RcppEigenCholmod.h
+	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Small
+	wrapper adjustments conditional on Matrix use
+	* inst/include/RcppEigenCholmod.h: Updated
+	* inst/include/RcppEigenForward.h: Simplified
+	* inst/include/RcppEigenWrap.h: Ditto
+	* inst/include/RcppEigenStubs.cpp: New shorter helper
+	* inst/include/RcppEigenStubs.h: Removed
+
+2023-07-21  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll micro version and date
+
+	* README.md: Add r-universe badge
+
+2023-07-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/RcppEigen.cpp (EigenNbThreads): Add simple threads reporter
+
+	* R/fastLm.R (fastLmPure): Simpler call to `fastLm_Impl()`
+
+	* src/init.c: Replaced by auto-generated section in RcppExports.cpp
+	* src/RcppExports.cpp: Regenerated
+	* R/RcppExports.R: Idem
+
+	* src/Makevars: Document possible use of '-fopenmp'
+	* src/Makevars.win: Idem
+
+2023-04-18  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Use app.codecov.io as base for codecov link
+
+2023-03-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Date, Version): Roll minor version
+
+	* R/RcppEigen.package.skeleton.R: No longer set Imports: RcppEigen in
+	DESCRIPTION and NAMESPACE
+
+2023-02-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/CITATION: Convert to bibentry() style with person()
+
+2022-11-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.3
+	* inst/NEWS.Rd: Release 0.3.3.9.3
+
+	* src/init.c: Add 'void' for proper prototype pleasing clang-15
+
+	* R/fastLm.R (summary.fastLm,print.fastLm): Refer to correct and full
+	variable name df.residual in the returned object
+
+	* .github/workflows/ci.yaml (jobs): Update to actions/checkout@v3
+
+2022-09-15  Jonah Gabry  <jgabry@gmail.com>
+
+	* inst/skeleton/rcppeigen_hello_world.cpp: Correct typo
+
+2022-04-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Depends): Add a versioned dependency on R 3.6.0 or
+	later because of our use of FCONE to support USE_FC_LEN_T
+
+2022-04-05  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.2
+	* inst/NEWS.Rd: Release 0.3.3.9.2
+
+2022-04-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/fastLm.cpp: Add FCONE in two calls for improved Fortran and C
+	character interface per Writing R Extensions, Section 6.6.1
+
+2022-01-16  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_wrap.R: Added (optional) large memory wrap tests
+ 	* inst/tinytest/cpp/wrap.cpp: Added C++ part of test
+
+	* .codecov.yml: Added to not trigger PR fail for small additions
+
+2022-01-16  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* inst/include/RcppEigenWrap.h: Refine use plain dense wrap() change
+
+2022-01-15  Mikael Jagan  <jaganmn@mcmaster.ca>
+
+	* inst/include/RcppEigenWrap.h: Use R_xlen_t for vectors rows + cols
+
+2021-12-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Add total downloads badge
+
+2021-12-08  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Remove unused continuous integration artifact and badge
+
+2021-10-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/CITATION: Refinment of doi use
 
 2021-10-10  Dirk Eddelbuettel  <edd@debian.org>
 

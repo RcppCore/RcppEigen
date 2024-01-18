@@ -238,7 +238,7 @@ class CholmodBase : public SparseSolverBase<Derived>
     {
       EIGEN_STATIC_ASSERT((internal::is_same<double,RealScalar>::value), CHOLMOD_SUPPORTS_DOUBLE_PRECISION_ONLY);
       m_shiftOffset[0] = m_shiftOffset[1] = 0.0;
-      internal::cm_start<StorageIndex>(m_cholmod);
+      R_MATRIX_CHOLMOD(start)(&m_cholmod);
     }
 
     explicit CholmodBase(const MatrixType& matrix)
@@ -246,15 +246,15 @@ class CholmodBase : public SparseSolverBase<Derived>
     {
       EIGEN_STATIC_ASSERT((internal::is_same<double,RealScalar>::value), CHOLMOD_SUPPORTS_DOUBLE_PRECISION_ONLY);
       m_shiftOffset[0] = m_shiftOffset[1] = 0.0;
-      internal::cm_start<StorageIndex>(m_cholmod);
+      R_MATRIX_CHOLMOD(start)(&m_cholmod);
       compute(matrix);
     }
 
     ~CholmodBase()
     {
       if(m_cholmodFactor)
-        internal::cm_free_factor<StorageIndex>(m_cholmodFactor, m_cholmod);
-      internal::cm_finish<StorageIndex>(m_cholmod);
+        R_MATRIX_CHOLMOD(free_factor)(&m_cholmodFactor, &m_cholmod);
+      R_MATRIX_CHOLMOD(finish)(&m_cholmod);
     }
 
     inline StorageIndex cols() const { return internal::convert_index<StorageIndex, Index>(m_cholmodFactor->n); }
@@ -289,12 +289,12 @@ class CholmodBase : public SparseSolverBase<Derived>
     {
       if(m_cholmodFactor)
       {
-        internal::cm_free_factor<StorageIndex>(m_cholmodFactor, m_cholmod);
+        R_MATRIX_CHOLMOD(free_factor)(&m_cholmodFactor, &m_cholmod);
         m_cholmodFactor = 0;
       }
       cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      m_cholmodFactor = internal::cm_analyze<StorageIndex>(A, m_cholmod);
-
+      m_cholmodFactor = R_MATRIX_CHOLMOD(analyze)(&A, &m_cholmod);
+      
       this->m_isInitialized = true;
       this->m_info = Success;
       m_analysisIsOk = true;
@@ -311,7 +311,7 @@ class CholmodBase : public SparseSolverBase<Derived>
     {
       eigen_assert(m_analysisIsOk && "You must first call analyzePattern()");
       cholmod_sparse A = viewAsCholmod(matrix.template selfadjointView<UpLo>());
-      internal::cm_factorize_p<StorageIndex>(&A, m_shiftOffset, 0, 0, m_cholmodFactor, m_cholmod);
+      R_MATRIX_CHOLMOD(factorize_p)(&A, m_shiftOffset, 0, 0, m_cholmodFactor, &m_cholmod);
 
       // If the factorization failed, minor is the column at which it did. On success minor == n.
       this->m_info = (m_cholmodFactor->minor == m_cholmodFactor->n ? Success : NumericalIssue);
@@ -336,7 +336,7 @@ class CholmodBase : public SparseSolverBase<Derived>
       Ref<const Matrix<typename Rhs::Scalar,Dynamic,Dynamic,ColMajor> > b_ref(b.derived());
 
       cholmod_dense b_cd = viewAsCholmod(b_ref);
-      cholmod_dense* x_cd = internal::cm_solve<StorageIndex>(CHOLMOD_A, *m_cholmodFactor, b_cd, m_cholmod);
+      cholmod_dense* x_cd = R_MATRIX_CHOLMOD(solve)(CHOLMOD_A, m_cholmodFactor, &b_cd, &m_cholmod);
       if(!x_cd)
       {
         this->m_info = NumericalIssue;
@@ -345,7 +345,7 @@ class CholmodBase : public SparseSolverBase<Derived>
       // TODO optimize this copy by swapping when possible (be careful with alignment, etc.)
       // NOTE Actually, the copy can be avoided by calling cholmod_solve2 instead of cholmod_solve
       dest = Matrix<Scalar,Dest::RowsAtCompileTime,Dest::ColsAtCompileTime>::Map(reinterpret_cast<Scalar*>(x_cd->x),b.rows(),b.cols());
-      internal::cm_free_dense<StorageIndex>(x_cd, m_cholmod);
+      R_MATRIX_CHOLMOD(free_dense)(&x_cd, &m_cholmod);
     }
 
     /** \internal */
@@ -360,7 +360,7 @@ class CholmodBase : public SparseSolverBase<Derived>
       // note: cs stands for Cholmod Sparse
       Ref<SparseMatrix<typename RhsDerived::Scalar,ColMajor,typename RhsDerived::StorageIndex> > b_ref(b.const_cast_derived());
       cholmod_sparse b_cs = viewAsCholmod(b_ref);
-      cholmod_sparse* x_cs = internal::cm_spsolve<StorageIndex>(CHOLMOD_A, *m_cholmodFactor, b_cs, m_cholmod);
+      cholmod_sparse* x_cs = R_MATRIX_CHOLMOD(spsolve)(CHOLMOD_A, m_cholmodFactor, &b_cs, &m_cholmod);
       if(!x_cs)
       {
         this->m_info = NumericalIssue;
@@ -369,7 +369,7 @@ class CholmodBase : public SparseSolverBase<Derived>
       // TODO optimize this copy by swapping when possible (be careful with alignment, etc.)
       // NOTE cholmod_spsolve in fact just calls the dense solver for blocks of 4 columns at a time (similar to Eigen's sparse solver)
       dest.derived() = viewAsEigen<typename DestDerived::Scalar,ColMajor,typename DestDerived::StorageIndex>(*x_cs);
-      internal::cm_free_sparse<StorageIndex>(x_cs, m_cholmod);
+      R_MATRIX_CHOLMOD(free_sparse)(&x_cs, &m_cholmod);
     }
     #endif // EIGEN_PARSED_BY_DOXYGEN
 

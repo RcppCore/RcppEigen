@@ -2,7 +2,7 @@
 //
 // fastLm.cpp: Rcpp/Eigen example of a simple lm() alternative
 //
-// Copyright (C) 2011 - 2015  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2022  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
