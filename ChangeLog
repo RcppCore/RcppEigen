@@ -1,3 +1,8 @@
+2024-02-12  Tomas Kalibera  <tomas.kalibera@gmail.com>
+
+	* inst/include/unsupported/Eigen/CXX11/src/ThreadPool/ThreadYield.h:
+	Support clang on Windows by including 'sched.h' header
+
 2023-11-01  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): CRAN Release 0.3.3.9.4
