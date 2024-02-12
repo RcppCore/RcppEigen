@@ -12,6 +12,7 @@
 
 // Try to come up with a portable way to yield
 #if EIGEN_COMP_GNUC && EIGEN_GNUC_AT_MOST(4, 7)
+#include <sched.h>
 #define EIGEN_THREAD_YIELD() sched_yield()
 #else
 #define EIGEN_THREAD_YIELD() std::this_thread::yield()
