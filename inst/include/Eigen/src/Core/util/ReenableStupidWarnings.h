@@ -11,9 +11,9 @@
   #elif defined __INTEL_COMPILER
     #pragma warning pop
   #elif defined __clang__
-    #pragma clang diagnostic pop
+    // #pragma clang diagnostic pop
   #elif defined __GNUC__  &&  (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-    #pragma GCC diagnostic pop
+    // #pragma GCC diagnostic pop
   #endif
 
   #if defined __NVCC__

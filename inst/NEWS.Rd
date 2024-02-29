@@ -3,6 +3,16 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.4.0.0 (2024-02-28)}{
+  \itemize{
+    \item The Eigen version has been upgrade to release 3.4.0 (Yixuan)
+    \item Extensive reverse-dependency checks ensure only three out of over
+    400 packages at CRAN are affected; PRs and patches helped other packages
+    \item The long-running branch also contains substantial contributions
+    from Mikael Jagan (for the lme4 interface) and Andrew Johnson (revdep PRs)
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.3.9.4 (2023-11-01)}{
   \itemize{
     \item The CITATION file has been updated for the new \code{bibentry}

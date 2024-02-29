@@ -25,6 +25,10 @@
 #include <R_ext/Lapack.h>
 #endif
 
+#ifndef FCONE
+# define FCONE
+#endif
+
 namespace lmsol {
     using Rcpp::_;
     using Rcpp::as;
