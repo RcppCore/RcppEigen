@@ -3,9 +3,15 @@ Type: Package
 Title: 'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
 Version: 0.3.4.0.0
 Date: 2024-02-28
-Author: Douglas Bates, Dirk Eddelbuettel, Romain Francois, and Yixuan Qiu;
- the authors of Eigen for the included version of Eigen
-Maintainer: Dirk Eddelbuettel <edd@debian.org>
+Authors@R: c(person("Doug", "Bates", role = "aut",
+                    comment = c(ORCID = "0000-0001-8316-9503")),
+             person("Dirk", "Eddelbuettel", role = c("aut", "cre"), email = "edd@debian.org",
+                    comment = c(ORCID = "0000-0001-6419-907X")),
+             person("Romain", "Francois", role = "aut",
+                    comment = c(ORDID = "0000-0002-2444-4226")),
+             person("Yixuan", "Qiu", role = "aut"),
+             person("Authors of", "Eigen", role = "cph",
+                    comment = "Authorship and copyright in included Eigen library as detailed in inst/COPYRIGHTS"))
 Copyright: See the file COPYRIGHTS for various Eigen copyright details
 Description: R and 'Eigen' integration using 'Rcpp'.
  'Eigen' is a C++ template library for linear algebra: matrices, vectors,
