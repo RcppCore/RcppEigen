@@ -1,6 +1,16 @@
+2024-08-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.4.0.1
+	* inst/NEWS.Rd: Release 0.3.4.0.1
+
+2024-08-13  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/misc/blas.h: Conditionally comment out
+	xerbla which is now also provided by r-devel (CRAN request)
+
 2024-08-12  Dirk Eddelbuettel  <edd@debian.org>
 
-	* DESCRIPTION (Authors@R): Added, with ORCID IDs for Dirk, Romain, Doug
+	* DESCRIPTION (Authors@R): Added, with ORCID IDs
 
 2024-05-16  Dirk Eddelbuettel  <edd@debian.org>
 

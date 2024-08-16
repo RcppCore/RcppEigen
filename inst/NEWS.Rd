@@ -3,6 +3,14 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.4.0.1 (2024-08-14)}{
+  \itemize{
+    \item Conditionally comment-out \code{xerbla} in \code{blas.h} as it is
+    now providedd by R-devel albeit with \code{FC_LEN_T} (per a CRAN request)
+    \item Minor package updates (continuous integration, badges)
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.4.0.0 (2024-02-28)}{
   \itemize{
     \item The Eigen version has been upgrade to release 3.4.0 (Yixuan)

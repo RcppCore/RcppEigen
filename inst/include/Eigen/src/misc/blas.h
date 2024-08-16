@@ -16,7 +16,11 @@ typedef long BLASLONG;
 typedef unsigned long BLASULONG;
 #endif
 
+#if defined(RVERSION)
+  #if RVERSION < R_Version(4,5,0)
 int    BLASFUNC(xerbla)(const char *, int *info, int);
+  #endif
+#endif
 
 float  BLASFUNC(sdot)  (int *, float  *, int *, float  *, int *);
 float  BLASFUNC(sdsdot)(int *, float  *,        float  *, int *, float  *, int *);
