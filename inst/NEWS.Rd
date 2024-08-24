@@ -3,6 +3,12 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/RcppEigen/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/RcppEigen/issues/#1}{##1}}
 
+\section{Changes in RcppEigen version 0.3.4.0.2 (2024-08-23)}{
+  \itemize{
+    \item Correct two typos in the ORCID tag
+  }
+}
+
 \section{Changes in RcppEigen version 0.3.4.0.1 (2024-08-14)}{
   \itemize{
     \item Conditionally comment-out \code{xerbla} in \code{blas.h} as it is

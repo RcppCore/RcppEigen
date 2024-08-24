@@ -1,3 +1,10 @@
+2024-08-23  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): CRAN Release 0.3.4.0.2
+	* inst/NEWS.Rd: Release 0.3.4.0.2
+
+	* DESCRIPTION (Authors@R): Correct two ORCID tag typos
+
 2024-08-14  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): CRAN Release 0.3.4.0.1
