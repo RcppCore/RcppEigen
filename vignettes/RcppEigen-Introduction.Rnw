@@ -1184,7 +1184,7 @@ The vector $\bm Q^\top\bm y$ is called the ``effects'' vector in \proglang{R}.
     \normalfont
     \normalsize
   \hrule
-  \caption{\code{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition.
+  \caption{\code{ColPivQRLSCpp}: Least squares using the pivoted QR decomposition. Can not use this code directly?
   \label{ColPivQRLS}}
 \end{figure}
 
