@@ -29,6 +29,11 @@ jobs:
       - name: Dependencies
         run: ./run.sh install_all
 
+      - name: Silence Compiler
+        run: |
+          mkdir ~/.R
+          echo 'CXXFLAGS=-O3 -pipe -Wno-ignored-attributes -Wno-maybe-uninitialized -Wall' > ~/.R/Makevars
+
       - name: Test
         run: ./run.sh run_tests
 
