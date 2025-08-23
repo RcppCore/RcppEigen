@@ -1,6 +1,6 @@
 2025-08-23  Dirk Eddelbuettel  <edd@debian.org>
 
-	* .github/workflows/ci.yaml (jobs): Re-enable coverage, silence compiler
+	* .github/workflows/ci.yaml (jobs): Re-enable coverage
 
 2025-04-04  Dirk Eddelbuettel  <edd@debian.org>
 
