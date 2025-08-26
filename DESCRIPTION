@@ -1,8 +1,8 @@
 Package: RcppEigen
 Type: Package
 Title: 'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
-Version: 0.3.4.0.2
-Date: 2024-08-23
+Version: 0.3.4.0.2.1
+Date: 2025-08-26
 Authors@R: c(person("Doug", "Bates", role = "aut",
                     comment = c(ORCID = "0000-0001-8316-9503")),
              person("Dirk", "Eddelbuettel", role = c("aut", "cre"), email = "edd@debian.org",

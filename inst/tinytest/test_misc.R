@@ -1,6 +1,6 @@
 #!/usr/bin/r -t
 #
-# Copyright (C) 2021  Dirk Eddelbuettel
+# Copyright (C) 2021-2025  Dirk Eddelbuettel
 #
 # This file is part of RcppEigen
 #
@@ -27,6 +27,8 @@ eig <- RcppEigen:::eigen_version(TRUE)
 expect_equal(class(eig), "integer")
 expect_equal(length(eig), 1L)
 expect_equal(class(RcppEigen:::Eigen_SSE()), "logical")
+nt <- RcppEigen:::EigenNbThreads()
+expect_true(nt >= 0)
 
 ## -- R/flags.R
 cxxflags <- RcppEigen:::RcppEigenCxxFlags()

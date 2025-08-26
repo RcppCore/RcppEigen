@@ -1,3 +1,9 @@
+2025-08-26  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_misc.R: Add minimal test for EigenNbThreads()
+
+	* inst/include/RcppEigenWrap.h: Add #nocov comments
+
 2025-08-23  Dirk Eddelbuettel  <edd@debian.org>
 
 	* .github/workflows/ci.yaml (jobs): Re-enable coverage

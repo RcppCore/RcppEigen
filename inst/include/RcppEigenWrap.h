@@ -1,8 +1,7 @@
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 4 -*-
-//
+
 // RcppEigenWrap.h: Rcpp wrap methods for Eigen matrices, vectors and arrays
 //
-// Copyright (C) 2011 - 2022   Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2025   Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -39,7 +38,7 @@ namespace Rcpp{
             bool needs_dim = T::ColsAtCompileTime != 1;
             R_xlen_t m = obj.rows(), n = obj.cols();
             if (needs_dim && (m > INT_MAX || n > INT_MAX)) {
-                Rcpp::stop("array dimensions cannot exceed INT_MAX");
+                Rcpp::stop("array dimensions cannot exceed INT_MAX");   // #nocov
             }
             R_xlen_t size = m * n;
             typename Eigen::internal::conditional<
@@ -50,13 +49,13 @@ namespace Rcpp{
                 const T&>::type objCopy(obj);
             SEXP ans = PROTECT(::Rcpp::wrap(objCopy.data(),
                                             objCopy.data() + size));
-            if (needs_dim) {
+            if (needs_dim) {    		// #nocov start
                 SEXP dd = PROTECT(::Rf_allocVector(INTSXP, 2));
                 int *d = INTEGER(dd);
                 d[0] = m;
                 d[1] = n;
                 ::Rf_setAttrib(ans, R_DimSymbol, dd);
-                UNPROTECT(1);
+                UNPROTECT(1);			// #nocov end
             }
             UNPROTECT(1);
             return ans;
