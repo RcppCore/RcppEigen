@@ -12,7 +12,7 @@
 
 #include "src/Core/util/DisableStupidWarnings.h"
 
-#include <cholmod.h>
+#include <RcppEigenCholmod.h>
 
 /** \ingroup Support_modules
  * \defgroup CholmodSupport_Module CholmodSupport module
