@@ -167,7 +167,7 @@ namespace lmsol {
     }
 
     SVD::SVD(const Map<MatrixXd> &X, const Map<VectorXd> &y) : lm(X, y) {
-	JacobiSVD<MatrixXd>  UDV(X.jacobiSvd(ComputeThinU|ComputeThinV));
+    JacobiSVD<MatrixXd>  UDV(X, ComputeThinU | ComputeThinV);
 	MatrixXd             VDi(UDV.matrixV() *
 				 Dplus(UDV.singularValues().array()).matrix().asDiagonal());
 	m_coef                   = VDi * UDV.matrixU().adjoint() * y;

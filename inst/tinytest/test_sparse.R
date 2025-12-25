@@ -99,11 +99,11 @@ expect_equal( res, sum(rr), info = "as<Map<SparseMatrix<double, Eigen::ColMajor>
 
 
 #test.asMappedSparse.deprecated.double.ColMajor.R <- function(){
-fx <- asMappedSparseDeprecatedDoubleColMajor
-rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
-colnames(rr) <- NULL
-res <- fx( rr )
-expect_equal( res, sum(rr), info = "as<MappedSparseMatrix<double, Eigen::ColMajor> >")
+#fx <- asMappedSparseDeprecatedDoubleColMajor
+#rr <- Matrix::t(as(gl(3,3), "sparseMatrix"))
+#colnames(rr) <- NULL
+#res <- fx( rr )
+#expect_equal( res, sum(rr), info = "as<MappedSparseMatrix<double, Eigen::ColMajor> >")
 
 
 #test.asSparse.double.RowMajor.R <- function(){
@@ -121,10 +121,10 @@ expect_equal( res, sum(rr), info = "as<Map<SparseMatrix<double, Eigen::RowMajor>
 
 
 #test.asMappedSparse.deprecated.double.RowMajor.R <- function(){
-rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=as.numeric(9:1), Dim=c(9L,3L) )
-colnames(rr) <- NULL
-res <- asMappedSparseDeprecatedDoubleRowMajor( rr )
-expect_equal( res, sum(rr), info = "as<MappedSparseMatrix<double, Eigen::RowMajor> >")
+#rr <- new( "dgRMatrix", j=rep(0L:2L, each=3), p=0L:9L, x=as.numeric(9:1), Dim=c(9L,3L) )
+#colnames(rr) <- NULL
+#res <- asMappedSparseDeprecatedDoubleRowMajor( rr )
+#expect_equal( res, sum(rr), info = "as<MappedSparseMatrix<double, Eigen::RowMajor> >")
 
 
 # test.sparseCholesky.R <- function() {
