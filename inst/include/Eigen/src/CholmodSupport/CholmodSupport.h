@@ -170,24 +170,12 @@ namespace internal {
 // template specializations for int and long that call the correct cholmod method
 
 #define EIGEN_CHOLMOD_SPECIALIZE0(ret, name)                        \
-  template <typename StorageIndex_>                                 \
-  inline ret cm_##name(cholmod_common& Common) {                    \
-    return cholmod_##name(&Common);                                 \
-  }                                                                 \
-  template <>                                                       \
-  inline ret cm_##name<SuiteSparse_long>(cholmod_common & Common) { \
-    return cholmod_l_##name(&Common);                               \
-  }
+  template<typename _StorageIndex> inline ret cm_ ## name           \
+  (cholmod_common &Common) { return cholmod_ ## name   (&Common); }
 
 #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                         \
-  template <typename StorageIndex_>                                          \
-  inline ret cm_##name(t1& a1, cholmod_common& Common) {                     \
-    return cholmod_##name(&a1, &Common);                                     \
-  }                                                                          \
-  template <>                                                                \
-  inline ret cm_##name<SuiteSparse_long>(t1 & a1, cholmod_common & Common) { \
-    return cholmod_l_##name(&a1, &Common);                                   \
-  }
+  template<typename _StorageIndex> inline ret cm_ ## name                    \
+  (t1& a1, cholmod_common &Common) { return cholmod_ ## name   (&a1, &Common); }
 
 EIGEN_CHOLMOD_SPECIALIZE0(int, start)
 EIGEN_CHOLMOD_SPECIALIZE0(int, finish)
@@ -203,31 +191,31 @@ template <typename StorageIndex_>
 inline cholmod_dense* cm_solve(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
   return cholmod_solve(sys, &L, &B, &Common);
 }
-template <>
-inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
-  return cholmod_l_solve(sys, &L, &B, &Common);
-}
+//template <>
+//inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
+//  return cholmod_l_solve(sys, &L, &B, &Common);
+//}
 
 template <typename StorageIndex_>
 inline cholmod_sparse* cm_spsolve(int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common& Common) {
   return cholmod_spsolve(sys, &L, &B, &Common);
 }
-template <>
-inline cholmod_sparse* cm_spsolve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_sparse& B,
-                                                    cholmod_common& Common) {
-  return cholmod_l_spsolve(sys, &L, &B, &Common);
-}
+//template <>
+//inline cholmod_sparse* cm_spsolve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_sparse& B,
+//                                                    cholmod_common& Common) {
+//  return cholmod_l_spsolve(sys, &L, &B, &Common);
+//}
 
 template <typename StorageIndex_>
 inline int cm_factorize_p(cholmod_sparse* A, double beta[2], StorageIndex_* fset, std::size_t fsize, cholmod_factor* L,
                           cholmod_common& Common) {
   return cholmod_factorize_p(A, beta, fset, fsize, L, &Common);
 }
-template <>
-inline int cm_factorize_p<SuiteSparse_long>(cholmod_sparse* A, double beta[2], SuiteSparse_long* fset,
-                                            std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
-  return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
-}
+//template <>
+//inline int cm_factorize_p<SuiteSparse_long>(cholmod_sparse* A, double beta[2], SuiteSparse_long* fset,
+//                                            std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
+//  return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
+//}
 
 #undef EIGEN_CHOLMOD_SPECIALIZE0
 #undef EIGEN_CHOLMOD_SPECIALIZE1
