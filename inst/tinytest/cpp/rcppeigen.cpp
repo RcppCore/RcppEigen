@@ -131,7 +131,7 @@ Rcpp::List fx5(Rcpp::List input) {
 
 // [[Rcpp::export]]
 Rcpp::List fx6(Rcpp::List input) {
-    const Eigen::MappedSparseMatrix<double>  m1 = input[0]; // maps share storage and do not allow conversion
+    const Eigen::Map<Eigen::SparseMatrix<double>>  m1 = input[0]; // maps share storage and do not allow conversion
 
     Rcpp::List res = Rcpp::List::create(Rcpp::_["nnz"]   = double(m1.nonZeros()),
                                         Rcpp::_["nr"]    = double(m1.rows()),

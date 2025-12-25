@@ -52,12 +52,12 @@ double asMappedSparseDoubleColMajor(Eigen::Map<Eigen::SparseMatrix<double, Eigen
     return s;
 }
 
-// [[Rcpp::export]]
-double asMappedSparseDeprecatedDoubleColMajor(Eigen::MappedSparseMatrix<double, Eigen::ColMajor> mm) {
-    // Deprecated
-    double s = mm.sum();          // access instantiated sparse matrix
-    return s;
-}
+// // [ [ Rcpp::export]]
+// double asMappedSparseDeprecatedDoubleColMajor(Eigen::MappedSparseMatrix<double, Eigen::ColMajor> mm) {
+//     // Deprecated
+//     double s = mm.sum();          // access instantiated sparse matrix
+//     return s;
+// }
 
 // [[Rcpp::export]]
 double asSparseDoubleRowMajor(Eigen::SparseMatrix<double, Eigen::RowMajor> mm) {
@@ -71,11 +71,11 @@ double asMappedSparseDoubleRowMajor(Eigen::Map<Eigen::SparseMatrix<double, Eigen
     return s;
 }
 
-// [[Rcpp::export]]
-double asMappedSparseDeprecatedDoubleRowMajor(Eigen::MappedSparseMatrix<double, Eigen::RowMajor> mm) {
-    double s = mm.sum();          // access instantiated sparse matrix
-    return s;
-}
+// // [ [ Rcpp::export ] ]
+// double asMappedSparseDeprecatedDoubleRowMajor(Eigen::MappedSparseMatrix<double, Eigen::RowMajor> mm) {
+//     double s = mm.sum();          // access instantiated sparse matrix
+//     return s;
+// }
 
 // [[Rcpp::export]]
 Rcpp::List sparseCholesky(Rcpp::List input) {

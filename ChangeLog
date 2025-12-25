@@ -20,6 +20,16 @@
 	* inst/include/Eigen/: Sync with upstream Eigen 5.0.0 (aka 3.5.0)
 	* inst/include/unsupported/Eigen/: Idem
 
+	* patches/eigen-5.0.0.diff: Summary of changes applied
+
+	* inst/include/RcppEigenForward.h: No longer use deprecated type
+	* inst/include/RcppEigenWrap.h: Idem
+	* inst/tinytest/cpp/rcppeigen.cpp: Adjust test to non-deprecated map
+	* inst/tinytest/cpp/sparse.cpp: Skip test of deprecated type
+	* inst/tinytest/test_sparse.R: Idem
+
+	* src/fastLm.cpp (SVD::SVD): Update to current form of option setting
+
 2025-08-26  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_misc.R: Add minimal test for EigenNbThreads()

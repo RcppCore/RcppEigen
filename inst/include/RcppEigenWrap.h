@@ -310,24 +310,24 @@ namespace Rcpp{
             IntegerVector d_dims, d_i, d_p;
             Vector<RTYPE> xx ;
         };
-        // Deprecated
-        template<typename T>
-        class Exporter<Eigen::MappedSparseMatrix<T> > {
-        public:
-            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
-            Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
-                if (!d_x.is("dgCMatrix"))
-                    throw std::invalid_argument("Need S4 class dgCMatrix for a mapped sparse matrix");
-            }
-            Eigen::MappedSparseMatrix<T> get() {
-                return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
-                                                    d_p.begin(), d_i.begin(), xx.begin() );
-            }
-        protected:
-            S4            d_x;
-            IntegerVector d_dims, d_i, d_p;
-            Vector<RTYPE> xx ;
-        };
+        // // Deprecated
+        // template<typename T>
+        // class Exporter<Eigen::MappedSparseMatrix<T> > {
+        // public:
+        //     const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+        //     Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
+        //         if (!d_x.is("dgCMatrix"))
+        //             throw std::invalid_argument("Need S4 class dgCMatrix for a mapped sparse matrix");
+        //     }
+        //     Eigen::MappedSparseMatrix<T> get() {
+        //         return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+        //                                             d_p.begin(), d_i.begin(), xx.begin() );
+        //     }
+        // protected:
+        //     S4            d_x;
+        //     IntegerVector d_dims, d_i, d_p;
+        //     Vector<RTYPE> xx ;
+        // };
 
         // Starting from Eigen 3.3 MappedSparseMatrix was deprecated.
         // The new type is Map<SparseMatrix>.
@@ -348,24 +348,24 @@ namespace Rcpp{
             IntegerVector d_dims, d_j, d_p;
             Vector<RTYPE> xx ;
         };
-        // Deprecated
-        template<typename T>
-        class Exporter<Eigen::MappedSparseMatrix<T, Eigen::RowMajor> > {
-        public:
-            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
-            Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_j(d_x.slot("j")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
-                if (!d_x.is("dgRMatrix"))
-                    throw std::invalid_argument("Need S4 class dgRMatrix for a mapped sparse matrix");
-            }
-            Eigen::MappedSparseMatrix<T, Eigen::RowMajor> get() {
-                return Eigen::MappedSparseMatrix<T, Eigen::RowMajor>(d_dims[0], d_dims[1], d_p[d_dims[1]],
-                                                                     d_p.begin(), d_j.begin(), xx.begin() );
-            }
-        protected:
-            S4            d_x;
-            IntegerVector d_dims, d_j, d_p;
-            Vector<RTYPE> xx ;
-        };
+        // // Deprecated
+        // template<typename T>
+        // class Exporter<Eigen::MappedSparseMatrix<T, Eigen::RowMajor> > {
+        // public:
+        //     const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+        //     Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_j(d_x.slot("j")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
+        //         if (!d_x.is("dgRMatrix"))
+        //             throw std::invalid_argument("Need S4 class dgRMatrix for a mapped sparse matrix");
+        //     }
+        //     Eigen::MappedSparseMatrix<T, Eigen::RowMajor> get() {
+        //         return Eigen::MappedSparseMatrix<T, Eigen::RowMajor>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+        //                                                              d_p.begin(), d_j.begin(), xx.begin() );
+        //     }
+        // protected:
+        //     S4            d_x;
+        //     IntegerVector d_dims, d_j, d_p;
+        //     Vector<RTYPE> xx ;
+        // };
 
         template<typename T>
         class Exporter<Eigen::SparseMatrix<T> > {
