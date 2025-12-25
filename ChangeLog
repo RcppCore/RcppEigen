@@ -15,6 +15,11 @@
 	* man/RcppEigen_throttle_cores.Rd: Document additional helpers
 	* cleanup: Minor extension
 
+2025-12-25  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/: Sync with upstream Eigen 5.0.0 (aka 3.5.0)
+	* inst/include/unsupported/Eigen/: Idem
+
 2025-08-26  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_misc.R: Add minimal test for EigenNbThreads()
