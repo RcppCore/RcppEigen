@@ -5,12 +5,20 @@ eigen_version <- function(single) {
     .Call(`_RcppEigen_eigen_version`, single)
 }
 
+eigen_version_typed <- function() {
+    .Call(`_RcppEigen_eigen_version_typed`)
+}
+
 Eigen_SSE <- function() {
     .Call(`_RcppEigen_Eigen_SSE`)
 }
 
 EigenNbThreads <- function() {
     .Call(`_RcppEigen_EigenNbThreads`)
+}
+
+EigenSetNbThreads <- function(n) {
+    invisible(.Call(`_RcppEigen_EigenSetNbThreads`, n))
 }
 
 fastLm_Impl <- function(X, y, type) {

@@ -38,6 +38,17 @@ Rcpp::IntegerVector eigen_version(bool single) {
 }
 
 // [[Rcpp::export]]
+Rcpp::List eigen_version_typed() {
+    // create a vector of major, minor, patch
+    auto v = Rcpp::IntegerVector::create(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
+    // and place it in a list (as e.g. packageVersion() in R returns)
+    auto l = Rcpp::List::create(v);
+    // and class it as 'package_version' accessing print() etc methods
+    l.attr("class") = Rcpp::CharacterVector::create("package_version", "numeric_version");
+    return l;
+}
+
+// [[Rcpp::export]]
 bool Eigen_SSE() {
     return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
 }
@@ -45,4 +56,9 @@ bool Eigen_SSE() {
 // [[Rcpp::export]]
 int EigenNbThreads() {
     return Eigen::nbThreads();
+}
+
+// [[Rcpp::export]]
+void EigenSetNbThreads(int n) {
+    Eigen::setNbThreads(n);
 }
