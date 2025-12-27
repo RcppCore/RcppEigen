@@ -20,7 +20,14 @@
 .pkgenv <- new.env(parent=emptyenv())
 
 .onLoad <- function(libname, pkgname) {
-    .pkgenv[["nb_threads"]] <- EigenNbThreads()		# #nocov
+    ## simple fallback: 'Ncpus' (if set) or else all cpus seen by OpenMP
+    ncores <- getOption("Ncpus", EigenNbThreads())
+    ## consider OMP_THREAD_LIMIT (cf Writing R Extensions), gets NA if envvar unset
+    ompcores <- as.integer(Sys.getenv("OMP_THREAD_LIMIT"))
+    ## keep the smaller value, omitting NA
+    ncores <- min(na.omit(c(ncores, ompcores)))
+    .pkgenv[["nb_threads"]] <- ncores		# #nocov
+    RcppEigen_throttle_cores(ncores)
 }
 
 ##' Throttle (or Reset) (Rcpp)Eigen to Two Cores
@@ -28,12 +35,12 @@
 ##' Helper functions to throttle use of cores by RcppEigen-internal code.
 ##' On package load, the initial value is saved and used to reset the value.
 ##' @param n Integer value of desired cores, default is two
-RcppEigen_throttle_cores <- function(n = 2) {
+RcppEigen_throttle_cores <- function(n) {
+    if (missing(n)) n <- .pkgenv[["nb_threads"]]
     EigenSetNbThreads(n)
 }
 
-##' @rdname RcppEigen_throttle_cores
-eigen_reset_cores <- function() {
-    n <- .pkgenv[["nb_threads"]]
-    EigenSetNbThreads(n)
+##'@ rdname RcppEigen_throttle_cores
+RcppEigen_reset_cores <- function() {
+    EigenSetNbThreads(.pkgenv[["nb_threads"]])
 }
