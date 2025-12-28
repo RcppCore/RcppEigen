@@ -49,11 +49,13 @@ bool Eigen_SSE() {
     return Rcpp::wrap(Eigen::SimdInstructionSetsInUse());
 }
 
+//' @rdname RcppEigen_throttle_cores
 // [[Rcpp::export]]
 int EigenNbThreads() {
     return Eigen::nbThreads();
 }
 
+//' @rdname RcppEigen_throttle_cores
 // [[Rcpp::export]]
 void EigenSetNbThreads(int n) {
     Eigen::setNbThreads(n);

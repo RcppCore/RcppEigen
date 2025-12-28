@@ -2,10 +2,14 @@ useDynLib("RcppEigen", .registration=TRUE)
 
 importFrom("Rcpp", "evalCpp")
 importFrom("utils", "packageDescription", "package.skeleton")
-importFrom("stats", "model.frame", "model.matrix", "model.response", "fitted", "coef", "printCoefmat", "pt")
+importFrom("stats", "model.frame", "model.matrix", "model.response", "fitted", "coef", "printCoefmat", "pt", "na.omit")
 export("fastLm",
        "fastLmPure",
-       "RcppEigen.package.skeleton"
+       "RcppEigen.package.skeleton",
+       "EigenNbThreads",
+       "EigenSetNbThreads",
+       "RcppEigen_throttle_cores",
+       "RcppEigen_reset_cores"
        )
 
 S3method("fastLm", "default")

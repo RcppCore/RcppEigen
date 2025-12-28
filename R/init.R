@@ -35,12 +35,16 @@
 ##' Helper functions to throttle use of cores by RcppEigen-internal code.
 ##' On package load, the initial value is saved and used to reset the value.
 ##' @param n Integer value of desired cores, default is two
+##' @return Only \code{EigenNbThreads()} returns a value, the current value of
+##' the number of cores used. The other functions are invoked for their side-effect
+##' of affecting the core count.
+##' @seealso \code{\link{RcppEigen-package}}
 RcppEigen_throttle_cores <- function(n) {
     if (missing(n)) n <- .pkgenv[["nb_threads"]]
     EigenSetNbThreads(n)
 }
 
-##'@ rdname RcppEigen_throttle_cores
+##' @rdname RcppEigen_throttle_cores
 RcppEigen_reset_cores <- function() {
     EigenSetNbThreads(.pkgenv[["nb_threads"]])
 }

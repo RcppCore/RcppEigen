@@ -13,10 +13,12 @@ Eigen_SSE <- function() {
     .Call(`_RcppEigen_Eigen_SSE`)
 }
 
+#' @rdname RcppEigen_throttle_cores
 EigenNbThreads <- function() {
     .Call(`_RcppEigen_EigenNbThreads`)
 }
 
+#' @rdname RcppEigen_throttle_cores
 EigenSetNbThreads <- function(n) {
     invisible(.Call(`_RcppEigen_EigenSetNbThreads`, n))
 }
