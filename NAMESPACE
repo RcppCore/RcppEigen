@@ -1,7 +1,7 @@
 useDynLib("RcppEigen", .registration=TRUE)
 
 importFrom("Rcpp", "evalCpp")
-importFrom("utils", "packageDescription", "package.skeleton")
+importFrom("utils", "packageDescription", "package.skeleton", "packageVersion")
 importFrom("stats", "model.frame", "model.matrix", "model.response", "fitted", "coef", "printCoefmat", "pt", "na.omit")
 export("fastLm",
        "fastLmPure",

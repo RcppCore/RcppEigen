@@ -5,7 +5,7 @@
 \alias{EigenSetNbThreads}
 \alias{RcppEigen_throttle_cores}
 \alias{RcppEigen_reset_cores}
-\title{Throttle (or Reset) (Rcpp)Eigen to Two Cores}
+\title{Throttle (or Reset) (Rcpp)Eigen Core Usage}
 \usage{
 EigenNbThreads()
 
@@ -16,12 +16,15 @@ RcppEigen_throttle_cores(n)
 RcppEigen_reset_cores()
 }
 \arguments{
-\item{n}{Integer value of desired cores, default is two}
+\item{n}{Integer value of desired cores, default is the value set at package
+startup reflecting the smallest value among the total number of available
+cores (or one if compiled without OpenMP support), the value of option
+\code{Ncpus} and the value of environment variable \code{OMP_THREAD_LIMIT}.}
 }
 \value{
 Only \code{EigenNbThreads()} returns a value, the current value of
-the number of cores used. The other functions are invoked for their side-effect
-of affecting the core count.
+the number of cores used. The other functions are invoked for their side
+effect of affecting the count of cores used.
 }
 \description{
 Helper functions to throttle use of cores by RcppEigen-internal code.

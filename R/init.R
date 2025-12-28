@@ -30,14 +30,25 @@
     RcppEigen_throttle_cores(ncores)
 }
 
-##' Throttle (or Reset) (Rcpp)Eigen to Two Cores
+.onAttach <- function(libname, pkgname) {
+    if (interactive()) {
+        packageStartupMessage("RcppEigen ", packageVersion("RcppEigen"),
+                              " using ", .pkgenv[["nb_threads"]], " cores. See ",
+                              "'help(\"RcppEigen-package\")' for details.")
+    }
+}
+
+##' Throttle (or Reset) (Rcpp)Eigen Core Usage
 ##'
 ##' Helper functions to throttle use of cores by RcppEigen-internal code.
 ##' On package load, the initial value is saved and used to reset the value.
-##' @param n Integer value of desired cores, default is two
+##' @param n Integer value of desired cores, default is the value set at package
+##' startup reflecting the smallest value among the total number of available
+##' cores (or one if compiled without OpenMP support), the value of option
+##' \code{Ncpus} and the value of environment variable \code{OMP_THREAD_LIMIT}.
 ##' @return Only \code{EigenNbThreads()} returns a value, the current value of
-##' the number of cores used. The other functions are invoked for their side-effect
-##' of affecting the core count.
+##' the number of cores used. The other functions are invoked for their side
+##' effect of affecting the count of cores used.
 ##' @seealso \code{\link{RcppEigen-package}}
 RcppEigen_throttle_cores <- function(n) {
     if (missing(n)) n <- .pkgenv[["nb_threads"]]
