@@ -1,8 +1,7 @@
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 8 -*-
-//
+
 // RcppEigen.cpp: Rcpp/Eigen glue
 //
-// Copyright (C) 2011 - 2023  Douglas Bates, Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2011 - 2025  Douglas Bates, Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of RcppEigen.
 //
@@ -23,18 +22,15 @@
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector eigen_version(bool single) {
-    using Rcpp::_;
-    using Rcpp::IntegerVector;
-
     if (single) {
-        return Rcpp::wrap( 10000 * EIGEN_WORLD_VERSION +
-                           100 * EIGEN_MAJOR_VERSION +
-                           EIGEN_MINOR_VERSION ) ;
+        return Rcpp::wrap(10000 * EIGEN_WORLD_VERSION +
+                          100 * EIGEN_MAJOR_VERSION +
+                          EIGEN_MINOR_VERSION) ;
     }
 
-    return IntegerVector::create(_["major"] = EIGEN_WORLD_VERSION,
-                                 _["minor"] = EIGEN_MAJOR_VERSION,
-                                 _["patch"] = EIGEN_MINOR_VERSION);
+    return Rcpp::IntegerVector::create(Rcpp::Named("major") = EIGEN_WORLD_VERSION,
+                                       Rcpp::Named("minor") = EIGEN_MAJOR_VERSION,
+                                       Rcpp::Named("patch") = EIGEN_MINOR_VERSION);
 }
 
 // [[Rcpp::export]]

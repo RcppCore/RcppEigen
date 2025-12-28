@@ -1,11 +1,5 @@
 ## -*- mode: makefile; -*-
 
-## One could add '-fopenmp' here (and below) for multithreaded operations
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -I../inst/include
 
-## One could add '-fopenmp' here (and above) for multithreaded operations
 PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
-
-## We are not enabling multithreaded operations by default because this would be
-## a change in behaviour that would like create trouble for packages using RcppEigen
-## as CRAN tests of those packages may seen use of more than two cores and protest
