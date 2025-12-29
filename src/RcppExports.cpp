@@ -22,6 +22,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// eigen_version_typed
+Rcpp::List eigen_version_typed();
+RcppExport SEXP _RcppEigen_eigen_version_typed() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(eigen_version_typed());
+    return rcpp_result_gen;
+END_RCPP
+}
 // Eigen_SSE
 bool Eigen_SSE();
 RcppExport SEXP _RcppEigen_Eigen_SSE() {
@@ -42,6 +52,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// EigenSetNbThreads
+void EigenSetNbThreads(int n);
+RcppExport SEXP _RcppEigen_EigenSetNbThreads(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    EigenSetNbThreads(n);
+    return R_NilValue;
+END_RCPP
+}
 // fastLm_Impl
 Rcpp::List fastLm_Impl(Rcpp::NumericMatrix X, Rcpp::NumericVector y, int type);
 RcppExport SEXP _RcppEigen_fastLm_Impl(SEXP XSEXP, SEXP ySEXP, SEXP typeSEXP) {
@@ -58,8 +78,10 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_RcppEigen_eigen_version", (DL_FUNC) &_RcppEigen_eigen_version, 1},
+    {"_RcppEigen_eigen_version_typed", (DL_FUNC) &_RcppEigen_eigen_version_typed, 0},
     {"_RcppEigen_Eigen_SSE", (DL_FUNC) &_RcppEigen_Eigen_SSE, 0},
     {"_RcppEigen_EigenNbThreads", (DL_FUNC) &_RcppEigen_EigenNbThreads, 0},
+    {"_RcppEigen_EigenSetNbThreads", (DL_FUNC) &_RcppEigen_EigenSetNbThreads, 1},
     {"_RcppEigen_fastLm_Impl", (DL_FUNC) &_RcppEigen_fastLm_Impl, 3},
     {NULL, NULL, 0}
 };

@@ -16,9 +16,23 @@ Rcpp/Eigen bridge
   other packages.  The C++ source code and the R source code in this
   package are for illustration only.
 
-  As described at the Eigen project's home page,
-  \url{http://eigen.tuxfamily.org/index.php?title=Main_Page}, Eigen is a versatile, fast, reliable
-  and elegant collection of C++ classes for linear algebra.
+  As described at the \href{https://libeigen.gitlab.io/}{Eigen project home
+  page} , Eigen is a C++ template library for linear algebra: matrices,
+  vectors, numerical solvers, and related algorithms.
+}
+\section{Threading}{
+  The Eigen library can take advantage of OpenMP to execute computations in
+  parallel via multi-threaded code. The number of cores uses can be set (or
+  retrieved) explicitly via helper functions \code{EigenSetNbThreads()} and
+  \code{EigenNbThreads()}. A default value is stored at package startup; it
+  recognises R option value \code{Ncpus} and environment variable
+  \code{OMP_THREAD_LIMIT}.  Additional helper functions
+  \code{RcppEigen_throttle_cores()} and \code{RcppEigen_reset_cores()} are
+  available to (temporarily) lower the number of cores uses and to reset to
+  the package default value set at startup.
+}
+\seealso{
+  \code{\link{RcppEigen_throttle_cores}}
 }
 \references{
   Douglas Bates and Dirk Eddelbuettel (2013). Fast and Elegant Numerical

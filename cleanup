@@ -4,5 +4,6 @@ rm -f  src/*.o src/*.so \
        inst/doc/RcppEigen-unitTests.out \
        inst/doc/RcppEigen-unitTests.aux \
        inst/doc/RcppEigen-unitTests.log \
-       */*~ *~
+       */*~ *~ \
+       config.log config.status src/Makevars
 rm -rf autom4te.cache

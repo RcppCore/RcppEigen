@@ -1,3 +1,20 @@
+2025-12-28  Dirk Eddelbuettel  <edd@debian.org>
+
+	* configure.ac: Detect OpenMP compile and link options
+	* configure.: Idem
+	* R/init.R: Set multithreading core count on startup, show startup
+	message, add two helper accessor functions
+	* src/Makevars.in: Support OpenMP use for multithreading
+	* src/Makevars.win: Idem
+	* src/RcppEigen.cpp: Add thread setter, add typed version getter,
+	edits to old version getter
+	* src/RcppExport.cpp: Export new compiled functions
+	* R/RcppExport.R: Idem
+	* NAMESPACE: Export several helper functions
+	* man/RcppEigen-package.Rd: Document thread count setting options
+	* man/RcppEigen_throttle_cores.Rd: Document additional helpers
+	* cleanup: Minor extension
+
 2025-08-26  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/tinytest/test_misc.R: Add minimal test for EigenNbThreads()
