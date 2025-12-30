@@ -15,6 +15,11 @@
 	* man/RcppEigen_throttle_cores.Rd: Document additional helpers
 	* cleanup: Minor extension
 
+2025-12-26  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Comment-out
+	another SuiteSparse reference
+
 2025-12-25  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/include/Eigen/: Sync with upstream Eigen 5.0.0 (aka 3.5.0)
