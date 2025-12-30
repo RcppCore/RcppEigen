@@ -26,8 +26,10 @@ expect_equal(names(eig), c("major","minor","patch"))
 eig <- RcppEigen:::eigen_version(TRUE)
 expect_equal(class(eig), "integer")
 expect_equal(length(eig), 1L)
+eigt <- RcppEigen:::eigen_version_typed()
+expect_true(inherits(eigt, "package_version"))
 expect_equal(class(RcppEigen:::Eigen_SSE()), "logical")
-nt <- RcppEigen:::EigenNbThreads()
+nt <- RcppEigen::EigenNbThreads()
 expect_true(nt >= 0)
 
 ## -- R/flags.R

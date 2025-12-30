@@ -1,3 +1,13 @@
+2025-12-30  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/tinytest/test_misc.R: Additional tests predicate
+
+	* R/init.R: Some additional #nocov tags
+
+2025-12-29  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION: Roll micro release and date
+
 2025-12-28  Dirk Eddelbuettel  <edd@debian.org>
 
 	* configure.ac: Detect OpenMP compile and link options
