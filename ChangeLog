@@ -20,6 +20,8 @@
 	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Comment-out
 	another SuiteSparse reference
 
+	* patches/eigen-5.0.0.diff: Updated against git commit of Eigen 5.0.0 sync
+
 2025-12-25  Dirk Eddelbuettel  <edd@debian.org>
 
 	* inst/include/Eigen/: Sync with upstream Eigen 5.0.0 (aka 3.5.0)

@@ -1,36 +1,56 @@
-diff --git c/inst/include/Eigen/CholmodSupport i/inst/include/Eigen/CholmodSupport
+diff --git c/inst/include/Eigen/CholmodSupport w/inst/include/Eigen/CholmodSupport
 index adc5f8d..bff39e6 100644
 --- c/inst/include/Eigen/CholmodSupport
-+++ i/inst/include/Eigen/CholmodSupport
++++ w/inst/include/Eigen/CholmodSupport
 @@ -12,7 +12,7 @@
- 
+
  #include "src/Core/util/DisableStupidWarnings.h"
- 
+
 -#include <cholmod.h>
 +#include <RcppEigenCholmod.h>
- 
+
  /** \ingroup Support_modules
   * \defgroup CholmodSupport_Module CholmodSupport module
-diff --git c/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h i/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
-index 7e3c881..cf0059f 100644
+diff --git c/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h w/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
+index 7e3c881..758fb5a 100644
 --- c/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
-+++ i/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
-@@ -170,24 +170,12 @@ namespace internal {
- // template specializations for int and long that call the correct cholmod method
- 
++++ w/inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
+@@ -13,6 +13,10 @@
+ // IWYU pragma: private
+ #include "./InternalHeaderCheck.h"
+
++#ifndef R_MATRIX_CHOLMOD
++# define R_MATRIX_CHOLMOD(_NAME_) cholmod_ ## _NAME_
++#endif
++
+ namespace Eigen {
+
+ namespace internal {
+@@ -84,8 +88,8 @@ cholmod_sparse viewAsCholmod(Ref<SparseMatrix<Scalar_, Options_, StorageIndex_>
+
+   if (internal::is_same<StorageIndex_, int>::value) {
+     res.itype = CHOLMOD_INT;
+-  } else if (internal::is_same<StorageIndex_, SuiteSparse_long>::value) {
+-    res.itype = CHOLMOD_LONG;
++  // } else if (internal::is_same<StorageIndex_, SuiteSparse_long>::value) {
++  //   res.itype = CHOLMOD_LONG;
+   } else {
+     eigen_assert(false && "Index type not supported yet");
+   }
+@@ -172,22 +176,14 @@ namespace internal {
  #define EIGEN_CHOLMOD_SPECIALIZE0(ret, name)                        \
--  template <typename StorageIndex_>                                 \
--  inline ret cm_##name(cholmod_common& Common) {                    \
+   template <typename StorageIndex_>                                 \
+   inline ret cm_##name(cholmod_common& Common) {                    \
 -    return cholmod_##name(&Common);                                 \
 -  }                                                                 \
 -  template <>                                                       \
 -  inline ret cm_##name<SuiteSparse_long>(cholmod_common & Common) { \
 -    return cholmod_l_##name(&Common);                               \
 -  }
-+  template<typename _StorageIndex> inline ret cm_ ## name           \
-+  (cholmod_common &Common) { return cholmod_ ## name   (&Common); }
- 
- #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                         \
++    return R_MATRIX_CHOLMOD(name)(&Common);			    \
++  }
+
+-#define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                         \
 -  template <typename StorageIndex_>                                          \
 -  inline ret cm_##name(t1& a1, cholmod_common& Common) {                     \
 -    return cholmod_##name(&a1, &Common);                                     \
@@ -39,64 +59,72 @@ index 7e3c881..cf0059f 100644
 -  inline ret cm_##name<SuiteSparse_long>(t1 & a1, cholmod_common & Common) { \
 -    return cholmod_l_##name(&a1, &Common);                                   \
 -  }
-+  template<typename _StorageIndex> inline ret cm_ ## name                    \
-+  (t1& a1, cholmod_common &Common) { return cholmod_ ## name   (&a1, &Common); }
- 
++#define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                    \
++  template <typename StorageIndex_>                                     \
++  inline ret cm_##name(t1& a1, cholmod_common& Common) {                \
++    return R_MATRIX_CHOLMOD(name) (&a1, &Common);			\
++  }
+
  EIGEN_CHOLMOD_SPECIALIZE0(int, start)
  EIGEN_CHOLMOD_SPECIALIZE0(int, finish)
-@@ -203,31 +191,31 @@ template <typename StorageIndex_>
+@@ -201,33 +197,33 @@ EIGEN_CHOLMOD_SPECIALIZE1(cholmod_sparse*, factor_to_sparse, cholmod_factor, L)
+
+ template <typename StorageIndex_>
  inline cholmod_dense* cm_solve(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
-   return cholmod_solve(sys, &L, &B, &Common);
- }
+-  return cholmod_solve(sys, &L, &B, &Common);
+-}
 -template <>
 -inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
 -  return cholmod_l_solve(sys, &L, &B, &Common);
--}
-+//template <>
-+//inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
-+//  return cholmod_l_solve(sys, &L, &B, &Common);
-+//}
- 
++  return R_MATRIX_CHOLMOD(solve) (sys, &L, &B, &Common);
+ }
++// template <>
++// inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
++//   return cholmod_l_solve(sys, &L, &B, &Common);
++// }
+
  template <typename StorageIndex_>
  inline cholmod_sparse* cm_spsolve(int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common& Common) {
-   return cholmod_spsolve(sys, &L, &B, &Common);
- }
+-  return cholmod_spsolve(sys, &L, &B, &Common);
+-}
 -template <>
 -inline cholmod_sparse* cm_spsolve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_sparse& B,
 -                                                    cholmod_common& Common) {
 -  return cholmod_l_spsolve(sys, &L, &B, &Common);
--}
-+//template <>
-+//inline cholmod_sparse* cm_spsolve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_sparse& B,
-+//                                                    cholmod_common& Common) {
-+//  return cholmod_l_spsolve(sys, &L, &B, &Common);
-+//}
- 
++  return R_MATRIX_CHOLMOD(spsolve) (sys, &L, &B, &Common);
+ }
++// template <>
++// inline cholmod_sparse* cm_spsolve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_sparse& B,
++//                                                     cholmod_common& Common) {
++//   return cholmod_l_spsolve(sys, &L, &B, &Common);
++// }
+
  template <typename StorageIndex_>
  inline int cm_factorize_p(cholmod_sparse* A, double beta[2], StorageIndex_* fset, std::size_t fsize, cholmod_factor* L,
                            cholmod_common& Common) {
-   return cholmod_factorize_p(A, beta, fset, fsize, L, &Common);
- }
+-  return cholmod_factorize_p(A, beta, fset, fsize, L, &Common);
+-}
 -template <>
 -inline int cm_factorize_p<SuiteSparse_long>(cholmod_sparse* A, double beta[2], SuiteSparse_long* fset,
 -                                            std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
 -  return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
--}
-+//template <>
-+//inline int cm_factorize_p<SuiteSparse_long>(cholmod_sparse* A, double beta[2], SuiteSparse_long* fset,
-+//                                            std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
-+//  return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
-+//}
- 
++  return R_MATRIX_CHOLMOD(factorize_p) (A, beta, fset, fsize, L, &Common);
+ }
++// template <>
++// inline int cm_factorize_p<SuiteSparse_long>(cholmod_sparse* A, double beta[2], SuiteSparse_long* fset,
++//                                             std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
++//   return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
++// }
+
  #undef EIGEN_CHOLMOD_SPECIALIZE0
  #undef EIGEN_CHOLMOD_SPECIALIZE1
-diff --git c/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h i/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
+diff --git c/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h w/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
 index ab0c542..8c27b14 100644
 --- c/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
-+++ i/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
++++ w/inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
 @@ -42,45 +42,45 @@
  #pragma warning disable 2196 279 1684 2259
- 
+
  #elif defined __clang__
 -#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 -#pragma clang diagnostic push
@@ -138,9 +166,9 @@ index ab0c542..8c27b14 100644
 +// #endif
 +// #endif
 +// #endif
- 
+
  #elif defined __GNUC__ && !defined(__FUJITSU)
- 
+
 -#if (!defined(EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 -#pragma GCC diagnostic push
 -#endif
@@ -174,19 +202,129 @@ index ab0c542..8c27b14 100644
 +// #pragma GCC diagnostic ignored "-Wattributes"
 +// #endif
  #endif
- 
+
  #if defined __NVCC__ && defined __CUDACC__
-diff --git c/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h i/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
-index 15d7fb2..0ccb566 100644
+diff --git c/inst/include/RcppEigenForward.h w/inst/include/RcppEigenForward.h
+index ef347e4..a41212c 100644
+--- c/inst/include/RcppEigenForward.h
++++ w/inst/include/RcppEigenForward.h
+@@ -54,10 +54,10 @@ namespace Rcpp {
+ 	template<typename T> class Exporter< Eigen::Array<T, Eigen::Dynamic, 1> >;
+ 	template<typename T> class Exporter< Eigen::Array<T, 1, Eigen::Dynamic> >;
+     template<typename T> class Exporter< Eigen::Map<Eigen::SparseMatrix<T> > >;
+-	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;  // Deprecated
++    //template<typename T> class Exporter< Eigen::MappedSparseMatrix<T> >;  // Deprecated
+ 	template<typename T> class Exporter< Eigen::SparseMatrix<T> >;
+     template<typename T> class Exporter< Eigen::Map<Eigen::SparseMatrix<T, Eigen::RowMajor> > >;
+-	template<typename T> class Exporter< Eigen::MappedSparseMatrix<T, Eigen::RowMajor> >;  // Deprecated
++    //template<typename T> class Exporter< Eigen::MappedSparseMatrix<T, Eigen::RowMajor> >;  // Deprecated
+ 	template<typename T> class Exporter< Eigen::SparseMatrix<T, Eigen::RowMajor> >;
+
+     } // namespace traits
+diff --git c/inst/include/RcppEigenWrap.h w/inst/include/RcppEigenWrap.h
+index 3c0e04e..4750b61 100644
+--- c/inst/include/RcppEigenWrap.h
++++ w/inst/include/RcppEigenWrap.h
+@@ -310,24 +310,24 @@ namespace Rcpp{
+             IntegerVector d_dims, d_i, d_p;
+             Vector<RTYPE> xx ;
+         };
+-        // Deprecated
+-        template<typename T>
+-        class Exporter<Eigen::MappedSparseMatrix<T> > {
+-        public:
+-            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+-            Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
+-                if (!d_x.is("dgCMatrix"))
+-                    throw std::invalid_argument("Need S4 class dgCMatrix for a mapped sparse matrix");
+-            }
+-            Eigen::MappedSparseMatrix<T> get() {
+-                return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+-                                                    d_p.begin(), d_i.begin(), xx.begin() );
+-            }
+-        protected:
+-            S4            d_x;
+-            IntegerVector d_dims, d_i, d_p;
+-            Vector<RTYPE> xx ;
+-        };
++        // // Deprecated
++        // template<typename T>
++        // class Exporter<Eigen::MappedSparseMatrix<T> > {
++        // public:
++        //     const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
++        //     Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_i(d_x.slot("i")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
++        //         if (!d_x.is("dgCMatrix"))
++        //             throw std::invalid_argument("Need S4 class dgCMatrix for a mapped sparse matrix");
++        //     }
++        //     Eigen::MappedSparseMatrix<T> get() {
++        //         return Eigen::MappedSparseMatrix<T>(d_dims[0], d_dims[1], d_p[d_dims[1]],
++        //                                             d_p.begin(), d_i.begin(), xx.begin() );
++        //     }
++        // protected:
++        //     S4            d_x;
++        //     IntegerVector d_dims, d_i, d_p;
++        //     Vector<RTYPE> xx ;
++        // };
+
+         // Starting from Eigen 3.3 MappedSparseMatrix was deprecated.
+         // The new type is Map<SparseMatrix>.
+@@ -348,24 +348,24 @@ namespace Rcpp{
+             IntegerVector d_dims, d_j, d_p;
+             Vector<RTYPE> xx ;
+         };
+-        // Deprecated
+-        template<typename T>
+-        class Exporter<Eigen::MappedSparseMatrix<T, Eigen::RowMajor> > {
+-        public:
+-            const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
+-            Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_j(d_x.slot("j")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
+-                if (!d_x.is("dgRMatrix"))
+-                    throw std::invalid_argument("Need S4 class dgRMatrix for a mapped sparse matrix");
+-            }
+-            Eigen::MappedSparseMatrix<T, Eigen::RowMajor> get() {
+-                return Eigen::MappedSparseMatrix<T, Eigen::RowMajor>(d_dims[0], d_dims[1], d_p[d_dims[1]],
+-                                                                     d_p.begin(), d_j.begin(), xx.begin() );
+-            }
+-        protected:
+-            S4            d_x;
+-            IntegerVector d_dims, d_j, d_p;
+-            Vector<RTYPE> xx ;
+-        };
++        // // Deprecated
++        // template<typename T>
++        // class Exporter<Eigen::MappedSparseMatrix<T, Eigen::RowMajor> > {
++        // public:
++        //     const static int RTYPE = ::Rcpp::traits::r_sexptype_traits<T>::rtype ;
++        //     Exporter(SEXP x) : d_x(x), d_dims(d_x.slot("Dim")), d_j(d_x.slot("j")), d_p(d_x.slot("p")), xx( d_x.slot("x") ) {
++        //         if (!d_x.is("dgRMatrix"))
++        //             throw std::invalid_argument("Need S4 class dgRMatrix for a mapped sparse matrix");
++        //     }
++        //     Eigen::MappedSparseMatrix<T, Eigen::RowMajor> get() {
++        //         return Eigen::MappedSparseMatrix<T, Eigen::RowMajor>(d_dims[0], d_dims[1], d_p[d_dims[1]],
++        //                                                              d_p.begin(), d_j.begin(), xx.begin() );
++        //     }
++        // protected:
++        //     S4            d_x;
++        //     IntegerVector d_dims, d_j, d_p;
++        //     Vector<RTYPE> xx ;
++        // };
+
+         template<typename T>
+         class Exporter<Eigen::SparseMatrix<T> > {
+diff --git c/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h w/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+index 21b62f6..0ccb566 100644
 --- c/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
-+++ i/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
-@@ -170,7 +170,9 @@ class MatrixMarketIterator {
++++ w/inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
+@@ -170,10 +170,10 @@ class MatrixMarketIterator {
        m_isvalid = false;
        std::string curfile;
        curfile = m_folder + "/" + m_curs_id->d_name;
-+#if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
-       // Discard if it is a folder
-+#endif
-       if (m_curs_id->d_type == DT_DIR) continue;  // FIXME This may not be available on non BSD systems
+-      // Discard if it is a folder
+ #if !(defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__sgi) || defined(__HAIKU__))
+-      if (m_curs_id->d_type == DT_DIR) continue;  // FIXME This may not be available on non BSD systems
++      // Discard if it is a folder
+ #endif
++      if (m_curs_id->d_type == DT_DIR) continue;  // FIXME This may not be available on non BSD systems
        //         struct stat st_buf;
        //         stat (curfile.c_str(), &st_buf);
+       //         if (S_ISDIR(st_buf.st_mode)) continue;
