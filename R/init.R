@@ -19,14 +19,14 @@
 
 .pkgenv <- new.env(parent=emptyenv())
 
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) {						# nocov start
     ## simple fallback: 'Ncpus' (if set) or else all cpus seen by OpenMP
     ncores <- getOption("Ncpus", EigenNbThreads())
     ## consider OMP_THREAD_LIMIT (cf Writing R Extensions), gets NA if envvar unset
     ompcores <- as.integer(Sys.getenv("OMP_THREAD_LIMIT"))
     ## keep the smaller value, omitting NA
     ncores <- min(na.omit(c(ncores, ompcores)))
-    .pkgenv[["nb_threads"]] <- ncores		# #nocov
+    .pkgenv[["nb_threads"]] <- ncores
     RcppEigen_throttle_cores(ncores)
 }
 
@@ -57,5 +57,5 @@ RcppEigen_throttle_cores <- function(n) {
 
 ##' @rdname RcppEigen_throttle_cores
 RcppEigen_reset_cores <- function() {
-    EigenSetNbThreads(.pkgenv[["nb_threads"]])
+    EigenSetNbThreads(.pkgenv[["nb_threads"]])				# nocov end
 }
