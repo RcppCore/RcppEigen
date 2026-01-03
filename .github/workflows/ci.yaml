@@ -32,11 +32,9 @@ jobs:
       - name: Test
         run: ./run.sh run_tests
 
-      - name: Install and Verify on macOS
+      - name: Verify OpenMP on macOS
         if: ${{ matrix.os == 'macOS-latest' }}
-        run: |
-          R CMD INSTALL .
-          Rscript -e 'RcppEigen::EigenNbThreads()'
+        run: R CMD INSTALL . && Rscript -e 'RcppEigen::EigenNbThreads()'
 
       - name: Coverage
         if: ${{ matrix.os == 'ubuntu-latest' }}
