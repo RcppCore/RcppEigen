@@ -18,7 +18,7 @@
 
 ### Synopsis
 
-[Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) is a C++ template library for linear algebra:
+[Eigen](https://libeigen.gitlab.io/) is a C++ template library for linear algebra:
 matrices, vectors, numerical solvers and related algorithms.  It supports dense and sparse
 matrices on integer, floating point and complex numbers, decompositions of such matrices,
 and solutions of linear systems. Its performance on many algorithms is comparable with
