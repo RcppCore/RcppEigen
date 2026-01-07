@@ -86,7 +86,7 @@ fastLm(X, \dots)
   URL http://www.jstatsoft.org/v52/i05/.
 }
 \author{
-  Eigen is described at \url{http://eigen.tuxfamily.org/index.php?title=Main_Page}.
+  Eigen is described at \url{https://libeigen.gitlab.io/}.
   RcppEigen is written by Douglas Bates, Dirk Eddelbuettel and Romain Francois.
 }
 \examples{
