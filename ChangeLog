@@ -1,3 +1,13 @@
+2026-05-03  Dirk Eddelbuettel  <edd@debian.org>
+
+	* vignettes/rnw/RcppEigen-Introduction.Rnw: Moved, also update three
+	URLs to https
+	* vignettes/rmw/Makefile: Added to ensure proper bibtex processing
+	* vignettes/RcppEigen-Introduction.pdf: Use precompiled pdf
+	* vignettes/RcppEigen-Introduction.pdf.asis: Added
+	* DESCRIPTION (VignetteBuilder): Added Rcpp
+	* .Rbuildignore: Exclude vignettes/rnw
+
 2026-01-15  Dirk Eddelbuettel  <edd@debian.org>
 
 	* .github/workflows/ci.yaml: Switch to actions/checkout@v6

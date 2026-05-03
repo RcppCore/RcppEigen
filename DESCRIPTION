@@ -36,3 +36,4 @@ Suggests: Matrix, inline, tinytest, pkgKitten, microbenchmark
 URL: https://github.com/RcppCore/RcppEigen, https://dirk.eddelbuettel.com/code/rcpp.eigen.html
 BugReports: https://github.com/RcppCore/RcppEigen/issues
 RoxygenNote: 6.0.1
+VignetteBuilder: Rcpp

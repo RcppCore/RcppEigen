@@ -1,0 +1,5 @@
+%\VignetteIndexEntry{RcppEigen-intro}
+%\VignetteKeywords{linear algebra, template programming, C++, R, Rcpp}
+%\VignettePackage{RcppEigen}
+%\VignetteEncoding{UTF-8}
+%\VignetteEngine{Rcpp::asis}

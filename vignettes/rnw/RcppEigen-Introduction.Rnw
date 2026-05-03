@@ -43,13 +43,13 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
   University of Wisconsin-Madison \\
   Madison, WI, United States of America \\
   E-mail: \email{bates@stat.wisc.edu} \\
-  URL: \url{http://www.stat.wisc.edu/~bates/}\\
+  URL: \url{https://www.stat.wisc.edu/~bates/}\\
 
   Dirk Eddelbuettel \\
   Debian Project \\
   River Forest, IL, United States of America\\
   E-mail: \email{edd@debian.org}\\
-  URL: \url{http://dirk.eddelbuettel.com}\\
+  URL: \url{https://dirk.eddelbuettel.com}\\
 }
 
 \usepackage{Sweave}
@@ -85,7 +85,7 @@ prettyDate <- format(Sys.Date(), "%B %e, %Y")
 
 \begin{quote} \footnotesize
   This vignette corresponds to a
-  \href{http://www.jstatsoft.org/v52/i05/}{paper published} in the
+  \href{https://www.jstatsoft.org/v52/i05/}{paper published} in the
   \textsl{Journal of Statistical Software}. Currently still identical
   to the paper, this vignette version may over time receive minor updates.
   For citations, please use \citet{JSS:RcppEigen} as provided by \code{citation("RcppEigen")}.
