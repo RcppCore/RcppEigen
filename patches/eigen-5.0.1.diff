@@ -2,12 +2,12 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/CholmodSupport inst/include/
 --- ../eigen/Eigen/CholmodSupport	2026-06-04 19:21:16.915228190 -0500
 +++ inst/include/Eigen/CholmodSupport	2026-06-04 19:34:11.433660905 -0500
 @@ -12,7 +12,7 @@
- 
+
  #include "src/Core/util/DisableStupidWarnings.h"
- 
+
 -#include <cholmod.h>
 +#include <RcppEigenCholmod.h>
- 
+
  /** \ingroup Support_modules
   * \defgroup CholmodSupport_Module CholmodSupport module
 diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSupport.h inst/include/Eigen/src/CholmodSupport/CholmodSupport.h
@@ -16,16 +16,16 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 @@ -13,6 +13,10 @@
  // IWYU pragma: private
  #include "./InternalHeaderCheck.h"
- 
+
 +#ifndef R_MATRIX_CHOLMOD
 +# define R_MATRIX_CHOLMOD(_NAME_) cholmod_ ## _NAME_
 +#endif
 +
  namespace Eigen {
- 
+
  namespace internal {
 @@ -84,8 +88,8 @@
- 
+
    if (internal::is_same<StorageIndex_, int>::value) {
      res.itype = CHOLMOD_INT;
 -  } else if (internal::is_same<StorageIndex_, SuiteSparse_long>::value) {
@@ -46,7 +46,7 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 -    return cholmod_l_##name(&Common);                               \
 +    return R_MATRIX_CHOLMOD(name)(&Common);			    \
    }
- 
+
  #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                         \
    template <typename StorageIndex_>                                          \
    inline ret cm_##name(t1& a1, cholmod_common& Common) {                     \
@@ -57,10 +57,10 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 -    return cholmod_l_##name(&a1, &Common);                                   \
 +    return R_MATRIX_CHOLMOD(name) (&a1, &Common);			\
    }
- 
+
  EIGEN_CHOLMOD_SPECIALIZE0(int, start)
 @@ -201,33 +197,33 @@
- 
+
  template <typename StorageIndex_>
  inline cholmod_dense* cm_solve(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
 -  return cholmod_solve(sys, &L, &B, &Common);
@@ -74,7 +74,7 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 +// inline cholmod_dense* cm_solve<SuiteSparse_long>(int sys, cholmod_factor& L, cholmod_dense& B, cholmod_common& Common) {
 +//   return cholmod_l_solve(sys, &L, &B, &Common);
 +// }
- 
+
  template <typename StorageIndex_>
  inline cholmod_sparse* cm_spsolve(int sys, cholmod_factor& L, cholmod_sparse& B, cholmod_common& Common) {
 -  return cholmod_spsolve(sys, &L, &B, &Common);
@@ -90,7 +90,7 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 +//                                                     cholmod_common& Common) {
 +//   return cholmod_l_spsolve(sys, &L, &B, &Common);
 +// }
- 
+
  template <typename StorageIndex_>
  inline int cm_factorize_p(cholmod_sparse* A, double beta[2], StorageIndex_* fset, std::size_t fsize, cholmod_factor* L,
                            cholmod_common& Common) {
@@ -107,15 +107,27 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/CholmodSupport/CholmodSu
 +//                                             std::size_t fsize, cholmod_factor* L, cholmod_common& Common) {
 +//   return cholmod_l_factorize_p(A, beta, fset, fsize, L, &Common);
 +// }
- 
+
  #undef EIGEN_CHOLMOD_SPECIALIZE0
  #undef EIGEN_CHOLMOD_SPECIALIZE1
+diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/Core/arch/AltiVec/PacketMath.h inst/include/Eigen/src/Core/arch/AltiVec/PacketMath.h
+--- ../eigen/Eigen/src/Core/arch/AltiVec/PacketMath.h   2026-06-04 19:21:16.924228445 -0500
++++ inst/include/Eigen/src/Core/arch/AltiVec/PacketMath.h       2026-06-04 19:48:47.058195837 -0500
+@@ -486,7 +486,7 @@
+   // Ignore partial input memory initialized
+ #if !EIGEN_COMP_LLVM
+ #pragma GCC diagnostic push
+-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
++//#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+ #endif
+ #ifdef EIGEN_VECTORIZE_VSX
+   return vec_xl(0, const_cast<__UNPACK_TYPE__(Packet)*>(from));
 diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/Core/util/DisableStupidWarnings.h inst/include/Eigen/src/Core/util/DisableStupidWarnings.h
 --- ../eigen/Eigen/src/Core/util/DisableStupidWarnings.h	2026-06-04 19:21:16.930228615 -0500
 +++ inst/include/Eigen/src/Core/util/DisableStupidWarnings.h	2026-06-04 19:34:11.433784882 -0500
 @@ -42,45 +42,45 @@
  #pragma warning disable 2196 279 1684 2259
- 
+
  #elif defined __clang__
 -#ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 -#pragma clang diagnostic push
@@ -157,9 +169,9 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/Core/util/DisableStupidW
 +// #endif
 +// #endif
 +// #endif
- 
+
  #elif defined __GNUC__ && !defined(__FUJITSU)
- 
+
 -#if (!defined(EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 -#pragma GCC diagnostic push
 -#endif
@@ -193,7 +205,7 @@ diff '--exclude=CMakeLists.txt' -ruw ../eigen/Eigen/src/Core/util/DisableStupidW
 +// #pragma GCC diagnostic ignored "-Wattributes"
 +// #endif
  #endif
- 
+
  #if defined __NVCC__ && defined __CUDACC__
 diff '--exclude=CMakeLists.txt' -ruw ../eigen/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h
 --- ../eigen/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h	2026-06-04 19:21:16.986230202 -0500

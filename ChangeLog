@@ -7,6 +7,7 @@
 	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Idem
 	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h: Idem
 	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h: Idem
+	* inst/include/Eigen/src/Core/arch/AltiVec/PacketMath.h: New one-line patch
 
 2026-05-03  Dirk Eddelbuettel  <edd@debian.org>
 
