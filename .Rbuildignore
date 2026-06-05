@@ -13,3 +13,4 @@ debian
 ^\.github
 ^\.codecov.yml
 ^\.covrignore
+^local
