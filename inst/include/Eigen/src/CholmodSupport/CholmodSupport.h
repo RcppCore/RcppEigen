@@ -177,13 +177,13 @@ namespace internal {
   template <typename StorageIndex_>                                 \
   inline ret cm_##name(cholmod_common& Common) {                    \
     return R_MATRIX_CHOLMOD(name)(&Common);			    \
-  }                                                                 
+  }
 
 #define EIGEN_CHOLMOD_SPECIALIZE1(ret, name, t1, a1)                    \
   template <typename StorageIndex_>                                     \
   inline ret cm_##name(t1& a1, cholmod_common& Common) {                \
     return R_MATRIX_CHOLMOD(name) (&a1, &Common);			\
-  }                                                                          
+  }
 
 EIGEN_CHOLMOD_SPECIALIZE0(int, start)
 EIGEN_CHOLMOD_SPECIALIZE0(int, finish)
