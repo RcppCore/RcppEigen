@@ -1,3 +1,13 @@
+2026-06-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/: Sync with upstream Eigen 5.0.1
+	* inst/include/unsupported/Eigen/: Idem
+
+	* inst/include/Eigen/CholmodSupport: Apply previous patch
+	* inst/include/Eigen/src/CholmodSupport/CholmodSupport.h: Idem
+	* inst/include/Eigen/src/Core/util/DisableStupidWarnings.h: Idem
+	* inst/include/unsupported/Eigen/src/SparseExtra/MatrixMarketIterator.h: Idem
+
 2026-05-03  Dirk Eddelbuettel  <edd@debian.org>
 
 	* vignettes/rnw/RcppEigen-Introduction.Rnw: Moved, also update three
