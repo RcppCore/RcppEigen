@@ -3,7 +3,7 @@
 ##
 ##  'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library
 ##
-##  Copyright (C) 2025  Dirk Eddelbuettel
+##  Copyright (C) 2025-2926  Dirk Eddelbuettel
 ##
 ##  Licensed under GPL-2 or later
 
@@ -15,7 +15,7 @@
 AC_PREREQ([2.69])
 
 ## Process this file with autoconf to produce a configure script.
-AC_INIT([RcppEigen],[0.3.4.0.2-1],[edd@debian.org])
+AC_INIT([RcppEigen],[0.4.9.9-2],[edd@debian.org])
 
 ## Set R_HOME, respecting an environment variable if one is set
 : ${R_HOME=$(R RHOME)}
@@ -163,6 +163,15 @@ fi # if macOS
 ## Go back home.
 cd "${owd}"
 rm -rf "${BUILDDIR}"
+
+## Check if building locally
+AC_MSG_CHECKING([whether .git/ exists])
+if test -d "$srcdir/.git"; then
+    AC_MSG_RESULT([yes, adding extra flags])
+    AC_SUBST([PKG_CXXFLAGS],["${PKG_CXXFLAGS} -Wno-ignored-attributes -Wno-maybe-uninitialized"])
+else
+    AC_MSG_RESULT([no, consider adding '-Wno-ignored-attributes -Wno-maybe-uninitialized' to ~/.R/Makevars])
+fi
 
 # Overall summary
 AC_MSG_CHECKING([for OpenMP])
