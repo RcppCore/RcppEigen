@@ -1,10 +1,19 @@
+
+2026-10-07  Steve Bronder  <sbronder@flatironinstitute.org>
+
+	* inst/include/Eigen/src/Core/arch/AVX/TypeCasting.h: Apply upstream
+	commit 43a01f06 to support gcc < 10.1 and clang < 10
+	* inst/include/Eigen/src/Core/arch/AVX512/PacketMath.h: Idem
+	* inst/include/Eigen/src/Core/arch/AVX512/TypeCasting.h: Idem
+
 2026-10-06  Dirk Eddelbuettel  <edd@debian.org>
 
 	* patches/eigen-5.0.1-stan.diff: Document previous commit as diff
 
 2026-10-01  Dirk Eddelbuettel  <edd@debian.org>
 
-	* inst/include/Eigen/src/Core/Fill.h: Apply patch to aid StanHeaders
+	* inst/include/Eigen/src/Core/Fill.h: Apply upstream commit e246f9cb
+	to use memset only if !NumTraits<Scalar>::RequireInitialization
 
 2026-07-27  Dirk Eddelbuettel  <edd@debian.org>
 
