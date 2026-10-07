@@ -1,3 +1,8 @@
+2026-10-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll micro version 0.4.9.9-5
+
+	* patches/eigen-5.0.1-stan.diff: Update with previous commit
 
 2026-10-07  Steve Bronder  <sbronder@flatironinstitute.org>
 
