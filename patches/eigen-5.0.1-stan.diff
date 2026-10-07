@@ -1,0 +1,221 @@
+diff --git c/inst/include/Eigen/src/Core/Fill.h w/inst/include/Eigen/src/Core/Fill.h
+index 779ef26..6f45935 100644
+--- c/inst/include/Eigen/src/Core/Fill.h
++++ w/inst/include/Eigen/src/Core/Fill.h
+@@ -93,8 +93,10 @@ struct eigen_fill_impl<Xpr, /*use_fill*/ true> {
+
+ template <typename Xpr>
+ struct eigen_memset_helper {
+-  static constexpr bool value =
+-      std::is_trivially_copyable<typename Xpr::Scalar>::value && eigen_fill_helper<Xpr>::value;
++  using Scalar = typename Xpr::Scalar;
++  static constexpr bool value = std::is_trivially_copyable<Scalar>::value &&
++                                !static_cast<bool>(NumTraits<Scalar>::RequireInitialization) &&
++                                eigen_fill_helper<Xpr>::value;
+ };
+
+ template <typename Xpr>
+diff --git c/inst/include/Eigen/src/Core/arch/AVX/TypeCasting.h w/inst/include/Eigen/src/Core/arch/AVX/TypeCasting.h
+index 767e2d5..9feb38f 100644
+--- c/inst/include/Eigen/src/Core/arch/AVX/TypeCasting.h
++++ w/inst/include/Eigen/src/Core/arch/AVX/TypeCasting.h
+@@ -56,6 +56,40 @@ struct type_casting_traits<int64_t, double> : vectorized_type_casting_traits<int
+ #endif
+ #endif
+
++EIGEN_STRONG_INLINE __m256 _eigen_mm256_set_m128(__m128 hi, __m128 lo) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 810)
++  __m256 result = _mm256_castps128_ps256(lo);
++  return _mm256_insertf128_ps(result, hi, 1);
++#else
++  return _mm256_set_m128(hi, lo);
++#endif
++}
++
++EIGEN_STRONG_INLINE __m256d _eigen_mm256_set_m128d(__m128d hi, __m128d lo) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 810)
++  __m256d result = _mm256_castpd128_pd256(lo);
++  return _mm256_insertf128_pd(result, hi, 1);
++#else
++  return _mm256_set_m128d(hi, lo);
++#endif
++}
++
++EIGEN_STRONG_INLINE __m256i _eigen_mm256_set_m128i(__m128i hi, __m128i lo) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 810)
++#if defined(EIGEN_VECTORIZE_AVX2)
++  __m256i result = _mm256_castsi128_si256(lo);
++  return _mm256_inserti128_si256(result, hi, 1);
++#else
++  EIGEN_ALIGN32 int32_t tmp[8];
++  _mm_storeu_si128(reinterpret_cast<__m128i*>(tmp), lo);
++  _mm_storeu_si128(reinterpret_cast<__m128i*>(tmp + 4), hi);
++  return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(tmp));
++#endif
++#else
++  return _mm256_set_m128i(hi, lo);
++#endif
++}
++
+ template <>
+ EIGEN_STRONG_INLINE Packet16b pcast<Packet8f, Packet16b>(const Packet8f& a, const Packet8f& b) {
+   __m256 nonzero_a = _mm256_cmp_ps(a, pzero(a), _CMP_NEQ_UQ);
+@@ -109,7 +143,7 @@ EIGEN_STRONG_INLINE Packet8i pcast<Packet8f, Packet8i>(const Packet8f& a) {
+
+ template <>
+ EIGEN_STRONG_INLINE Packet8i pcast<Packet4d, Packet8i>(const Packet4d& a, const Packet4d& b) {
+-  return _mm256_set_m128i(_mm256_cvttpd_epi32(b), _mm256_cvttpd_epi32(a));
++  return _eigen_mm256_set_m128i(_mm256_cvttpd_epi32(b), _mm256_cvttpd_epi32(a));
+ }
+
+ template <>
+@@ -124,7 +158,7 @@ EIGEN_STRONG_INLINE Packet8f pcast<Packet8i, Packet8f>(const Packet8i& a) {
+
+ template <>
+ EIGEN_STRONG_INLINE Packet8f pcast<Packet4d, Packet8f>(const Packet4d& a, const Packet4d& b) {
+-  return _mm256_set_m128(_mm256_cvtpd_ps(b), _mm256_cvtpd_ps(a));
++  return _eigen_mm256_set_m128(_mm256_cvtpd_ps(b), _mm256_cvtpd_ps(a));
+ }
+
+ template <>
+@@ -249,7 +283,7 @@ EIGEN_STRONG_INLINE Packet4d pcast<Packet4l, Packet4d>(const Packet4l& a) {
+
+ template <>
+ EIGEN_STRONG_INLINE Packet4d pcast<Packet2l, Packet4d>(const Packet2l& a, const Packet2l& b) {
+-  return _mm256_set_m128d((pcast<Packet2l, Packet2d>(b)), (pcast<Packet2l, Packet2d>(a)));
++  return _eigen_mm256_set_m128d((pcast<Packet2l, Packet2d>(b)), (pcast<Packet2l, Packet2d>(a)));
+ }
+
+ template <>
+diff --git c/inst/include/Eigen/src/Core/arch/AVX512/PacketMath.h w/inst/include/Eigen/src/Core/arch/AVX512/PacketMath.h
+index b76c8a7..baeefa3 100644
+--- c/inst/include/Eigen/src/Core/arch/AVX512/PacketMath.h
++++ w/inst/include/Eigen/src/Core/arch/AVX512/PacketMath.h
+@@ -44,6 +44,54 @@ typedef eigen_packet_wrapper<__m512i, 6> Packet32s;
+ typedef eigen_packet_wrapper<__m256i, 6> Packet16s;
+ typedef eigen_packet_wrapper<__m128i, 6> Packet8s;
+
++EIGEN_STRONG_INLINE Packet16i _eigen_mm512_loadu_epi32(const int* from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
++#else
++  return _mm512_loadu_epi32(from);
++#endif
++}
++
++EIGEN_STRONG_INLINE Packet16i _eigen_mm512_loadu_epi64(const int64_t* from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
++#else
++  return _mm512_loadu_epi64(from);
++#endif
++}
++
++EIGEN_STRONG_INLINE void _eigen_mm512_storeu_epi32(void* to, const Packet16i& from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  _mm512_storeu_si512(to, from);
++#else
++  _mm512_storeu_epi32(to, from);
++#endif
++}
++
++EIGEN_STRONG_INLINE void _eigen_mm512_storeu_epi64(void* to, const Packet16i& from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  _mm512_storeu_si512(to, from);
++#else
++  _mm512_storeu_epi64(to, from);
++#endif
++}
++
++EIGEN_STRONG_INLINE void _eigen_mm256_storeu_epi32(void* to, const __m256i& from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  _mm256_storeu_si256(reinterpret_cast<__m256i*>(to), from);
++#else
++  _mm256_storeu_epi32(to, from);
++#endif
++}
++
++EIGEN_STRONG_INLINE void _eigen_mm_storeu_epi32(void* to, const __m128i& from) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 1010)
++  _mm_storeu_si128(reinterpret_cast<__m128i*>(to), from);
++#else
++  _mm_storeu_epi32(to, from);
++#endif
++}
++
+ template <>
+ struct is_arithmetic<__m512> {
+   enum { value = true };
+@@ -1033,11 +1081,11 @@ EIGEN_STRONG_INLINE Packet8d ploadu<Packet8d>(const double* from) {
+ }
+ template <>
+ EIGEN_STRONG_INLINE Packet16i ploadu<Packet16i>(const int* from) {
+-  EIGEN_DEBUG_UNALIGNED_LOAD return _mm512_loadu_epi32(from);
++  EIGEN_DEBUG_UNALIGNED_LOAD return _eigen_mm512_loadu_epi32(from);
+ }
+ template <>
+ EIGEN_STRONG_INLINE Packet8l ploadu<Packet8l>(const int64_t* from) {
+-  EIGEN_DEBUG_UNALIGNED_LOAD return _mm512_loadu_epi64(from);
++  EIGEN_DEBUG_UNALIGNED_LOAD return _eigen_mm512_loadu_epi64(from);
+ }
+
+ template <>
+@@ -1158,11 +1206,11 @@ EIGEN_STRONG_INLINE void pstoreu<double>(double* to, const Packet8d& from) {
+ }
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<int>(int* to, const Packet16i& from) {
+-  EIGEN_DEBUG_UNALIGNED_STORE _mm512_storeu_epi32(to, from);
++  EIGEN_DEBUG_UNALIGNED_STORE _eigen_mm512_storeu_epi32(to, from);
+ }
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<int64_t>(int64_t* to, const Packet8l& from) {
+-  EIGEN_DEBUG_UNALIGNED_STORE _mm512_storeu_epi64(to, from);
++  EIGEN_DEBUG_UNALIGNED_STORE _eigen_mm512_storeu_epi64(to, from);
+ }
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<float>(float* to, const Packet16f& from, uint16_t umask) {
+@@ -3019,19 +3067,19 @@ EIGEN_STRONG_INLINE void pstore<numext::int16_t, Packet8s>(numext::int16_t* out,
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet32s>(numext::int16_t* out, const Packet32s& x) {
+   EIGEN_DEBUG_UNALIGNED_STORE
+-  _mm512_storeu_epi32(out, x);
++  _eigen_mm512_storeu_epi32(out, x);
+ }
+
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet16s>(numext::int16_t* out, const Packet16s& x) {
+   EIGEN_DEBUG_UNALIGNED_STORE
+-  _mm256_storeu_epi32(out, x);
++  _eigen_mm256_storeu_epi32(out, x);
+ }
+
+ template <>
+ EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet8s>(numext::int16_t* out, const Packet8s& x) {
+   EIGEN_DEBUG_UNALIGNED_STORE
+-  _mm_storeu_epi32(out, x);
++  _eigen_mm_storeu_epi32(out, x);
+ }
+
+ template <>
+diff --git c/inst/include/Eigen/src/Core/arch/AVX512/TypeCasting.h w/inst/include/Eigen/src/Core/arch/AVX512/TypeCasting.h
+index fc55fd8..e970d43 100644
+--- c/inst/include/Eigen/src/Core/arch/AVX512/TypeCasting.h
++++ w/inst/include/Eigen/src/Core/arch/AVX512/TypeCasting.h
+@@ -52,9 +52,17 @@ struct type_casting_traits<bfloat16, float> : vectorized_type_casting_traits<bfl
+ template <>
+ struct type_casting_traits<float, bfloat16> : vectorized_type_casting_traits<float, bfloat16> {};
+
++EIGEN_STRONG_INLINE __mmask16 _eigen_mm512_cmpneq_ps_mask(__m512 a, __m512 b) {
++#if EIGEN_COMP_GNUC && (EIGEN_COMP_CLANG < 1000 || EIGEN_COMP_GNUC < 810)
++  return _mm512_cmp_ps_mask(a, b, _CMP_NEQ_UQ);
++#else
++  return _mm512_cmpneq_ps_mask(a, b);
++#endif
++}
++
+ template <>
+ EIGEN_STRONG_INLINE Packet16b pcast<Packet16f, Packet16b>(const Packet16f& a) {
+-  __mmask16 mask = _mm512_cmpneq_ps_mask(a, pzero(a));
++  __mmask16 mask = _eigen_mm512_cmpneq_ps_mask(a, pzero(a));
+   return _mm512_maskz_cvtepi32_epi8(mask, _mm512_set1_epi32(1));
+ }
