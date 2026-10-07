@@ -1,3 +1,11 @@
+2026-10-06  Dirk Eddelbuettel  <edd@debian.org>
+
+	* patches/eigen-5.0.1-stan.diff: Document previous commit as diff
+
+2026-10-01  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/Eigen/src/Core/Fill.h: Apply patch to aid StanHeaders
+
 2026-07-27  Dirk Eddelbuettel  <edd@debian.org>
 
 	* configure.ac: Conditionally adding compilation flags
